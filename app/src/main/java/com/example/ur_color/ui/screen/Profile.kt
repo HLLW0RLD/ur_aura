@@ -15,26 +15,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.ur_color.ui.screen.viewModel.UserViewModel
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.calculateAge
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
-data class Profile(val user: String = "null") : Screen {
-
-}
+data class Profile(val user: String = "null") : Screen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfileScreen() {
-    val user by PrefCache.user.collectAsState()
 
     val navController = LocalNavController.current
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val vm: UserViewModel = koinViewModel()
+    val user by vm.user.collectAsState()
 
     Column(
         modifier = Modifier
@@ -67,16 +73,15 @@ fun ProfileScreen() {
 
                 Spacer(Modifier.width(16.dp))
 
-                // Имя, возраст, знак зодиака
                 Column {
                     Text(
-                        text = "${u.firstName} ${u.middleName.orEmpty()} ${u.lastName}".trim(),
+                        text = "${u.firstName}, ${calculateAge(u.birthDate)}",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    calculateAge(u.birthDate)?.let { age ->
-                        Text("Возраст: $age", style = MaterialTheme.typography.bodyMedium)
-                    }
-                    Text("Знак: ${u.zodiacSign}", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "(${u.zodiacSign.lowercase()})",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
 
@@ -92,7 +97,29 @@ fun ProfileScreen() {
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate(AuraDetails().route()) }
+                        .clickable {
+                            navController.navigate(AuraDetails().route())
+                        }
+                        .padding(8.dp)
+                )
+                Text(
+                    "Emotional map",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+//                            navController.navigate("diary")
+                        }
+                        .padding(8.dp)
+                )
+                Text(
+                    "Diary",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+//                            navController.navigate("diary")
+                        }
                         .padding(8.dp)
                 )
                 Text(
@@ -106,12 +133,19 @@ fun ProfileScreen() {
                         .padding(8.dp)
                 )
                 Text(
-                    "Diary",
+                    "Удалить профиль",
                     style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Red,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-//                            navController.navigate("diary")
+                            scope.launch {
+                                vm.deleteUser(context)
+                                // например, вернуться на экран логина
+                                navController.navigate(Login.route()) {
+                                    popUpTo(0) // очистить стек
+                                }
+                            }
                         }
                         .padding(8.dp)
                 )

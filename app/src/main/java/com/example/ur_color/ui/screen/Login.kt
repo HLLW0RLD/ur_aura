@@ -141,7 +141,7 @@ fun LoginScreen() {
                     // 4) сохраняем (suspend)
                     scope.launch {
                         PrefCache.saveUser(context, user, avatarBitmap)
-                        navController.navigate(Main)
+                        navController.navigate(Main.route())
                     }
                 }
             }

@@ -80,6 +80,18 @@ object PrefCache {
         _aura.value = auraBitmap ?: loadAuraFromFile(context)
     }
 
+    suspend fun deleteUser(context: Context) {
+        context.dataStore.edit { prefs ->
+            prefs.clear()
+        }
+
+        val f = File(context.filesDir, IMAGE_FILE)
+        if (f.exists()) f.delete()
+
+        _user.value = null
+        _aura.value = null
+    }
+
     private fun saveAuraToFile(context: Context, bitmap: Bitmap) {
         val file = File(context.filesDir, IMAGE_FILE)
         FileOutputStream(file).use { out ->

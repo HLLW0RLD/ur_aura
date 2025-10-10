@@ -11,35 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
 import com.example.ur_color.data.local.LocalDailyCardService
 import com.example.ur_color.data.local.PrefCache
 import com.example.ur_color.data.model.Card
-import com.example.ur_color.data.remote.DailyCardService
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.utils.LocalNavController
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.WindowType
 
@@ -75,29 +61,32 @@ fun MainScreen() {
             backgroundColor = Color.White
         )
 
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .padding(top = 56.dp, bottom = 64.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                ExpandableFloatingBox(
-                    closedTitle = card?.name ?: "oops",
-                    expandedTitle = card?.advice ?: "oops",
-                    windowType = WindowType.Regular,
-                    onClose = {},
-                ) {
+            ExpandableFloatingBox(
+                closedTitle = ("ваша карта дня " + card?.name + "!"),
+                expandedTitle = card?.advice ?: "oops",
+                windowType = WindowType.Full,
+                content = {
                     Column(
-                        Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.Start
                     ) {
                         Text(card?.name ?: "oops", style = MaterialTheme.typography.titleLarge)
                         Spacer(Modifier.height(8.dp))
                         Text("Стихия: ${card?.element}, Номер: ${card?.number}")
                         Spacer(Modifier.height(8.dp))
-                        Text(card?.fullMeaning ?: "oops", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            card?.fullMeaning ?: "oops",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                         Spacer(Modifier.height(8.dp))
                         Text("Совет: ${card?.advice}", style = MaterialTheme.typography.bodyMedium)
                         Spacer(Modifier.height(8.dp))
@@ -107,7 +96,7 @@ fun MainScreen() {
                         Spacer(Modifier.height(16.dp))
                     }
                 }
-            }
+            )
         }
 
         Row(
@@ -140,7 +129,9 @@ fun MainScreen() {
 @Composable
 fun DailyCardBottomSheet(card: Card, onClose: () -> Unit) {
     Column(
-        Modifier.fillMaxWidth().padding(16.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(card.name, style = MaterialTheme.typography.titleLarge)

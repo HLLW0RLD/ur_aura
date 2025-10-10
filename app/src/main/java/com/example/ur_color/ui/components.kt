@@ -1,7 +1,9 @@
 package com.example.ur_color.ui
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,13 +11,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -109,19 +116,37 @@ fun ExpandableFloatingBox(
     expandedTitle: String,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
-    onClose: (() -> Unit)? = null,
-    onConfirm: (() -> Unit)? = null,
+    onClose: (() -> Unit) = {},
     onCancel: (() -> Unit)? = null,
+    onConfirm: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-
+    val scrollState = rememberScrollState()
     val transition = updateTransition(targetState = expanded, label = "expandTransition")
 
-    val scale by transition.animateFloat(label = "scaleAnim") { if (it) 1f else 0.9f }
-    val elevation by transition.animateDp(label = "elevationAnim") { if (it) 12.dp else 2.dp }
-    val corner by transition.animateDp(label = "cornerAnim") { if (it) 16.dp else 28.dp }
-    val alpha by transition.animateFloat(label = "alphaAnim") { if (it) 1f else 0f }
+    val animationSpeed = 700
+    val easing = LinearOutSlowInEasing
+
+    val scale by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = animationSpeed, easing = easing) },
+        label = "scaleAnim"
+    ) { if (it) 1f else 0.9f }
+
+    val elevation by transition.animateDp(
+        transitionSpec = { tween(durationMillis = animationSpeed, easing = easing) },
+        label = "elevationAnim"
+    ) { if (it) 12.dp else 2.dp }
+
+    val corner by transition.animateDp(
+        transitionSpec = { tween(durationMillis = animationSpeed, easing = easing) },
+        label = "cornerAnim"
+    ) { if (it) 16.dp else 28.dp }
+
+    val alpha by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = animationSpeed - 100, easing = easing) },
+        label = "alphaAnim"
+    ) { if (it) 1f else 0f }
 
     val targetHeightFraction = when (windowType) {
         WindowType.Slim -> 0.25f
@@ -145,32 +170,45 @@ fun ExpandableFloatingBox(
                 clip = true
             }
             .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(corner))
-            .clickable { expanded = !expanded }
+            .clickable(
+                interactionSource = null
+            ) { expanded = !expanded }
             .padding(16.dp)
     ) {
         if (expanded) {
             Column(
                 Modifier
                     .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .alpha(alpha)
             ) {
                 Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(expandedTitle, style = MaterialTheme.typography.titleMedium)
-                    IconButton(onClick = { expanded = false; onClose?.invoke() }) {
-                        Icon(painter = painterResource(R.drawable.close_filled), contentDescription = "Закрыть")
-                    }
-                }
-
-                Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .alpha(alpha)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                    verticalAlignment = Alignment.Top
                 ) {
-                    content()
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f),
+                        text = expandedTitle,
+                        maxLines = 2,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Icon(
+                        modifier = Modifier.clickable {
+                            expanded = false
+                            onClose()
+                        },
+                        painter = painterResource(R.drawable.close_filled),
+                        contentDescription = "Закрыть"
+                    )
                 }
+                Spacer(Modifier.size(4.dp))
+                HorizontalDivider(thickness = 0.5.dp, color = Color.Black)
+
+                content()
 
                 Row(
                     Modifier

@@ -49,8 +49,13 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
 
+    // api
+    implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
+
     // gson
     implementation(libs.gson)
+    implementation(libs.converter.gson)
 
     // navigation
     implementation(libs.androidx.navigation.compose)
@@ -71,6 +76,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)

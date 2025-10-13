@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.random.Random
 
 val LocalNavController =
@@ -111,6 +112,17 @@ fun generatePatternAura(
     return bitmap
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+fun formatDateToRussian(dateStr: String): String {
+    return try {
+        val parser = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH)
+        val parsed = LocalDate.parse(dateStr, parser)
+        val rusFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("ru"))
+        parsed.format(rusFormatter)
+    } catch (e: Exception) {
+        dateStr
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun calculateAge(birthDate: String): Int? {

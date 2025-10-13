@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UserViewModel() : ViewModel() {
+class ProfileViewModel() : ViewModel() {
 
     private val _user = MutableStateFlow<UserData?>(null)
     val user: StateFlow<UserData?> = _user

@@ -4,8 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.example.ur_color.data.UserData
-import com.example.ur_color.data.local.PrefCache
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,10 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.ur_color.ui.screen.viewModel.UserViewModel
+import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.calculateAge
 import kotlinx.coroutines.launch
@@ -39,7 +36,7 @@ fun ProfileScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val vm: UserViewModel = koinViewModel()
+    val vm: ProfileViewModel = koinViewModel()
     val user by vm.user.collectAsState()
 
     Column(

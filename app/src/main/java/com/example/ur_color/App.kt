@@ -1,6 +1,7 @@
 package com.example.ur_color
 
 import android.app.Application
+import com.example.ur_color.data.di.apiModule
 import com.example.ur_color.data.di.appModule
 import com.example.ur_color.data.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -13,6 +14,7 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 appModule,
+                apiModule,
                 viewModelModule
             )
         }

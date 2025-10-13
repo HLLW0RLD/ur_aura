@@ -5,8 +5,10 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +18,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,9 +43,22 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.ur_color.R
+
+enum class WindowType { Slim, Regular, Full }
+enum class ExpandableType {
+    FULL,        // Раскрывается на всю ширину
+    HALF,        // Две колонки — занимает половину
+    STATIC       // Не раскрывается вообще
+}
 
 @Composable
 fun CustomAppBar(
@@ -60,55 +76,53 @@ fun CustomAppBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = Modifier
-            .then(modifier)
+        modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        color = backgroundColor,
+        color = backgroundColor
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             if (showBack) {
-                IconButton(
-                    onClick = { onBackClick?.invoke() },
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
+                IconButton(onClick = { onBackClick?.invoke() }) {
                     Icon(
                         painter = backIcon,
-                        contentDescription = "Назад",
+                        contentDescription = "",
                         tint = backIconTint
                     )
                 }
-            }
-
-            if (showOptions) {
-                IconButton(
-                    onClick = { onOptionsClick?.invoke() },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        painter = optionsIcon,
-                        contentDescription = "Опции",
-                        tint = optionsIconTint
-                    )
-                }
+            } else {
+                Spacer(modifier = Modifier.size(48.dp))
             }
 
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .align(if (isCentered) Alignment.Center else Alignment.CenterStart)
-                    .padding(
-                        start = if (!isCentered && showBack) 56.dp else 16.dp,
-                        end = 56.dp
-                    )
+                modifier = if (isCentered) Modifier.weight(1f)
+                else Modifier.weight(1f).padding(start = 8.dp),
+                textAlign = if (isCentered) TextAlign.Center else TextAlign.Start
             )
+
+            if (showOptions) {
+                IconButton(onClick = { onOptionsClick?.invoke() }) {
+                    Icon(
+                        painter = optionsIcon,
+                        contentDescription = "",
+                        tint = optionsIconTint
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.size(48.dp))
+            }
         }
     }
 }
-
-enum class WindowType { Slim, Regular, Full }
 
 @Composable
 fun ExpandableFloatingBox(
@@ -116,130 +130,256 @@ fun ExpandableFloatingBox(
     expandedTitle: String,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
-    onClose: (() -> Unit) = {},
+    type: ExpandableType = ExpandableType.HALF,
+    canShowFull: Boolean = false,
+    height: Float? = null,
+    width: Float? = null,
+    expandHeight: Float? = null,
+    expandWidth: Float? = null,
+    onOpen: () -> Unit = {},
+    onClose: () -> Unit = {},
     onCancel: (() -> Unit)? = null,
     onConfirm: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
-    val transition = updateTransition(targetState = expanded, label = "expandTransition")
+    ExpandableBase(
+        isDialog = false,
+        closedTitle = closedTitle,
+        expandedTitle = expandedTitle,
+        modifier = modifier,
+        windowType = windowType,
+        canShowFull = canShowFull,
+        height = height,
+        width = width,
+        expandHeight = expandHeight,
+        expandWidth = expandWidth,
+        onOpen = onOpen,
+        onClose = onClose,
+        onCancel = onCancel,
+        onConfirm = onConfirm,
+        content = content
+    )
+}
 
+@Composable
+private fun ExpandableBase(
+    isDialog: Boolean = false,
+    closedTitle: String,
+    expandedTitle: String,
+    modifier: Modifier = Modifier,
+    windowType: WindowType = WindowType.Regular,
+    canShowFull: Boolean = false,
+    height: Float? = null,
+    width: Float? = null,
+    expandHeight: Float? = null,
+    expandWidth: Float? = null,
+    onOpen: () -> Unit,
+    onClose: () -> Unit,
+    onCancel: (() -> Unit)?,
+    onConfirm: (() -> Unit)?,
+    content: @Composable () -> Unit
+) {
+    val scrollState = rememberScrollState()
+    var expanded by remember { mutableStateOf(false) }
+    var currentWindowType by remember { mutableStateOf(windowType) }
+
+    val transition = updateTransition(targetState = expanded, label = "expandTransition")
     val animationSpeed = 700
     val easing = LinearOutSlowInEasing
 
     val scale by transition.animateFloat(
-        transitionSpec = { tween(durationMillis = animationSpeed, easing = easing) },
+        transitionSpec = { tween(animationSpeed, easing = easing) },
         label = "scaleAnim"
     ) { if (it) 1f else 0.9f }
 
     val elevation by transition.animateDp(
-        transitionSpec = { tween(durationMillis = animationSpeed, easing = easing) },
+        transitionSpec = { tween(animationSpeed, easing = easing) },
         label = "elevationAnim"
     ) { if (it) 12.dp else 2.dp }
 
-    val corner by transition.animateDp(
-        transitionSpec = { tween(durationMillis = animationSpeed, easing = easing) },
-        label = "cornerAnim"
-    ) { if (it) 16.dp else 28.dp }
-
     val alpha by transition.animateFloat(
-        transitionSpec = { tween(durationMillis = animationSpeed - 100, easing = easing) },
+        transitionSpec = { tween(animationSpeed, easing = easing) },
         label = "alphaAnim"
     ) { if (it) 1f else 0f }
 
-    val targetHeightFraction = when (windowType) {
+    val offsetY by transition.animateDp(
+        transitionSpec = { tween(animationSpeed, easing = easing) },
+        label = "offsetY"
+    ) { if (it) 0.dp else 50.dp }
+
+    val targetHeightFraction = when (currentWindowType) {
         WindowType.Slim -> 0.25f
-        WindowType.Regular -> 0.5f
+        WindowType.Regular -> 0.55f
         WindowType.Full -> 0.9f
     }
 
-    val heightFraction by transition.animateFloat(label = "heightFractionAnim") {
-        if (it) targetHeightFraction else 0.1f
+    val heightFraction by transition.animateFloat(
+        transitionSpec = { tween(animationSpeed, easing = easing) },
+        label = "heightFractionAnim"
+    ) { if (it) targetHeightFraction else 0.1f }
+
+    fun toggleExpand(toFull: Boolean = false) {
+        expanded = !expanded
+        if (expanded) {
+            onOpen()
+            currentWindowType = if (toFull) WindowType.Full else windowType
+        } else {
+            onClose()
+        }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(heightFraction)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                shadowElevation = elevation.toPx()
-                shape = RoundedCornerShape(corner)
-                clip = true
-            }
-            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(corner))
-            .clickable(
-                interactionSource = null
-            ) { expanded = !expanded }
-            .padding(16.dp)
-    ) {
+    if (isDialog) {
         if (expanded) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .alpha(alpha)
+            Dialog(
+                onDismissRequest = { toggleExpand() },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
             ) {
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f),
-                        text = expandedTitle,
-                        maxLines = 2,
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.4f * alpha))
+                        .clickable { toggleExpand() }
+                )
 
-                    Icon(
-                        modifier = Modifier.clickable {
-                            expanded = false
-                            onClose()
-                        },
-                        painter = painterResource(R.drawable.close_filled),
-                        contentDescription = "Закрыть"
-                    )
-                }
-                Spacer(Modifier.size(4.dp))
-                HorizontalDivider(thickness = 0.5.dp, color = Color.Black)
-
-                content()
-
-                Row(
-                    Modifier
+                Box(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.End
+                        .fillMaxHeight(heightFraction)
+//                        .align(Alignment.BottomCenter)
+                        .graphicsLayer {
+                            shadowElevation = elevation.toPx()
+                            translationY = offsetY.toPx()
+                            clip = true
+                            shape = RoundedCornerShape(20.dp)
+                        }
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(16.dp)
                 ) {
-                    if (onCancel != null) {
-                        TextButton(
-                            onClick = { onCancel() }
-                        ) {
-                            Text("Отмена")
-                        }
-                    }
-                    if (onConfirm != null) {
-                        TextButton(
-                            onClick = { onConfirm() }
-                        ) {
-                            Text("ОК")
-                        }
-                    }
+                    ExpandableContent(
+                        expandedTitle = expandedTitle,
+                        scrollState = scrollState,
+                        alpha = alpha,
+                        onCancel = onCancel,
+                        onConfirm = onConfirm,
+                        onClose = { toggleExpand() },
+                        content = content
+                    )
                 }
             }
         } else {
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier = modifier
+                    .clickable { toggleExpand() }
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(24.dp))
+                    .padding(16.dp)
             ) {
-                Text(closedTitle, style = MaterialTheme.typography.bodyMedium)
+                Text(text = closedTitle, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    } else {
+        Box(
+            modifier = modifier
+                .fillMaxWidth(if (expanded) expandWidth ?: 1f else width ?: 1f)
+                .heightIn(
+                    max = if (expanded)
+                        (expandHeight?.dp ?: (heightFraction * 800).dp)
+                    else
+                        height?.dp ?: 80.dp
+                )
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    shadowElevation = elevation.toPx()
+                    clip = true
+                    shape = RoundedCornerShape(20.dp)
+                }
+                .background(MaterialTheme.colorScheme.surface)
+                .pointerInput(canShowFull) {
+                    detectTapGestures(
+                        onTap = { toggleExpand() },
+                        onLongPress = { if (canShowFull) toggleExpand(true) }
+                    )
+                }
+                .padding(16.dp)
+        ) {
+            if (expanded) {
+                ExpandableContent(
+                    expandedTitle = expandedTitle,
+                    scrollState = scrollState,
+                    alpha = alpha,
+                    onCancel = onCancel,
+                    onConfirm = onConfirm,
+                    onClose = { toggleExpand() },
+                    content = content
+                )
+            } else {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = closedTitle,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
     }
 }
 
+@Composable
+private fun ExpandableContent(
+    expandedTitle: String,
+    scrollState: ScrollState,
+    alpha: Float,
+    onCancel: (() -> Unit)?,
+    onConfirm: (() -> Unit)?,
+    onClose: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .alpha(alpha)
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Text(
+                text = expandedTitle,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                painter = painterResource(R.drawable.close_filled),
+                contentDescription = "Закрыть",
+                modifier = Modifier.clickable { onClose() }
+            )
+        }
+
+        Spacer(Modifier.height(4.dp))
+        HorizontalDivider(thickness = 0.5.dp, color = Color.Black)
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
+            content()
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                onCancel?.let {
+                    TextButton(onClick = it) { Text("Отмена") }
+                }
+                onConfirm?.let {
+                    TextButton(onClick = it) { Text("ОК") }
+                }
+            }
+        }
+    }
+}

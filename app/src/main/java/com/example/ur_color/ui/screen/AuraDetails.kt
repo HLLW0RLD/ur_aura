@@ -1,29 +1,18 @@
 package com.example.ur_color.ui.screen
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import android.graphics.Bitmap
-import android.graphics.drawable.GradientDrawable.Orientation
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
-import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,15 +23,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import com.example.ur_color.data.local.PrefCache
-import com.example.ur_color.ui.screen.viewModel.UserViewModel
-import com.example.ur_color.utils.formatDateInput
-import com.example.ur_color.utils.generatePatternAura
+import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -53,7 +37,7 @@ data class AuraDetails(val color: String? = null) : Screen
 
 @Composable
 fun AuraDetailsScreen(cd: AuraDetails) {
-    val vm: UserViewModel = koinViewModel()
+    val vm: ProfileViewModel = koinViewModel()
     val aura by vm.aura.collectAsState()
 
     val density = LocalDensity.current

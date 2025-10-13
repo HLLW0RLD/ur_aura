@@ -25,7 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.data.UserData
-import com.example.ur_color.data.calculateZodiac
+import com.example.ur_color.data.ZodiacSign
+import com.example.ur_color.data.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.data.local.PrefCache
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.formatDateInput
@@ -121,7 +122,7 @@ fun LoginScreen() {
                     val parts = birthDate.text.split("/")
                     val day = parts.getOrNull(0)?.toIntOrNull() ?: 1
                     val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
-                    val zodiac = calculateZodiac(day, month)
+                    val zodiac = ZodiacSign.calculateZodiac(day, month)
 
                     // 2) генерируем битмап (нужен для сохранения)
                     val avatarBitmap: Bitmap = generatePatternAura(fullName, birthDate.text)
@@ -135,7 +136,7 @@ fun LoginScreen() {
                         birthTime = birthTime,
                         birthPlace = birthPlace,
                         gender = gender,
-                        zodiacSign = zodiac
+                        zodiacSign = zodiac.nameRu
                     )
 
                     // 4) сохраняем (suspend)

@@ -8,6 +8,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +20,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -40,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -48,17 +53,14 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.ur_color.R
+import kotlin.math.roundToInt
 
 enum class WindowType { Slim, Regular, Full }
-enum class ExpandableType {
-    FULL,        // Раскрывается на всю ширину
-    HALF,        // Две колонки — занимает половину
-    STATIC       // Не раскрывается вообще
-}
 
 @Composable
 fun CustomAppBar(
@@ -130,7 +132,6 @@ fun ExpandableFloatingBox(
     expandedTitle: String,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
-    type: ExpandableType = ExpandableType.HALF,
     canShowFull: Boolean = false,
     height: Float? = null,
     width: Float? = null,
@@ -143,7 +144,6 @@ fun ExpandableFloatingBox(
     content: @Composable () -> Unit
 ) {
     ExpandableBase(
-        isDialog = false,
         closedTitle = closedTitle,
         expandedTitle = expandedTitle,
         modifier = modifier,
@@ -163,7 +163,6 @@ fun ExpandableFloatingBox(
 
 @Composable
 private fun ExpandableBase(
-    isDialog: Boolean = false,
     closedTitle: String,
     expandedTitle: String,
     modifier: Modifier = Modifier,
@@ -228,98 +227,48 @@ private fun ExpandableBase(
         }
     }
 
-    if (isDialog) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth(if (expanded) expandWidth ?: 1f else width ?: 1f)
+            .heightIn(
+                max = if (expanded)
+                    (expandHeight?.dp ?: (heightFraction * 800).dp)
+                else
+                    height?.dp ?: 80.dp
+            )
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                shadowElevation = elevation.toPx()
+                clip = true
+                shape = RoundedCornerShape(20.dp)
+            }
+            .background(MaterialTheme.colorScheme.surface)
+            .pointerInput(canShowFull) {
+                detectTapGestures(
+                    onTap = { toggleExpand() },
+                    onLongPress = { if (canShowFull) toggleExpand(true) }
+                )
+            }
+            .padding(16.dp)
+    ) {
         if (expanded) {
-            Dialog(
-                onDismissRequest = { toggleExpand() },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.4f * alpha))
-                        .clickable { toggleExpand() }
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(heightFraction)
-//                        .align(Alignment.BottomCenter)
-                        .graphicsLayer {
-                            shadowElevation = elevation.toPx()
-                            translationY = offsetY.toPx()
-                            clip = true
-                            shape = RoundedCornerShape(20.dp)
-                        }
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(16.dp)
-                ) {
-                    ExpandableContent(
-                        expandedTitle = expandedTitle,
-                        scrollState = scrollState,
-                        alpha = alpha,
-                        onCancel = onCancel,
-                        onConfirm = onConfirm,
-                        onClose = { toggleExpand() },
-                        content = content
-                    )
-                }
-            }
+            ExpandableContent(
+                expandedTitle = expandedTitle,
+                scrollState = scrollState,
+                alpha = alpha,
+                onCancel = onCancel,
+                onConfirm = onConfirm,
+                onClose = { toggleExpand() },
+                content = content
+            )
         } else {
-            Box(
-                modifier = modifier
-                    .clickable { toggleExpand() }
-                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(24.dp))
-                    .padding(16.dp)
-            ) {
-                Text(text = closedTitle, style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-    } else {
-        Box(
-            modifier = modifier
-                .fillMaxWidth(if (expanded) expandWidth ?: 1f else width ?: 1f)
-                .heightIn(
-                    max = if (expanded)
-                        (expandHeight?.dp ?: (heightFraction * 800).dp)
-                    else
-                        height?.dp ?: 80.dp
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = closedTitle,
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                    shadowElevation = elevation.toPx()
-                    clip = true
-                    shape = RoundedCornerShape(20.dp)
-                }
-                .background(MaterialTheme.colorScheme.surface)
-                .pointerInput(canShowFull) {
-                    detectTapGestures(
-                        onTap = { toggleExpand() },
-                        onLongPress = { if (canShowFull) toggleExpand(true) }
-                    )
-                }
-                .padding(16.dp)
-        ) {
-            if (expanded) {
-                ExpandableContent(
-                    expandedTitle = expandedTitle,
-                    scrollState = scrollState,
-                    alpha = alpha,
-                    onCancel = onCancel,
-                    onConfirm = onConfirm,
-                    onClose = { toggleExpand() },
-                    content = content
-                )
-            } else {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = closedTitle,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
             }
         }
     }

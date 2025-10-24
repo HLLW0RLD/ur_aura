@@ -6,16 +6,23 @@ import android.graphics.BitmapFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.ur_color.data.UserData
+import com.example.ur_color.data.user.UserData
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 val Context.dataStore by preferencesDataStore("user_prefs")
 
 object PrefCache {
+    private val gson = Gson()
+
+    private val KEY_WIDGETS = stringPreferencesKey("widgets_json")
 
     private val KEY_FIRST = stringPreferencesKey("firstName")
     private val KEY_LAST = stringPreferencesKey("lastName")
@@ -55,6 +62,35 @@ object PrefCache {
         }
 
         _aura.value = loadAuraFromFile(context)
+    }
+
+    suspend fun updateAura(context: Context, newAura: Bitmap) {
+        saveAuraToFile(context, newAura)
+        _aura.value = newAura
+    }
+
+    fun saveAuraToHistory(context: Context, bitmap: Bitmap) {
+        val date = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        val file = File(context.filesDir, "aura_history_$date.png")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+    }
+
+    suspend fun updateDynamicUserState(
+        context: Context,
+        energyLevel: Int? = null,
+        dominantColor: String? = null,
+        element: String? = null
+    ) {
+        val current = _user.value ?: return
+        val updated = current.copy(
+            energyLevel = energyLevel ?: current.energyLevel,
+            dominantColor = dominantColor ?: current.dominantColor,
+            element = element ?: current.element
+        )
+
+        saveUser(context, updated, _aura.value)
     }
 
     suspend fun saveUser(context: Context, userData: UserData, auraBitmap: Bitmap?) {

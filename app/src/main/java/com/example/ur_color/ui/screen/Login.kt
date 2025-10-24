@@ -1,6 +1,8 @@
 package com.example.ur_color.ui.screen
 
 import android.graphics.Bitmap
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,21 +26,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.ur_color.data.UserData
-import com.example.ur_color.data.ZodiacSign
-import com.example.ur_color.data.ZodiacSign.Companion.calculateZodiac
-import com.example.ur_color.data.local.PrefCache
+import com.example.ur_color.data.user.UserData
+import com.example.ur_color.data.user.ZodiacSign.Companion.calculateZodiac
+import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.formatDateInput
-import com.example.ur_color.utils.generatePatternAura
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 object Login : Screen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    loginViewModel: LoginViewModel = koinViewModel()
+) {
 
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -122,12 +126,9 @@ fun LoginScreen() {
                     val parts = birthDate.text.split("/")
                     val day = parts.getOrNull(0)?.toIntOrNull() ?: 1
                     val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
-                    val zodiac = ZodiacSign.calculateZodiac(day, month)
+                    val zodiac = calculateZodiac(day, month)
 
-                    // 2) генерируем битмап (нужен для сохранения)
-                    val avatarBitmap: Bitmap = generatePatternAura(fullName, birthDate.text)
-
-                    // 3) формируем модель
+                    // 2) формируем модель
                     val user = UserData(
                         firstName = firstName,
                         lastName = lastName,
@@ -139,9 +140,7 @@ fun LoginScreen() {
                         zodiacSign = zodiac.nameRu
                     )
 
-                    // 4) сохраняем (suspend)
-                    scope.launch {
-                        PrefCache.saveUser(context, user, avatarBitmap)
+                    loginViewModel.onSaveUser(context, user) {
                         navController.navigate(Main.route())
                     }
                 }

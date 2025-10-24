@@ -33,7 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.sp
-import com.example.ur_color.data.ZodiacSign
+import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState

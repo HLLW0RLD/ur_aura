@@ -21,6 +21,16 @@ import kotlin.random.Random
 val LocalNavController =
     staticCompositionLocalOf<NavController> { throw IllegalStateException("No NavController found") }
 
+fun String?.parseBirthHour(): Int {
+    return try {
+        if (this.isNullOrBlank()) return 12
+        val parts = this.split(":")
+        parts[0].toIntOrNull() ?: 12
+    } catch (_: Exception) {
+        12
+    }
+}
+
 fun formatDateInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFieldValue {
     val digits = newValue.text.filter { it.isDigit() }
 
@@ -58,58 +68,6 @@ fun formatDateInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFie
         text = formatted,
         selection = TextRange(cursorPos)
     )
-}
-
-fun generatePatternAura(
-    fullName: String,
-    birthDate: String,
-    width: Int = 512,
-    height: Int = 512
-): Bitmap {
-    val seedString = "$fullName$birthDate"
-    val seed = seedString.hashCode().toLong()
-    val random = Random(seed)
-
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
-
-    val baseColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256))
-    val accentColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256))
-
-    val paint = Paint().apply {
-        shader = LinearGradient(
-            0f, 0f, width.toFloat(), height.toFloat(),
-            baseColor,
-            accentColor,
-            Shader.TileMode.MIRROR
-        )
-    }
-    canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
-
-    val shapesCount = 5 + random.nextInt(6) // от 5 до 10 фигур
-    repeat(shapesCount) {
-        val shapePaint = Paint().apply {
-            color = Color.argb(
-                150, // прозрачность
-                random.nextInt(256),
-                random.nextInt(256),
-                random.nextInt(256)
-            )
-            style = Paint.Style.FILL
-        }
-
-        val x = random.nextInt(width).toFloat()
-        val y = random.nextInt(height).toFloat()
-        val size = 50f + random.nextInt(150)
-
-        when (random.nextInt(3)) {
-            0 -> canvas.drawCircle(x, y, size, shapePaint)
-            1 -> canvas.drawRect(x, y, x + size, y + size, shapePaint)
-            2 -> canvas.drawRoundRect(x, y, x + size, y + size, 20f, 20f, shapePaint)
-        }
-    }
-
-    return bitmap
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

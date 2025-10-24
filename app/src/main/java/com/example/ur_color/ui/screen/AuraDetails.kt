@@ -74,7 +74,7 @@ fun AuraDetailsScreen(cd: AuraDetails) {
                 bitmap = it.asImageBitmap(),
                 contentDescription = "Аура фон",
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
         }
 

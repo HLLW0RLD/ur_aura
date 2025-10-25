@@ -2,10 +2,14 @@ package com.example.ur_color.ui.screen.viewModel
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.user.UserData
 import com.example.ur_color.data.local.PrefCache
+import com.example.ur_color.data.user.AuraGenerator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,6 +34,25 @@ class ProfileViewModel() : ViewModel() {
             PrefCache.saveUser(context, userData, auraBitmap)
             _user.value = userData
             _aura.value = auraBitmap ?: PrefCache.aura.value
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun update(
+        context: Context,
+        energyLevel: Int? = null,
+        dominantColor: String? = null,
+        element: String? = null,
+    ) {
+        viewModelScope.launch(Dispatchers.Default) {
+
+            PrefCache.updateDynamicUserState(
+                context,
+                energyLevel = energyLevel,
+                dominantColor = dominantColor,
+                element = element,
+            )
+            AuraGenerator.generateDynamicAura(context)
         }
     }
 

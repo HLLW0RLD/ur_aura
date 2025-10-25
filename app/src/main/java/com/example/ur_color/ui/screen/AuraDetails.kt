@@ -1,5 +1,7 @@
 package com.example.ur_color.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -35,10 +38,15 @@ import kotlin.math.roundToInt
 @Serializable
 data class AuraDetails(val color: String? = null) : Screen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AuraDetailsScreen(cd: AuraDetails) {
-    val vm: ProfileViewModel = koinViewModel()
-    val aura by vm.aura.collectAsState()
+fun AuraDetailsScreen(
+    cd: AuraDetails,
+    profileViewModel: ProfileViewModel = koinViewModel()
+) {
+    val context = LocalContext.current
+
+    val aura by profileViewModel.aura.collectAsState()
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -66,6 +74,15 @@ fun AuraDetailsScreen(cd: AuraDetails) {
         scope.launch {
             offsetY.animateTo(collapsedY, animationSpec = spring(stiffness = Spring.StiffnessMedium))
         }
+    }
+
+    LaunchedEffect(Unit) {
+        profileViewModel.update(
+            context,
+            energyLevel = 2,
+            dominantColor = "blue",
+            element = "air",
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

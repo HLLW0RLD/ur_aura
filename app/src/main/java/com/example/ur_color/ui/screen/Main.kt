@@ -1,5 +1,7 @@
 package com.example.ur_color.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
@@ -44,13 +47,14 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 object Main : Screen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     profileViewModel: ProfileViewModel = koinViewModel()
 ) {
-
+    val context = LocalContext.current
     val navController = LocalNavController.current
 
     val user = PrefCache.user.collectAsState().value

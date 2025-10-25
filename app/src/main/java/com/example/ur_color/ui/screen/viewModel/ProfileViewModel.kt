@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class ProfileViewModel() : ViewModel() {
 
@@ -54,6 +55,37 @@ class ProfileViewModel() : ViewModel() {
             )
             AuraGenerator.generateDynamicAura(context)
         }
+    }
+
+    suspend fun randomizeDynamicUserState(context: Context) {
+        val current = _user.value ?: return
+        val rnd = Random(System.currentTimeMillis())
+
+        // 🎲 Энергия — от 1 до 7
+        val energyLevel = rnd.nextInt(1, 8)
+
+        // 🎨 Базовые цвета
+        val colorPalette = listOf(
+           "red",
+           "green",
+           "blue",
+           "yellow",
+           "magenta",
+           "cyan",
+        )
+        val dominantColor = colorPalette.random(rnd)
+
+        // 🔹 Элемент (пока просто случайный, можно позже связать со знаком)
+        val elements = listOf("fire", "water", "air", "earth", "aether", "metal")
+        val element = elements.random(rnd)
+
+        val updated = current.copy(
+            energyLevel = energyLevel,
+            dominantColor = dominantColor,
+            element = element
+        )
+
+        saveUser(context, updated, _aura.value)
     }
 
     fun deleteUser(context: Context) {

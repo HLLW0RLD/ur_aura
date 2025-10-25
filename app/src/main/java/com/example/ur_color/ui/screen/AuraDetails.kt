@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 @Serializable
 data class AuraDetails(val color: String? = null) : Screen
@@ -76,11 +77,26 @@ fun AuraDetailsScreen(
         }
     }
 
+
+
     LaunchedEffect(Unit) {
+        val rnd = Random(System.currentTimeMillis())
+        val newEnergyLevel = rnd.nextInt(1, 7)
+        val color = rnd.nextInt(1, 6)
+
+        val colorPalette = listOf(
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "magenta",
+            "cyan",
+        )
+
         profileViewModel.update(
             context,
-            energyLevel = 2,
-            dominantColor = "blue",
+            energyLevel = newEnergyLevel,
+            dominantColor = colorPalette.get(color),
             element = "air",
         )
     }

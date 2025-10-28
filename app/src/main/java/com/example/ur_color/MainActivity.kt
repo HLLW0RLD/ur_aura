@@ -27,42 +27,46 @@ import com.example.ur_color.ui.screen.ProfileScreen
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.screen.screenComposable
+import com.example.ur_color.ui.theme.AuraTheme
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.flow.firstOrNull
 
 const val SCREEN_DATA = "{json}"
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
+
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController = rememberNavController()
-            val context = LocalContext.current
+            AuraTheme {
+                val navController = rememberNavController()
+                val context = LocalContext.current
 
-            var startRoute by remember { mutableStateOf<Screen?>(null) } // или тип Any для data class
-            var isInitialized by remember { mutableStateOf(false) }
+                var startRoute by remember { mutableStateOf<Screen?>(null) } // или тип Any для data class
+                var isInitialized by remember { mutableStateOf(false) }
 
-            LaunchedEffect(Unit) {
-                PrefCache.initialize(context)
+                LaunchedEffect(Unit) {
+                    PrefCache.initialize(context)
 
-                val user = PrefCache.user.firstOrNull()
-                startRoute = if (user != null) Main else Login
-                isInitialized = true
-            }
+                    val user = PrefCache.user.firstOrNull()
+                    startRoute = if (user != null) Main else Login
+                    isInitialized = true
+                }
 
-            if (!isInitialized) return@setContent
+                if (!isInitialized) return@AuraTheme
 
 
-            CompositionLocalProvider(LocalNavController provides navController) {
-                NavHost(
-                    navController = navController,
-                    startDestination = startRoute!!.route()
-                ) {
-                    screenComposable<Login> { LoginScreen() }
-                    screenComposable<Main> { MainScreen() }
-                    screenComposable<AuraDetails> { AuraDetailsScreen(it) }
-                    screenComposable<Profile> { ProfileScreen() }
+                CompositionLocalProvider(LocalNavController provides navController) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = startRoute!!.route()
+                    ) {
+                        screenComposable<Login> { LoginScreen() }
+                        screenComposable<Main> { MainScreen() }
+                        screenComposable<AuraDetails> { AuraDetailsScreen(it) }
+                        screenComposable<Profile> { ProfileScreen() }
+                    }
                 }
             }
         }

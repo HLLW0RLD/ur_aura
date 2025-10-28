@@ -1,16 +1,25 @@
 package com.example.ur_color.data.local
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.ur_color.App
 import com.example.ur_color.data.user.UserData
+import com.example.ur_color.ui.theme.ThemeMode
+import com.example.ur_color.ui.theme.ThemePalette
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -19,21 +28,15 @@ import java.util.Locale
 
 val Context.dataStore by preferencesDataStore("user_prefs")
 
+private val USER_KEY = stringPreferencesKey("user_json")
+private val THEME_KEY = stringPreferencesKey("selected_theme")
+private val PALETTE_KEY = stringPreferencesKey("palette")
+
+private const val IMAGE_FILE = "user_aura.png"
+private const val HISTORY_FILE = "aura_state_history.json"
+
 object PrefCache {
     private val gson = Gson()
-
-    private val KEY_WIDGETS = stringPreferencesKey("widgets_json")
-
-    private val KEY_FIRST = stringPreferencesKey("firstName")
-    private val KEY_LAST = stringPreferencesKey("lastName")
-    private val KEY_MIDDLE = stringPreferencesKey("middleName")
-    private val KEY_DATE = stringPreferencesKey("birthDate")
-    private val KEY_TIME = stringPreferencesKey("birthTime")
-    private val KEY_PLACE = stringPreferencesKey("birthPlace")
-    private val KEY_GENDER = stringPreferencesKey("gender")
-    private val KEY_ZODIAC = stringPreferencesKey("zodiacSign")
-
-    private const val IMAGE_FILE = "user_aura.png"
 
     private val _user = MutableStateFlow<UserData?>(null)
     val user: StateFlow<UserData?> = _user
@@ -41,42 +44,61 @@ object PrefCache {
     private val _aura = MutableStateFlow<Bitmap?>(null)
     val aura: StateFlow<Bitmap?> = _aura
 
+    private var _selectedTheme: ThemeMode? = null
+    var selectedTheme: ThemeMode
+        get() = _selectedTheme ?: ThemeMode.SYSTEM
+        private set(value) {
+            _selectedTheme = value
+            themeChanged.value++
+        }
+
+    private var _selectedPalette: ThemePalette? = null
+    var selectedPalette: ThemePalette
+        get() = _selectedPalette ?: ThemePalette.PINK
+        private set(value) {
+            _selectedPalette = value
+            themeChanged.value++
+        }
+
+    val themeChanged = mutableStateOf(0)
+
+    suspend fun saveTheme(context: Context, theme: ThemeMode) {
+        context.dataStore.edit { it[THEME_KEY] = theme.name }
+        selectedTheme = theme
+    }
+
+    suspend fun savePalette(context: Context, palette: ThemePalette) {
+        context.dataStore.edit { it[PALETTE_KEY] = palette.name }
+        selectedPalette = palette
+    }
+
 
     suspend fun initialize(context: Context) {
-        val prefs = context.dataStore.data.first()
-        val first = prefs[KEY_FIRST] ?: ""
-        val last = prefs[KEY_LAST] ?: ""
-        if (first.isBlank() || last.isBlank()) {
-            _user.value = null
-        } else {
-            _user.value = UserData(
-                firstName = first,
-                lastName = last,
-                middleName = prefs[KEY_MIDDLE]?.ifBlank { null },
-                birthDate = prefs[KEY_DATE] ?: "",
-                birthTime = prefs[KEY_TIME] ?: "",
-                birthPlace = prefs[KEY_PLACE] ?: "",
-                gender = prefs[KEY_GENDER] ?: "",
-                zodiacSign = prefs[KEY_ZODIAC] ?: ""
-            )
-        }
-
-        _aura.value = loadAuraFromFile(context)
+        loadTheme(context)
+        loadUser(context)
+        _aura.value = loadAura(context)
     }
 
-    suspend fun updateAura(context: Context, newAura: Bitmap) {
-        saveAuraToFile(context, newAura)
-        _aura.value = newAura
-    }
-
-    fun saveAuraToHistory(context: Context, bitmap: Bitmap) {
-        val date = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-        val file = File(context.filesDir, "aura_history_$date.png")
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+    suspend fun loadTheme(context: Context) {
+        context.dataStore.data.firstOrNull()?.let { prefs ->
+            _selectedTheme = prefs[THEME_KEY]?.let { ThemeMode.valueOf(it) }
+            _selectedPalette = prefs[PALETTE_KEY]?.let { ThemePalette.valueOf(it) }
         }
     }
 
+    private suspend fun loadUser(context: Context) {
+        context.dataStore.data.first()[USER_KEY]?.let {
+            _user.value = gson.fromJson(it, UserData::class.java)
+        }
+    }
+
+    suspend fun saveUser(context: Context, userData: UserData, auraBitmap: Bitmap? = null) {
+        context.dataStore.edit { it[USER_KEY] = gson.toJson(userData) }
+        _user.value = userData
+        auraBitmap?.let { saveAura(context, it) }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     suspend fun updateDynamicUserState(
         context: Context,
         energyLevel: Int? = null,
@@ -86,62 +108,46 @@ object PrefCache {
         val current = _user.value ?: return
         val updated = current.copy(
             energyLevel = energyLevel ?: current.energyLevel,
+            energyCapacity = if (energyLevel != null) (current.energyCapacity + energyLevel).takeLast(3) else current.energyCapacity,
             dominantColor = dominantColor ?: current.dominantColor,
-            element = element ?: current.element
+            colorVector = if (dominantColor != null) (current.colorVector + dominantColor).takeLast(3) else current.colorVector,
+            element = element ?: current.element,
         )
-
+        saveUserStateHistory(context, updated)
         saveUser(context, updated, _aura.value)
     }
 
-    suspend fun saveUser(context: Context, userData: UserData, auraBitmap: Bitmap?) {
-        context.dataStore.edit { prefs ->
-            prefs[KEY_FIRST] = userData.firstName
-            prefs[KEY_LAST] = userData.lastName
-            prefs[KEY_MIDDLE] = userData.middleName ?: ""
-            prefs[KEY_DATE] = userData.birthDate
-            prefs[KEY_TIME] = userData.birthTime ?: ""
-            prefs[KEY_PLACE] = userData.birthPlace
-            prefs[KEY_GENDER] = userData.gender
-            prefs[KEY_ZODIAC] = userData.zodiacSign
-        }
+    fun updateAura(context: Context, newAura: Bitmap) {
+        saveAura(context, newAura)
+        _aura.value = newAura
+    }
 
-        if (auraBitmap != null) {
-            saveAuraToFile(context, auraBitmap)
-        } else {
-            val f = File(context.filesDir, IMAGE_FILE)
-            if (f.exists()) f.delete()
-        }
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    private fun saveUserStateHistory(context: Context, user: UserData) {
+        val file = File(context.filesDir, HISTORY_FILE)
+        val list: MutableList<UserData> = if (file.exists()) {
+            gson.fromJson(file.readText(), object : TypeToken<MutableList<UserData>>() {}.type)
+        } else mutableListOf()
+        list.add(user)
+        if (list.size > 10) list.removeFirst()
+        file.writeText(gson.toJson(list))
+    }
 
-        _user.value = userData
-        _aura.value = auraBitmap ?: loadAuraFromFile(context)
+    private fun saveAura(context: Context, bitmap: Bitmap) {
+        File(context.filesDir, IMAGE_FILE).outputStream().use {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+    }
+
+    private fun loadAura(context: Context): Bitmap? {
+        val file = File(context.filesDir, IMAGE_FILE)
+        return if (file.exists()) BitmapFactory.decodeFile(file.absolutePath) else null
     }
 
     suspend fun deleteUser(context: Context) {
-        context.dataStore.edit { prefs ->
-            prefs.clear()
-        }
-
-        val f = File(context.filesDir, IMAGE_FILE)
-        if (f.exists()) f.delete()
-
+        context.dataStore.edit { it.clear() }
+        File(context.filesDir, IMAGE_FILE).takeIf { it.exists() }?.delete()
         _user.value = null
         _aura.value = null
-    }
-
-    private fun saveAuraToFile(context: Context, bitmap: Bitmap) {
-        val file = File(context.filesDir, IMAGE_FILE)
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-            out.flush()
-        }
-    }
-
-    private fun loadAuraFromFile(context: Context): Bitmap? {
-        val file = File(context.filesDir, IMAGE_FILE)
-        return if (file.exists()) {
-            BitmapFactory.decodeFile(file.absolutePath)
-        } else {
-            null
-        }
     }
 }

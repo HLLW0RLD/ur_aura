@@ -1,6 +1,8 @@
 package com.example.ur_color.data.remote
 
-import com.example.ur_color.utils.logApi
+import com.example.ur_color.utils.logDebug
+import com.example.ur_color.utils.logError
+import com.example.ur_color.utils.logSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
@@ -94,7 +96,7 @@ class DailyCardService {
 
 
         request.body?.let { body ->
-            logApi("start ${request.method} ${request.url}\n" +
+            logDebug("start ${request.method} ${request.url}\n" +
                     "Headers: ${request.headers}\n" +
                     "Request body: $body")
         }
@@ -103,12 +105,12 @@ class DailyCardService {
 
         val bodyString = response.body?.string().orEmpty()
         if (response.isSuccessful){
-            logApi(
+            logSuccess(
                 "end ${request.method} ${request.url}\n" +
                         "Response body: $bodyString"
             )
         } else {
-            logApi(
+            logError(
                 "end ${request.method} ${request.url}\n" +
                         "code: ${response.code} ${response.message}\n" +
                         "Response body: $bodyString"

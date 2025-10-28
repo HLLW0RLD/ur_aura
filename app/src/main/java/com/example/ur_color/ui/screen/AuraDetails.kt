@@ -14,6 +14,8 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
@@ -39,7 +41,7 @@ import kotlin.random.Random
 @Serializable
 data class AuraDetails(val color: String? = null) : Screen
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun AuraDetailsScreen(
     cd: AuraDetails,
@@ -75,30 +77,6 @@ fun AuraDetailsScreen(
         scope.launch {
             offsetY.animateTo(collapsedY, animationSpec = spring(stiffness = Spring.StiffnessMedium))
         }
-    }
-
-
-
-    LaunchedEffect(Unit) {
-        val rnd = Random(System.currentTimeMillis())
-        val newEnergyLevel = rnd.nextInt(1, 7)
-        val color = rnd.nextInt(1, 6)
-
-        val colorPalette = listOf(
-            "red",
-            "green",
-            "blue",
-            "yellow",
-            "magenta",
-            "cyan",
-        )
-
-        profileViewModel.update(
-            context,
-            energyLevel = newEnergyLevel,
-            dominantColor = colorPalette.get(color),
-            element = "air",
-        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -170,6 +148,46 @@ fun AuraDetailsScreen(
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
+                    item {
+                        Button(
+                            shape = RoundedCornerShape(10.dp),
+                            onClick = {
+                                val rnd = Random(System.currentTimeMillis())
+                                val newEnergyLevel = rnd.nextInt(1, 10)
+
+                                val colorPalette = listOf(
+                                    "red",
+                                    "green",
+                                    "blue",
+                                    "yellow",
+                                    "magenta",
+                                    "cyan",
+                                )
+                                val colorInd = rnd.nextInt(1, 6)
+                                val color = colorPalette.get(colorInd)
+
+                                val elements = listOf("fire", "water", "air", "earth", "aether", "metal")
+                                val element = elements.random(rnd)
+
+
+
+                                profileViewModel.update(
+                                    context,
+                                    energyLevel = newEnergyLevel,
+                                    dominantColor = color,
+                                    element = element,
+                                )
+                            },
+                            content = {
+                                Text(
+                                    text = "upd",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                )
+                            }
+                        )
+                    }
                     items(30) { i ->
                         Text(
                             text = "Элемент $i",

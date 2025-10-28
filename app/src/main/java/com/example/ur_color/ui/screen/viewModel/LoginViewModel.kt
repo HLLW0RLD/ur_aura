@@ -18,7 +18,7 @@ class LoginViewModel() : ViewModel() {
     fun onSaveUser(context: Context, user: UserData, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.Default) {
 
-            val bitmap = AuraGenerator.generateBaseAura(context, user = user)
+            val bitmap = AuraGenerator.generateAura(user)
             PrefCache.saveUser(context, user, bitmap)
 
             withContext(Dispatchers.Main) {

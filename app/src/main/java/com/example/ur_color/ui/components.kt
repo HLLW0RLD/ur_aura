@@ -1,41 +1,53 @@
 package com.example.ur_color.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,23 +56,232 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.example.ur_color.R
-import kotlin.math.roundToInt
+import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.utils.getCurrentDateTime
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 enum class WindowType { Slim, Regular, Full }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AuraPickerField(
+    label: String,
+    date: String,
+    color: Color? = null,
+    onDateChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        AuraOutlinedTextField(
+            color = color,
+            value = date,
+            onValueChange = {},
+            readOnly = true,
+            label = label,
+            trailingIcon = {
+//                Icon(
+//                    Icons.Default.DateRange, contentDescription = "Выбрать дату",
+//                    tint = color ?: AppColors.accentPrimary
+//                )
+            },
+        )
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0f)
+                .clickable { showDatePicker = true }
+        )
+    }
+
+    if (showDatePicker) {
+        ReturnAuraPickerDialog(
+            initialDate = date.ifEmpty { getCurrentDateTime() },
+            onDateSelected = { newDate ->
+                onDateChanged(newDate)
+            },
+            onDismiss = { showDatePicker = false },
+            color = color
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReturnAuraPickerDialog(
+    initialDate: String? = null,
+    color: Color? = null,
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val initialMillis = remember(initialDate) {
+        initialDate?.let { dateString ->
+            try {
+                SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    .parse(dateString)?.time
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialMillis
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            AuraTextButton(color = color, text = "OK") {
+                datePickerState.selectedDateMillis?.let { millis ->
+                    val selectedDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                        .format(Date(millis))
+                    onDateSelected(selectedDate)
+                }
+                onDismiss()
+            }
+        },
+        dismissButton = {
+            AuraTextButton(text = "Отмена", color = color) { onDismiss }
+        },
+        colors = DatePickerDefaults.colors(
+            containerColor = color ?: AuraColors.accentPrimary,
+        ),
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@Composable
+fun AuraTextButton(
+    text: String,
+    color: Color? = null,
+    enabled: Boolean = true,
+    border: BorderStroke? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Button(
+        colors = ButtonDefaults.buttonColors(
+            containerColor = color ?: AuraColors.accentPrimary,
+            disabledContainerColor = color ?: AuraColors.surface,
+        ),
+        onClick = {
+            onClick()
+        },
+        enabled = enabled,
+
+        border = border,
+        contentPadding = contentPadding,
+        modifier = Modifier.then(modifier)
+    ) {
+        Text(
+            text = text,
+            color = AuraColors.background
+        )
+    }
+}
+
+@Composable
+fun AuraRadioButton(
+    selected: Boolean,
+    text: String,
+    color: Color? = null,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .then(modifier)
+            .padding(start = 4.dp)
+            .clickable {
+                onClick()
+            },
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = { onClick() },
+            colors = RadioButtonDefaults.colors(
+                selectedColor = color ?: AuraColors.accentPrimary,
+                unselectedColor = AuraColors.surface
+            )
+        )
+        Text(
+            text = text,
+            color = if (selected) AuraColors.textPrimary else AuraColors.textSecondary
+        )
+    }
+}
+
+@Composable
+fun AuraOutlinedTextField(
+    value: String,
+    label: String,
+    color: Color? = null,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    onValueChange: (String) -> Unit,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedTextField(
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedLabelColor = color ?: AuraColors.textPrimary,
+            unfocusedLabelColor = color ?: AuraColors.textPrimary,
+            focusedBorderColor = color ?: AuraColors.textPrimary,
+            unfocusedBorderColor = color ?: AuraColors.textPrimary,
+        ),
+        value = value,
+        onValueChange = {
+            onValueChange(it)
+        },
+        label = { Text(label) },
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        modifier = Modifier
+            .then(modifier)
+            .fillMaxWidth(),
+
+        enabled = enabled,
+        readOnly = readOnly,
+        placeholder = placeholder,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        isError = isError,
+        visualTransformation = visualTransformation,
+        keyboardActions = keyboardActions,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+    )
+}
 
 @Composable
 fun CustomAppBar(
@@ -72,9 +293,9 @@ fun CustomAppBar(
     onOptionsClick: (() -> Unit)? = null,
     backIcon: Painter = painterResource(R.drawable.arrow_left),
     optionsIcon: Painter = painterResource(R.drawable.switcher_options),
-    backIconTint: Color = Color.Black,
-    optionsIconTint: Color = Color.Black,
-    backgroundColor: Color = Color.White,
+    backIconTint: Color = AuraColors.surface,
+    optionsIconTint: Color = AuraColors.surface,
+    backgroundColor: Color = AuraColors.background,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -83,45 +304,60 @@ fun CustomAppBar(
             .height(56.dp),
         color = backgroundColor
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            if (showBack) {
-                IconButton(onClick = { onBackClick?.invoke() }) {
-                    Icon(
-                        painter = backIcon,
-                        contentDescription = "",
-                        tint = backIconTint
-                    )
+
+
+        Box {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (showBack) {
+                    IconButton(onClick = { onBackClick?.invoke() }) {
+                        Icon(
+                            painter = backIcon,
+                            contentDescription = "",
+                            tint = backIconTint
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
                 }
-            } else {
-                Spacer(modifier = Modifier.size(48.dp))
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = if (isCentered) Modifier.weight(1f)
+                    else Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    textAlign = if (isCentered) TextAlign.Center else TextAlign.Start
+                )
+
+                if (showOptions) {
+                    IconButton(onClick = { onOptionsClick?.invoke() }) {
+                        Icon(
+                            painter = optionsIcon,
+                            contentDescription = "",
+                            tint = optionsIconTint
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
             }
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = if (isCentered) Modifier.weight(1f)
-                else Modifier.weight(1f).padding(start = 8.dp),
-                textAlign = if (isCentered) TextAlign.Center else TextAlign.Start
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                thickness = 0.5.dp,
+                color = AuraColors.textPrimary
             )
-
-            if (showOptions) {
-                IconButton(onClick = { onOptionsClick?.invoke() }) {
-                    Icon(
-                        painter = optionsIcon,
-                        contentDescription = "",
-                        tint = optionsIconTint
-                    )
-                }
-            } else {
-                Spacer(modifier = Modifier.size(48.dp))
-            }
         }
     }
 }
@@ -201,6 +437,11 @@ private fun ExpandableBase(
         label = "alphaAnim"
     ) { if (it) 1f else 0f }
 
+    val revAlpha by transition.animateFloat(
+        transitionSpec = { tween(animationSpeed, easing = easing) },
+        label = "alphaAnim"
+    ) { if (it) 0f else 1f }
+
     val offsetY by transition.animateDp(
         transitionSpec = { tween(animationSpeed, easing = easing) },
         label = "offsetY"
@@ -243,7 +484,15 @@ private fun ExpandableBase(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .background(MaterialTheme.colorScheme.surface)
+            .background(if (expanded) AuraColors.background else AuraColors.surface)
+            .padding(2.dp)
+            .border(
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(
+                    color = if (expanded) AuraColors.surface else AuraColors.background,
+                    width = 2.dp
+                )
+            )
             .pointerInput(canShowFull) {
                 detectTapGestures(
                     onTap = { toggleExpand() },
@@ -263,11 +512,18 @@ private fun ExpandableBase(
                 content = content
             )
         } else {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+//                    .background(AuraColors.accentSecondary.copy(revAlpha))
+                ,
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     textAlign = TextAlign.Center,
                     text = closedTitle,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AuraColors.textPrimary
                 )
             }
         }
@@ -279,6 +535,7 @@ private fun ExpandableContent(
     expandedTitle: String,
     scrollState: ScrollState,
     alpha: Float,
+    titleColor: Color = AuraColors.textPrimary,
     onCancel: (() -> Unit)?,
     onConfirm: (() -> Unit)?,
     onClose: () -> Unit,
@@ -295,11 +552,13 @@ private fun ExpandableContent(
             verticalAlignment = Alignment.Top
         ) {
             Text(
+                color = titleColor,
                 text = expandedTitle,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)
             )
             Icon(
+                tint = AuraColors.textPrimary,
                 painter = painterResource(R.drawable.close_filled),
                 contentDescription = "Закрыть",
                 modifier = Modifier.clickable { onClose() }
@@ -307,7 +566,7 @@ private fun ExpandableContent(
         }
 
         Spacer(Modifier.height(4.dp))
-        HorizontalDivider(thickness = 0.5.dp, color = Color.Black)
+        HorizontalDivider(thickness = 0.5.dp, color = AuraColors.accentPrimary)
 
         Column(
             Modifier
@@ -323,10 +582,20 @@ private fun ExpandableContent(
                 horizontalArrangement = Arrangement.End
             ) {
                 onCancel?.let {
-                    TextButton(onClick = it) { Text("Отмена") }
+                    TextButton(onClick = it) {
+                        Text(
+                            text = "Отмена",
+                            color = AuraColors.textPrimary,
+                        )
+                    }
                 }
                 onConfirm?.let {
-                    TextButton(onClick = it) { Text("ОК") }
+                    TextButton(onClick = it) {
+                        Text(
+                            text = "ОК",
+                            color = AuraColors.textPrimary,
+                        )
+                    }
                 }
             }
         }

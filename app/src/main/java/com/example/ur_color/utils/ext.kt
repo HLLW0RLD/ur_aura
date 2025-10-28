@@ -1,25 +1,45 @@
 package com.example.ur_color.utils
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.LinearGradient
-import android.graphics.Paint
-import android.graphics.Shader
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
+import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
+import com.example.ur_color.data.local.PrefCache.selectedTheme
+import com.example.ur_color.ui.theme.ThemeMode
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Date
 import java.util.Locale
-import kotlin.random.Random
+
+//  SYSTEM
+/*==============================================================================================*/
+
+internal fun Context.findActivity(): ComponentActivity {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is ComponentActivity) return context
+        context = context.baseContext
+    }
+    throw IllegalStateException("Picture in picture should be called in the context of an Activity")
+}
 
 val LocalNavController =
     staticCompositionLocalOf<NavController> { throw IllegalStateException("No NavController found") }
+
+
+
+
+//  UI / UX
+/*==============================================================================================*/
+
 
 fun String?.parseBirthHour(): Int {
     return try {
@@ -29,6 +49,50 @@ fun String?.parseBirthHour(): Int {
     } catch (_: Exception) {
         12
     }
+}
+
+val isDarkTheme: Boolean get() = selectedTheme == ThemeMode.DARK
+
+fun getCurrentDate(): String {
+    val dateFormat = SimpleDateFormat("yyyy_MM_dd", Locale.getDefault())
+    val date = Date()
+    return dateFormat.format(date)
+}
+
+fun getCurrentDateTime(): String {
+    val dateFormat = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
+    val date = Date()
+    return dateFormat.format(date)
+}
+
+fun formatTimeInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFieldValue {
+    val digits = newValue.text.filter { it.isDigit() }
+
+    val hour = when {
+        digits.length >= 2 -> digits.substring(0, 2).take(2)
+        else -> digits
+    }
+
+    val minute = if (digits.length > 2) digits.substring(2, minOf(4, digits.length)) else ""
+
+    var formatted = hour
+    if (minute.isNotEmpty()) formatted += ":$minute"
+
+    if (formatted.length > 5) formatted = formatted.take(5)
+
+    val digitsBeforeCursor = newValue.text.take(newValue.selection.start).count { it.isDigit() }
+
+    var cursorPos = 0
+    var digitsPassed = 0
+    while (cursorPos < formatted.length && digitsPassed < digitsBeforeCursor) {
+        if (formatted[cursorPos].isDigit()) digitsPassed++
+        cursorPos++
+    }
+
+    return TextFieldValue(
+        text = formatted,
+        selection = TextRange(cursorPos)
+    )
 }
 
 fun formatDateInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFieldValue {
@@ -92,4 +156,51 @@ fun calculateAge(birthDate: String): Int? {
     } catch (e: Exception) {
         null
     }
+}
+
+// для обозначения актуальности/ДЭДЛАЙНА относительно даты
+@RequiresApi(Build.VERSION_CODES.O)
+fun String.setColorDate(isDeadLine: Boolean = true): androidx.compose.ui.graphics.Color? {
+    try {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
+        if (!this.matches(Regex("\\d{2}\\.\\d{2}\\.\\d{4}"))) {
+            return null
+            throw IllegalArgumentException("Дата должна быть в формате dd.MM.yyyy")
+        }
+
+        val inputDate = LocalDate.parse(this, formatter)
+        val currentDate = LocalDate.now()
+
+        val days = if (isDeadLine) {
+            ChronoUnit.DAYS.between(inputDate, currentDate)
+        } else {
+            ChronoUnit.DAYS.between(currentDate, inputDate)
+        }
+
+
+        return if (isDeadLine) {
+            // Дедлайн: чем ближе дата, тем краснее
+            when {
+                days > 8 -> androidx.compose.ui.graphics.Color.Green
+                days in 3..7 -> androidx.compose.ui.graphics.Color.Yellow
+                days in 1..2 -> androidx.compose.ui.graphics.Color.hsl(35f, 1f, 0.5f)
+                days == 0L -> androidx.compose.ui.graphics.Color.Red
+                else -> androidx.compose.ui.graphics.Color.White
+            }
+        } else {
+            // Актуальность: чем свежее дата, тем зеленее
+            when {
+                days <= 1 -> androidx.compose.ui.graphics.Color.Green
+                days in 2..3 -> androidx.compose.ui.graphics.Color.Yellow
+                days in 4..7 -> androidx.compose.ui.graphics.Color.hsl(35f, 1f, 0.5f)
+                days > 7 -> androidx.compose.ui.graphics.Color.Red
+                else -> androidx.compose.ui.graphics.Color.White
+            }
+        }
+
+    } catch (e : Exception) {
+        logError("string: $this \nerror $e")
+    }
+    return androidx.compose.ui.graphics.Color.Red
 }

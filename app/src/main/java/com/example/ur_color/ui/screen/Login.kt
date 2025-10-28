@@ -3,6 +3,7 @@ package com.example.ur_color.ui.screen
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,9 +31,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.data.user.UserData
 import com.example.ur_color.data.user.ZodiacSign.Companion.calculateZodiac
+import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
+import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.formatDateInput
+import com.example.ur_color.utils.formatTimeInput
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -52,101 +58,157 @@ fun LoginScreen(
     var lastName by remember { mutableStateOf("") }
     var middleName by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf(TextFieldValue("")) }
-    var birthTime by remember { mutableStateOf("") }
+    var birthTime by remember { mutableStateOf(TextFieldValue("")) }
     var birthPlace by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("Мужской") }
-
-    var generatedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     Column(
         modifier = Modifier
             .statusBarsPadding()
             .imePadding()
             .fillMaxSize()
-            .padding(16.dp),
+            .background(AuraColors.background),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
-            label = { Text("Фамилия") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = firstName,
-            onValueChange = { firstName = it },
-            label = { Text("Имя") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = middleName,
-            onValueChange = { middleName = it },
-            label = { Text("Отчество (опционально)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = birthDate,
-            onValueChange = { input -> birthDate = formatDateInput(birthDate, input) },
-            label = { Text("Дата рождения (ДД/ММ/ГГГГ)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = birthTime,
-            onValueChange = { birthTime = it },
-            label = { Text("Время рождения (ЧЧ:ММ)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = birthPlace,
-            onValueChange = { birthPlace = it },
-            label = { Text("Место рождения") },
-            modifier = Modifier.fillMaxWidth()
+        CustomAppBar(
+            title = "-__a__u__r__a__-",
         )
 
-        // Пол
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            listOf("Мужской", "Женский").forEach { option ->
-                Button(
-                    onClick = { gender = option },
-                    colors = ButtonDefaults.buttonColors(if (gender == option) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary)
-                ) {
-                    Text(option)
-                }
-            }
-        }
+            OutlinedTextField(
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = AuraColors.textPrimary,
+                    unfocusedTextColor = AuraColors.textPrimary,
+                    focusedContainerColor = AuraColors.background,
+                    unfocusedContainerColor = AuraColors.background,
+                    focusedLabelColor = AuraColors.accentPrimary,
+                    unfocusedLabelColor = AuraColors.accentPrimary,
+                ),
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Фамилия") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = AuraColors.textPrimary,
+                    unfocusedTextColor = AuraColors.textPrimary,
+                    focusedContainerColor = AuraColors.background,
+                    unfocusedContainerColor = AuraColors.background,
+                    focusedLabelColor = AuraColors.accentPrimary,
+                    unfocusedLabelColor = AuraColors.accentPrimary,
+                ),
+                value = firstName,
+                onValueChange = { firstName = it },
+                label = { Text("Имя") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = AuraColors.textPrimary,
+                    unfocusedTextColor = AuraColors.textPrimary,
+                    focusedContainerColor = AuraColors.background,
+                    unfocusedContainerColor = AuraColors.background,
+                    focusedLabelColor = AuraColors.accentPrimary,
+                    unfocusedLabelColor = AuraColors.accentPrimary,
+                ),
+                value = middleName,
+                onValueChange = { middleName = it },
+                label = { Text("Отчество (опционально)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = AuraColors.textPrimary,
+                    unfocusedTextColor = AuraColors.textPrimary,
+                    focusedContainerColor = AuraColors.background,
+                    unfocusedContainerColor = AuraColors.background,
+                    focusedLabelColor = AuraColors.accentPrimary,
+                    unfocusedLabelColor = AuraColors.accentPrimary,
+                ),
+                value = birthDate,
+                onValueChange = { input -> birthDate = formatDateInput(birthDate, input) },
+                label = { Text("Дата рождения (ДД/ММ/ГГГГ)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = AuraColors.textPrimary,
+                    unfocusedTextColor = AuraColors.textPrimary,
+                    focusedContainerColor = AuraColors.background,
+                    unfocusedContainerColor = AuraColors.background,
+                    focusedLabelColor = AuraColors.accentPrimary,
+                    unfocusedLabelColor = AuraColors.accentPrimary,
+                ),
+                value = birthTime,
+                onValueChange = { input -> birthTime = formatTimeInput(birthTime, input)},
+                label = { Text("Время рождения (ЧЧ:ММ)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = AuraColors.textPrimary,
+                    unfocusedTextColor = AuraColors.textPrimary,
+                    focusedContainerColor = AuraColors.background,
+                    unfocusedContainerColor = AuraColors.background,
+                    focusedLabelColor = AuraColors.accentPrimary,
+                    unfocusedLabelColor = AuraColors.accentPrimary,
+                ),
+                value = birthPlace,
+                onValueChange = { birthPlace = it },
+                label = { Text("Место рождения") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Button(
-            onClick = {
-                if (firstName.isNotBlank() && lastName.isNotBlank() && birthDate.text.length == 10) {
-                    val fullName = "$lastName $firstName ${middleName.ifBlank { "" }}".trim()
-
-                    // 1) парсим день/месяц для знака зодиака
-                    val parts = birthDate.text.split("/")
-                    val day = parts.getOrNull(0)?.toIntOrNull() ?: 1
-                    val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
-                    val zodiac = calculateZodiac(day, month)
-
-                    // 2) формируем модель
-                    val user = UserData(
-                        firstName = firstName,
-                        lastName = lastName,
-                        middleName = middleName.ifBlank { null },
-                        birthDate = birthDate.text,
-                        birthTime = birthTime,
-                        birthPlace = birthPlace,
-                        gender = gender,
-                        zodiacSign = zodiac.nameRu
-                    )
-
-                    loginViewModel.onSaveUser(context, user) {
-                        navController.navigate(Main.route())
+            // Пол
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf("Мужской", "Женский").forEach { option ->
+                    Button(
+                        onClick = { gender = option },
+                        colors = ButtonDefaults.buttonColors(if (gender == option) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary)
+                    ) {
+                        Text(option)
                     }
                 }
             }
-        ) {
-            Text("войти")
+
+            Button(
+                onClick = {
+                    if (firstName.isNotBlank() && lastName.isNotBlank() && birthDate.text.length == 10) {
+                        val fullName = "$lastName $firstName ${middleName.ifBlank { "" }}".trim()
+
+                        // 1) парсим день/месяц для знака зодиака
+                        val parts = birthDate.text.split("/")
+                        val day = parts.getOrNull(0)?.toIntOrNull() ?: 1
+                        val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
+                        val zodiac = calculateZodiac(day, month)
+
+                        // 2) формируем модель
+                        val user = UserData(
+                            firstName = firstName,
+                            lastName = lastName,
+                            middleName = middleName.ifBlank { null },
+                            birthDate = birthDate.text,
+                            birthTime = birthTime.text,
+                            birthPlace = birthPlace,
+                            gender = gender,
+                            zodiacSign = zodiac.nameRu
+                        )
+
+                        loginViewModel.onSaveUser(context, user) {
+                            navController.navigate(Main.route())
+                        }
+                    }
+                }
+            ) {
+                Text("войти")
+            }
         }
     }
 }

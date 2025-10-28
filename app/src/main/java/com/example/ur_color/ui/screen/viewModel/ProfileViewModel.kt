@@ -13,8 +13,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 class ProfileViewModel() : ViewModel() {
 
     private val _user = MutableStateFlow<UserData?>(null)
@@ -30,15 +32,6 @@ class ProfileViewModel() : ViewModel() {
         }
     }
 
-    fun saveUser(context: Context, userData: UserData, auraBitmap: Bitmap?) {
-        viewModelScope.launch {
-            PrefCache.saveUser(context, userData, auraBitmap)
-            _user.value = userData
-            _aura.value = auraBitmap ?: PrefCache.aura.value
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     fun update(
         context: Context,
         energyLevel: Int? = null,
@@ -46,46 +39,20 @@ class ProfileViewModel() : ViewModel() {
         element: String? = null,
     ) {
         viewModelScope.launch(Dispatchers.Default) {
-
             PrefCache.updateDynamicUserState(
                 context,
                 energyLevel = energyLevel,
                 dominantColor = dominantColor,
-                element = element,
+                element = element
             )
-            AuraGenerator.generateDynamicAura(context)
+            val user = PrefCache.user.value ?: return@launch
+            val existing = PrefCache.aura.value ?: return@launch
+            val newAura = AuraGenerator.updateAura(existing, user)
+
+            withContext(Dispatchers.Main) {
+                PrefCache.updateAura(context, newAura)
+            }
         }
-    }
-
-    suspend fun randomizeDynamicUserState(context: Context) {
-        val current = _user.value ?: return
-        val rnd = Random(System.currentTimeMillis())
-
-        // 🎲 Энергия — от 1 до 7
-        val energyLevel = rnd.nextInt(1, 8)
-
-        // 🎨 Базовые цвета
-        val colorPalette = listOf(
-           "red",
-           "green",
-           "blue",
-           "yellow",
-           "magenta",
-           "cyan",
-        )
-        val dominantColor = colorPalette.random(rnd)
-
-        // 🔹 Элемент (пока просто случайный, можно позже связать со знаком)
-        val elements = listOf("fire", "water", "air", "earth", "aether", "metal")
-        val element = elements.random(rnd)
-
-        val updated = current.copy(
-            energyLevel = energyLevel,
-            dominantColor = dominantColor,
-            element = element
-        )
-
-        saveUser(context, updated, _aura.value)
     }
 
     fun deleteUser(context: Context) {

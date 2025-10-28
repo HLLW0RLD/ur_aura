@@ -13,55 +13,31 @@ fun logDebug(
         msg = msg,
         fixedLabel = LogType.DEBUG,
         logColor = tagColorMap[LogType.DEBUG] ?: LogColor.ORANGE,
-        resolvedTag = resolvedTag
+        resolvedTag = resolvedTag ?: "TESTOVIY"
     )
 }
 
 fun logSuccess(
     msg: Any?,
-    resolvedTag: String
+    resolvedTag: String? = null
 ) {
     log(
         msg = msg,
         fixedLabel = LogType.SUCCESS,
         logColor = tagColorMap[LogType.SUCCESS] ?: LogColor.GREEN,
-        resolvedTag = resolvedTag
+        resolvedTag = resolvedTag ?: "Success"
     )
 }
 
 fun logError(
     msg: Any?,
-    resolvedTag: String
+    resolvedTag: String? = null
 ) {
     log(
         msg = msg,
         fixedLabel = LogType.ERROR,
         logColor = tagColorMap[LogType.ERROR] ?: LogColor.RED,
-        resolvedTag = resolvedTag
-    )
-}
-
-fun logApi(
-    msg: Any?,
-    resolvedTag: String? = null
-) {
-    log(
-        msg = msg,
-        fixedLabel = LogType.API,
-        logColor = tagColorMap[LogType.API] ?: LogColor.PURPLE,
-        resolvedTag = resolvedTag
-    )
-}
-
-fun logDB(
-    msg: Any?,
-    resolvedTag: String? = null
-) {
-    log(
-        msg = msg,
-        fixedLabel = LogType.DB,
-        logColor = tagColorMap[LogType.DB] ?: LogColor.MAGENTA,
-        resolvedTag = resolvedTag
+        resolvedTag = resolvedTag ?: "Error"
     )
 }
 

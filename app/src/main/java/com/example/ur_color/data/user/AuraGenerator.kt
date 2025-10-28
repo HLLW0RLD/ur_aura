@@ -1,328 +1,362 @@
 package com.example.ur_color.data.user
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.*
-import android.graphics.BlurMaskFilter
 import android.graphics.Shader
-import com.example.ur_color.data.local.PrefCache
 import kotlin.math.*
 import kotlin.random.Random
 
 object AuraGenerator {
 
-    suspend fun generateBaseAura(context: Context, user: UserData): Bitmap {
-        val bitmap = generateKuznetsovPattern(user)
-        PrefCache.updateAura(context, bitmap)
-        return bitmap
+    // =============================
+    // 🎛 Основная функция генерации ауры
+    // =============================
+    fun generateAura(user: UserData, width: Int = 1080, height: Int = 1080): Bitmap {
+        val base = generateBaseLayer(width, height)
+        val shapes = generateDynamicShapes(width, height, user)
+        val frame = generateZodiacFrame(width, height, user)
+        val dots = generateEnergyDots(width, height, user)
+        val lines = generateDynamicLines(width, height, user)
+        val bigFrames = generateBigFrames(width, height, user)
+
+        return combineLayers(base, listOf(shapes, frame, dots, lines, bigFrames))
     }
 
-    suspend fun generateDynamicAura(context: Context): Bitmap {
-        val user = PrefCache.user.value ?: error("User not initialized")
-        val base = PrefCache.aura.value ?: generateBaseAura(context, user)
-        val updated = applyDynamicLayer(base, user)
-
-        PrefCache.updateAura(context, updated)
-        PrefCache.saveAuraToHistory(context, updated)
-
-        return updated
-    }
-
-    private fun applyDynamicLayer(base: Bitmap, user: UserData): Bitmap {
-        val result = base.copy(Bitmap.Config.ARGB_8888, true)
+    fun updateAura(existing: Bitmap, user: UserData): Bitmap {
+        val result = existing.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(result)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val rnd = Random(user.auraSeed)
 
-        // Более мягкое влияние энергии
-        val hueShift = (user.energyLevel - 5) * 3f // раньше 10f
-        val overlayColor = user.dominantColor?.let { Color.parseColor(it) }
-            ?: Color.HSVToColor(floatArrayOf(hueShift, 0.5f, 1f))
-
-        paint.shader = RadialGradient(
-            result.width / 2f,
-            result.height / 2f,
-            result.width / 1.6f,
-            overlayColor,
-            Color.TRANSPARENT,
-            Shader.TileMode.CLAMP
-        )
-        paint.alpha = (user.energyLevel * 15 + 50).coerceIn(60, 200)
-        canvas.drawCircle(
-            result.width / 2f,
-            result.height / 2f,
-            result.width / 2f,
-            paint
-        )
-
-        // При высокой энергии — внутреннее сияние
-        if (user.energyLevel > 7) {
-            val glow = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = overlayColor
-                maskFilter = BlurMaskFilter(result.width / 8f, BlurMaskFilter.Blur.OUTER)
-                alpha = 80
-            }
-            canvas.drawCircle(result.width / 2f, result.height / 2f, result.width / 3f, glow)
-        }
-
-        // Добавляем мягкие блики от dominantColor, но не перекрашиваем ауру
-        user.dominantColor?.let { hex ->
-            val accent = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor(hex)
-                alpha = 40
-                style = Paint.Style.STROKE
-                strokeWidth = 3f
-            }
-            val step = 30
-            for (i in 0 until 360 step step) {
-                val angle = Math.toRadians(i.toDouble())
-                val r = result.width / 2.3f + (sin(angle) * 10)
-                val x = result.width / 2f + cos(angle) * r
-                val y = result.height / 2f + sin(angle) * r
-                canvas.drawCircle(x.toFloat(), y.toFloat(), 4f, accent)
-            }
-        }
+        addSymmetricShapes(canvas, user, rnd)
+        addEnergyDots(canvas, user, rnd)
+        addClockwiseLines(canvas, user, rnd)
+        addBigFrames(canvas, user, rnd)
 
         return result
     }
 
-    private fun generateKuznetsovPattern(user: UserData): Bitmap {
-        val size = 1080
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    // =============================
+    // 🌀 1. Базовый слой
+    // =============================
+    private fun generateBaseLayer(width: Int, height: Int): Bitmap {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
+        val gradient = LinearGradient(
+            0f, 0f, width.toFloat(), height.toFloat(),
+            intArrayOf(Color.BLACK, Color.DKGRAY),
+            null,
+            Shader.TileMode.CLAMP
+        )
+        val paint = Paint().apply { shader = gradient }
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+        return bitmap
+    }
+
+    // =============================
+    // 🔺 2. Динамические фигуры
+    // =============================
+    private val shapeTemplates = listOf("circle","polygon","star","spiral","hexagon","petal","wave","cross")
+
+    private fun generateDynamicShapes(width: Int, height: Int, user: UserData): Bitmap {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        addSymmetricShapes(canvas, user, Random(user.auraSeed))
+        return bitmap
+    }
+
+    private fun addSymmetricShapes(canvas: Canvas, user: UserData, rnd: Random) {
+        val energyAvg = user.energyCapacity.average().toInt()
+        val shapeCount = (6 + energyAvg).coerceAtMost(12)
+        val positions = getSymmetricPositions(canvas, shapeCount)
+        val activeShapes = mutableListOf<String>()
+        if (user.dominantColor.lowercase() == "red") activeShapes.addAll(listOf("polygon","star","hexagon"))
+        if (user.dominantColor.lowercase() == "blue") activeShapes.addAll(listOf("circle","wave"))
+        if (user.dominantColor.lowercase() == "green") activeShapes.addAll(listOf("spiral","petal","cross"))
+        if (user.element?.lowercase() == "fire") activeShapes.addAll(listOf("star","spiral"))
+        if (user.element?.lowercase() == "water") activeShapes.addAll(listOf("wave","circle"))
+        if (activeShapes.isEmpty()) activeShapes.add("circle")
+
+        positions.forEach { (x, y) ->
+            val shapeType = activeShapes[rnd.nextInt(activeShapes.size)]
+            val size = 15 + energyAvg * 4 + rnd.nextInt(0, 15)
+            val complexity = when(shapeType){
+                "polygon","hexagon" -> 3 + energyAvg/2
+                "star","petal" -> 5 + energyAvg/3
+                "spiral","wave" -> 2 + energyAvg/2
+                else -> 4
+            }
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = getOverlayColor(user.dominantColor, energyAvg)
+                alpha = 70 + rnd.nextInt(50)
+                style = Paint.Style.STROKE
+                strokeWidth = 2f + rnd.nextFloat()*2f
+            }
+            drawShapeByType(canvas, shapeType, x.toDouble(), y.toDouble(), size, complexity, paint)
+        }
+    }
+
+    private fun getSymmetricPositions(canvas: Canvas, count: Int): List<Pair<Float, Float>> {
+        val cx = canvas.width / 2f
+        val cy = canvas.height / 2f
+        val radius = min(cx, cy) * 0.7f
+        return List(count) { i ->
+            val angle = 2 * Math.PI * i / count
+            (cx + cos(angle) * radius).toFloat() to (cy + sin(angle) * radius).toFloat()
+        }
+    }
+
+    private fun drawShapeByType(
+        canvas: Canvas,
+        type: String,
+        x: Double,
+        y: Double,
+        size: Int,
+        complexity: Int,
+        paint: Paint
+    ) {
+        when (type) {
+            "circle" -> canvas.drawCircle(x.toFloat(), y.toFloat(), size.toFloat(), paint)
+            "polygon" -> drawPolygon(canvas, x, y, complexity, size.toFloat(), paint)
+            "hexagon" -> drawPolygon(canvas, x, y, 6, size.toFloat(), paint)
+            "star" -> drawStar(canvas, x, y, complexity, paint)
+            "spiral" -> drawSpiral(canvas, x, y, complexity, paint)
+            "petal" -> drawPetal(canvas, x, y, complexity, size.toFloat(), paint)
+            "wave" -> drawWave(canvas, x, y, complexity, size.toFloat(), paint)
+            "cross" -> drawCross(canvas, x, y, size.toFloat(), paint)
+        }
+    }
+
+    // =============================
+    // ✨ Точки энергии
+    // =============================
+    private fun generateEnergyDots(width:Int,height:Int,user:UserData): Bitmap{
+        val bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val rnd = Random(user.auraSeed + 999)
+        val cx = width/2f
+        val cy = height/2f
+        val color = getOverlayColor(user.dominantColor,user.energyLevel)
+
+        val dotCount = 15 + user.energyLevel*4
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-        // Цветовая база по знаку зодиака
-        val baseHue = when (user.zodiacSign) {
-            "Aries", "Leo", "Sagittarius" -> 15f
-            "Taurus", "Virgo", "Capricorn" -> 120f
-            "Gemini", "Libra", "Aquarius" -> 200f
-            "Cancer", "Scorpio", "Pisces" -> 260f
-            else -> 180f
+        repeat(dotCount){ i ->
+            val angle = 2*Math.PI*i/dotCount + rnd.nextDouble()*0.5
+            val distance = width/4 + rnd.nextDouble()*width/4
+            val x = cx + cos(angle)*distance
+            val y = cy + sin(angle)*distance
+
+            paint.color=color
+            paint.alpha=50 + rnd.nextInt(50)
+            canvas.drawCircle(x.toFloat(),y.toFloat(),3f + rnd.nextFloat()*(user.energyLevel/2f),paint)
         }
-
-        val energy = user.energyLevel.coerceIn(1, 10)
-        val brightness = 0.5f + (energy * 0.04f)
-        val saturation = 0.65f + (energy * 0.03f)
-
-        // Мягкий фоновый градиент
-        val bgShader = LinearGradient(
-            0f, 0f, size.toFloat(), size.toFloat(),
-            Color.HSVToColor(floatArrayOf(baseHue, saturation, brightness)),
-            Color.HSVToColor(floatArrayOf((baseHue + 120f) % 360, saturation, brightness * 0.9f)),
-            Shader.TileMode.MIRROR
-        )
-        paint.shader = bgShader
-        canvas.drawRect(0f, 0f, size.toFloat(), size.toFloat(), paint)
-
-        val rnd = Random(user.hashCode().toLong())
-        paint.shader = null
-
-        // --- Симметричные узоры ---
-        val cx = size / 2f
-        val cy = size / 2f
-
-        // Кольцевые дуги
-        for (r in 100..size / 2 step 80) {
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 2f
-            paint.color = Color.HSVToColor(
-                (80..150).random(rnd),
-                floatArrayOf((baseHue + r / 4f) % 360, 0.8f, 1f)
-            )
-            canvas.drawCircle(cx, cy, r.toFloat(), paint)
-        }
-
-        // Радиальные линии
-        for (angle in 0 until 360 step 12) {
-            val rad = Math.toRadians(angle.toDouble())
-            val x = cx + cos(rad) * size / 2
-            val y = cy + sin(rad) * size / 2
-            paint.strokeWidth = 1.5f
-            paint.alpha = 80
-            canvas.drawLine(cx, cy, x.toFloat(), y.toFloat(), paint)
-        }
-
-        // Симметричные волновые орнаменты
-        for (layer in 0 until 6) {
-            val wavePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.HSVToColor(100, floatArrayOf((baseHue + layer * 20) % 360, 0.8f, 1f))
-                alpha = 70
-                style = Paint.Style.STROKE
-                strokeWidth = 2f
-            }
-            val path = Path()
-            val radius = size / 2.5f - layer * 60f
-            for (a in 0..360 step 15) {
-                val rad = Math.toRadians(a.toDouble())
-                val offset = sin(rad * 3 + layer) * 20
-                val x = cx + cos(rad) * (radius + offset)
-                val y = cy + sin(rad) * (radius + offset)
-                if (a == 0) path.moveTo(x.toFloat(), y.toFloat())
-                else path.lineTo(x.toFloat(), y.toFloat())
-            }
-            path.close()
-            canvas.drawPath(path, wavePaint)
-        }
-
-        // Центральное сияние
-        val core = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            shader = RadialGradient(
-                cx, cy, size / 3f,
-                Color.HSVToColor(255, floatArrayOf(baseHue, 0.7f, 1f)),
-                Color.TRANSPARENT,
-                Shader.TileMode.CLAMP
-            )
-        }
-        canvas.drawCircle(cx, cy, size / 3f, core)
 
         return bitmap
     }
 
-    // V1_chaotic
-//    /**
-//     * Генерирует базовую ауру — используется при первом создании профиля.
-//     * Основывается на статичных данных: имя, дата, знак, элемент и т.п.
-//     */
-//    suspend fun generateBaseAura(context: Context, user: UserData): Bitmap {
-//        val bitmap = generateAuraPattern(user)
-//        PrefCache.updateAura(context, bitmap)
-//        return bitmap
-//    }
-//
-//    /**
-//     * Генерирует динамическую ауру — обновляет существующую в зависимости от текущих состояний.
-//     */
-//    suspend fun generateDynamicAura(context: Context): Bitmap {
-//        val user = PrefCache.user.value ?: error("User not initialized")
-//        val base = PrefCache.aura.value ?: generateBaseAura(context, user)
-//        val updated = applyDynamicLayer(base, user)
-//
-//        PrefCache.updateAura(context, updated)
-//        PrefCache.saveAuraToHistory(context, updated)
-//
-//        return updated
-//    }
-//
-//    /**
-//     * Применяет поверх базового изображения новые слои, отражающие текущее состояние.
-//     */
-//    private fun applyDynamicLayer(base: Bitmap, user: UserData): Bitmap {
-//        val result = base.copy(Bitmap.Config.ARGB_8888, true)
-//        val canvas = Canvas(result)
-//        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-//
-//        val hueShift = (user.energyLevel - 5) * 10f
-//        val overlayColor = user.dominantColor?.let { Color.parseColor(it) }
-//            ?: Color.HSVToColor(floatArrayOf(hueShift, 0.7f, 1f))
-//
-//        paint.shader = RadialGradient(
-//            result.width / 2f,
-//            result.height / 2f,
-//            result.width / 1.5f,
-//            overlayColor,
-//            Color.TRANSPARENT,
-//            Shader.TileMode.CLAMP
-//        )
-//        paint.alpha = (user.energyLevel * 25).coerceIn(60, 255)
-//
-//        canvas.drawCircle(
-//            result.width / 2f,
-//            result.height / 2f,
-//            result.width / 2f,
-//            paint
-//        )
-//
-//        // Пульсирующий эффект при высокой энергии
-//        if (user.energyLevel > 7) {
-//            val pulsePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-//                color = overlayColor
-//                maskFilter = BlurMaskFilter(result.width / 10f, BlurMaskFilter.Blur.OUTER)
-//                alpha = 90
-//            }
-//            canvas.drawCircle(result.width / 2f, result.height / 2f, result.width / 3f, pulsePaint)
-//        }
-//
-//        return result
-//    }
-//
-//    /**
-//     * Генерация базового геометрического узора (в стиле “Кузнецовское письмо”)
-//     */
-//    private fun generateAuraPattern(user: UserData): Bitmap {
-//        val size = 1080
-//        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-//        val canvas = Canvas(bitmap)
-//        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-//
-//        // Цветовая палитра по знаку зодиака и элементу
-//        val baseHue = when (user.zodiacSign.lowercase()) {
-//            "овен", "стрелец", "лев" -> 15f
-//            "телец", "дева", "козерог" -> 120f
-//            "близнецы", "весы", "водолей" -> 200f
-//            "рак", "скорпион", "рыбы" -> 260f
-//            else -> 180f
-//        }
-//
-//        val energy = user.energyLevel.coerceIn(1, 10)
-//        val brightness = 0.5f + (energy * 0.05f)
-//        val saturation = 0.6f + (energy * 0.04f)
-//
-//        // Фон с мягким линейным градиентом
-//        val bgShader = LinearGradient(
-//            0f, 0f, size.toFloat(), size.toFloat(),
-//            Color.HSVToColor(floatArrayOf(baseHue, saturation, brightness)),
-//            Color.HSVToColor(floatArrayOf((baseHue + 90f) % 360, saturation, brightness * 0.8f)),
-//            Shader.TileMode.MIRROR
-//        )
-//        paint.shader = bgShader
-//        canvas.drawRect(0f, 0f, size.toFloat(), size.toFloat(), paint)
-//
-//        // Геометрические узоры в стиле "Кузнецовское письмо"
-//        val rnd = Random(user.hashCode().toLong())
-//        paint.shader = null
-//        for (i in 0 until 120) {
-//            val alpha = (50..130).random(rnd)
-//            val stroke = (1..3).random(rnd).toFloat()
-//            val color = Color.HSVToColor(alpha, floatArrayOf((baseHue + rnd.nextInt(180)) % 360, 0.9f, 1f))
-//            paint.color = color
-//            paint.strokeWidth = stroke
-//
-//            val x = rnd.nextInt(size)
-//            val y = rnd.nextInt(size)
-//            val radius = rnd.nextInt(size / 3).toFloat()
-//
-//            when (rnd.nextInt(3)) {
-//                0 -> canvas.drawCircle(x.toFloat(), y.toFloat(), radius / 4, paint)
-//                1 -> canvas.drawLine(x.toFloat(), y.toFloat(), x + radius / 2, y + radius / 2, paint)
-//                2 -> canvas.drawArc(
-//                    x - radius / 2, y - radius / 2, x + radius / 2, y + radius / 2,
-//                    rnd.nextInt(360).toFloat(), rnd.nextInt(90).toFloat(), false, paint
-//                )
-//            }
-//        }
-//
-//        // Радиальные точки, формирующие "молитвенный" узор
-//        val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
-//        for (a in 0 until 360 step 5) {
-//            val r = size / 2.5f
-//            val x = size / 2f + cos(Math.toRadians(a.toDouble())) * r
-//            val y = size / 2f + sin(Math.toRadians(a.toDouble())) * r
-//            canvas.drawCircle(x.toFloat(), y.toFloat(), (2..5).random(rnd).toFloat(), dotPaint)
-//        }
-//
-//        // Центр — "ядро ауры"
-//        val corePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-//            shader = RadialGradient(
-//                size / 2f, size / 2f, size / 4f,
-//                Color.HSVToColor(255, floatArrayOf(baseHue, 0.8f, 1f)),
-//                Color.TRANSPARENT,
-//                Shader.TileMode.CLAMP
-//            )
-//        }
-//        canvas.drawCircle(size / 2f, size / 2f, size / 4f, corePaint)
-//
-//        return bitmap
-//    }
+    private fun addEnergyDots(canvas: Canvas, user: UserData, rnd: Random) {
+        val dotCount = 20 + user.energyLevel * 4
+        val cx = canvas.width/2f
+        val cy = canvas.height/2f
+        val color = getOverlayColor(user.dominantColor, user.energyLevel)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        repeat(dotCount){ i ->
+            val angle = 2*Math.PI*i/dotCount + rnd.nextDouble()
+            val distance = rnd.nextDouble()*(canvas.width/2.0)
+            val x = cx + cos(angle)*distance
+            val y = cy + sin(angle)*distance
+            paint.color=color
+            paint.alpha=50 + rnd.nextInt(80)
+            canvas.drawCircle(x.toFloat(),y.toFloat(),3f + rnd.nextFloat()*(user.energyLevel/2f),paint)
+        }
+    }
+
+    // =============================
+    // 🧩 Линии по часовой стрелке
+    // =============================
+    private fun generateDynamicLines(width:Int,height:Int,user:UserData): Bitmap {
+        val bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        addClockwiseLines(canvas, user, Random(user.auraSeed))
+        return bitmap
+    }
+
+    private fun addClockwiseLines(canvas: Canvas, user: UserData, rnd: Random, clockwise: Boolean = true) {
+        val cx = canvas.width / 2f
+        val cy = canvas.height / 2f
+        val lineCount = 20 + user.energyLevel * 2
+        val maxRadius = min(cx, cy) * 0.9f
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = getOverlayColor(user.dominantColor, user.energyLevel)
+            alpha = 80
+            strokeWidth = 2f
+            style = Paint.Style.STROKE
+        }
+
+        for (i in 0 until lineCount) {
+            val t = i.toFloat() / lineCount
+            val angle = if(clockwise) 2*Math.PI*t else 2*Math.PI*(1-t)
+            val rStart = maxRadius * 0.3f
+            val rEnd = maxRadius
+            val xStart = cx + cos(angle) * rStart
+            val yStart = cy + sin(angle) * rStart
+            val xEnd = cx + cos(angle) * rEnd
+            val yEnd = cy + sin(angle) * rEnd
+            canvas.drawLine(xStart.toFloat(), yStart.toFloat(), xEnd.toFloat(), yEnd.toFloat(), paint)
+        }
+    }
+
+    // =============================
+    // 🖼 Большие рамки
+    // =============================
+    private fun generateBigFrames(width:Int,height:Int,user:UserData): Bitmap {
+        val bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        addBigFrames(canvas,user,Random(user.auraSeed+999))
+        return bitmap
+    }
+
+    private fun addBigFrames(canvas: Canvas,user:UserData,rnd: Random){
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply{
+            style=Paint.Style.STROKE
+            strokeWidth=3f + rnd.nextFloat()*5f
+            color=getOverlayColor(user.dominantColor,user.energyLevel)
+            alpha=50 + rnd.nextInt(50)
+        }
+        val steps = 3 + user.energyLevel / 2
+        for(i in 0 until steps){
+            val margin = 20 + i * 60 + rnd.nextInt(0,40)
+            canvas.drawRect(
+                margin.toFloat(), margin.toFloat(),
+                (canvas.width-margin).toFloat(), (canvas.height-margin).toFloat(),
+                paint
+            )
+        }
+    }
+
+    // =============================
+    // ♈ Рамка по зодиаку
+    // =============================
+    private fun generateZodiacFrame(width:Int,height:Int,user:UserData): Bitmap{
+        val bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val rnd = Random(user.auraSeed + 777)
+        val hueOffset = getZodiacHue(user.zodiacSign)
+        val color = Color.HSVToColor(floatArrayOf(hueOffset,0.8f,1f))
+
+        if((user.energyLevel+rnd.nextInt(100))%2==0){
+            val margin = (width/10f)+rnd.nextInt(0,40)
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply{
+                style = Paint.Style.STROKE
+                strokeWidth = 2.5f + user.energyLevel*0.4f
+                this.color=color
+                alpha=90
+            }
+            canvas.drawRect(margin,margin,width-margin,height-margin,paint)
+        }
+        return bitmap
+    }
+
+    // =============================
+    // 🧩 Комбинирование слоев
+    // =============================
+    private fun combineLayers(base: Bitmap,layers: List<Bitmap>): Bitmap{
+        val result = base.copy(Bitmap.Config.ARGB_8888,true)
+        val canvas = Canvas(result)
+        layers.forEach{ canvas.drawBitmap(it,0f,0f,null) }
+        return result
+    }
+
+    // =============================
+    // ⚙️ Вспомогательные функции
+    // =============================
+    private fun getColorHueOffset(color:String):Float = when(color.lowercase()){
+        "red"->0f;"orange"->30f;"yellow"->50f;"green"->120f;"blue"->210f;"purple","violet"->280f
+        else->180f
+    }
+
+    private fun getZodiacHue(zodiac:String):Float = when(zodiac.lowercase()){
+        "aries","leo","sagittarius"->15f
+        "taurus","virgo","capricorn"->120f
+        "gemini","libra","aquarius"->200f
+        "cancer","scorpio","pisces"->260f
+        else->180f
+    }
+
+    private fun getOverlayColor(color:String,energy:Int):Int{
+        val hsv = floatArrayOf(getColorHueOffset(color),0.9f,1f)
+        return Color.HSVToColor(100+energy*10,hsv)
+    }
+
+    // =============================
+    // Рисование фигур
+    // =============================
+    private fun drawPolygon(canvas: Canvas,cx:Double,cy:Double,sides:Int,r:Float,paint: Paint){
+        val path = Path()
+        for(i in 0..sides){
+            val a = Math.toRadians((i*360f/sides).toDouble())
+            val x = cx + cos(a)*r
+            val y = cy + sin(a)*r
+            if(i==0) path.moveTo(x.toFloat(),y.toFloat()) else path.lineTo(x.toFloat(),y.toFloat())
+        }
+        path.close()
+        canvas.drawPath(path,paint)
+    }
+
+    private fun drawStar(canvas: Canvas,cx:Double,cy:Double,points:Int,paint: Paint){
+        val path = Path()
+        for(i in 0 until points*2){
+            val a = Math.toRadians((i*180f/points).toDouble())
+            val r = if(i%2==0) 40f else 15f
+            val x = cx + cos(a)*r
+            val y = cy + sin(a)*r
+            if(i==0) path.moveTo(x.toFloat(),y.toFloat()) else path.lineTo(x.toFloat(),y.toFloat())
+        }
+        path.close()
+        canvas.drawPath(path,paint)
+    }
+
+    private fun drawSpiral(canvas: Canvas,cx:Double,cy:Double,complexity:Int,paint: Paint){
+        val path = Path()
+        val turns = 2 + complexity
+        var a=0.0
+        while(a<2*Math.PI*turns){
+            val r = 10 + a*5
+            val x = cx + cos(a)*r
+            val y = cy + sin(a)*r
+            if(a==0.0) path.moveTo(x.toFloat(),y.toFloat()) else path.lineTo(x.toFloat(),y.toFloat())
+            a+=0.2
+        }
+        canvas.drawPath(path,paint)
+    }
+
+    private fun drawPetal(canvas: Canvas,cx:Double,cy:Double,points:Int,r:Float,paint: Paint){
+        val path = Path()
+        for(i in 0 until points){
+            val angle = i*360.0/points
+            val x = cx + cos(Math.toRadians(angle))*r
+            val y = cy + sin(Math.toRadians(angle))*r
+            if(i==0) path.moveTo(x.toFloat(),y.toFloat()) else path.lineTo(x.toFloat(),y.toFloat())
+        }
+        path.close()
+        canvas.drawPath(path,paint)
+    }
+
+    private fun drawWave(canvas: Canvas,cx:Double,cy:Double,amplitude:Int,length:Float,paint: Paint){
+        val path = Path()
+        for(i in 0..360 step 10){
+            val angle = Math.toRadians(i.toDouble())
+            val x = cx + i/2
+            val y = cy + sin(angle)*amplitude
+            if(i==0) path.moveTo(x.toFloat(),y.toFloat()) else path.lineTo(x.toFloat(),y.toFloat())
+        }
+        canvas.drawPath(path,paint)
+    }
+
+    private fun drawCross(canvas: Canvas,cx:Double,cy:Double,r:Float,paint: Paint){
+        canvas.drawLine((cx-r).toFloat(),cy.toFloat(),(cx+r).toFloat(),cy.toFloat(),paint)
+        canvas.drawLine(cx.toFloat(),(cy-r).toFloat(),cx.toFloat(),(cy+r).toFloat(),paint)
+    }
 }
 
 

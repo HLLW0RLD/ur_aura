@@ -2,8 +2,10 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +44,9 @@ import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
+import com.example.ur_color.ui.theme.AuraColors
 import org.koin.androidx.compose.koinViewModel
+import java.nio.file.WatchEvent
 
 @Serializable
 object Main : Screen
@@ -80,15 +84,17 @@ fun MainScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .background(AuraColors.background),
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+        ) {
             CustomAppBar(
-//                modifier = Modifier.align(Alignment.TopCenter),
-                title = "a u r a",
+                title = "-__a__u__r__a__-",
                 showOptions = true,
                 onOptionsClick = {},
-                backgroundColor = Color.White,
+                backgroundColor = AuraColors.background,
                 showBack = true,
                 isCentered = true,
                 onBackClick = {},
@@ -97,6 +103,7 @@ fun MainScreen(
             aura?.let {
                 Box(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .clickable(
                             indication = null,
                             interactionSource = null
@@ -108,15 +115,24 @@ fun MainScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(150.dp)
-                            .padding(16.dp)
-                            .clip(RoundedCornerShape(20.dp)),
+                            .padding(12.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(AuraColors.textPrimary)
+                            .padding(2.dp)
+                            .border(
+                                shape = RoundedCornerShape(20.dp),
+                                border = BorderStroke(
+                                    color = AuraColors.background,
+                                    width = 2.dp
+                                )
+                            ),
                         bitmap = it.asImageBitmap(),
                         contentDescription = "Аура фон",
                         contentScale = ContentScale.Crop
                     )
                     Text(
                         modifier = Modifier
-                            .padding(20.dp)
+                            .padding(24.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color.White)
                             .padding(8.dp)
@@ -132,8 +148,8 @@ fun MainScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
 
@@ -153,25 +169,37 @@ fun MainScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
+                                color = AuraColors.textPrimary,
                                 text = card?.name ?: "oops",
                                 style = MaterialTheme.typography.titleLarge
                             )
                             Spacer(Modifier.height(8.dp))
-                            Text(text = "Стихия: ${card?.element}, Номер: ${card?.number}")
+                            Text(
+                                color = AuraColors.textPrimary,
+                                text = "Стихия: ${card?.element}, Номер: ${card?.number}"
+                            )
                             Spacer(Modifier.height(8.dp))
                             Text(
+                                color = AuraColors.textPrimary,
                                 text = card?.fullMeaning ?: "oops",
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(Modifier.height(8.dp))
                             Text(
+                                color = AuraColors.textPrimary,
                                 text = "Совет: ${card?.advice}",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Spacer(Modifier.height(8.dp))
-                            Text(text = "Ключевые слова: ${card?.keywords?.joinToString(", ")}")
+                            Text(
+                                color = AuraColors.textPrimary,
+                                text = "Ключевые слова: ${card?.keywords?.joinToString(", ")}"
+                            )
                             Spacer(Modifier.height(8.dp))
-                            Text(text = "Совместимые карты: ${card?.compatibleWith?.joinToString(", ")}")
+                            Text(
+                                color = AuraColors.textPrimary,
+                                text = "Совместимые карты: ${card?.compatibleWith?.joinToString(", ")}"
+                            )
                         }
                     }
                 )
@@ -193,7 +221,8 @@ fun MainScreen(
                                     .padding(16.dp)
                             ) {
                                 Text(
-                                    horoscope.horoscope,
+                                    color = AuraColors.textPrimary,
+                                    text = horoscope.horoscope,
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
@@ -218,7 +247,10 @@ fun MainScreen(
                             windowType = WindowType.Slim,
                             canShowFull = false
                         ) {
-                            Text(uiState.message)
+                            Text(
+                                color = AuraColors.textPrimary,
+                                text = uiState.message
+                            )
                         }
                     }
                 }
@@ -234,6 +266,7 @@ fun MainScreen(
         ) {
             Text(
                 text = "Главная",
+                color = AuraColors.textPrimary,
                 modifier = Modifier
                     .padding(vertical = 16.dp)
                     .clickable {
@@ -242,6 +275,7 @@ fun MainScreen(
             )
             Text(
                 text = "Профиль",
+                color = AuraColors.textPrimary,
                 modifier = Modifier
                     .padding(vertical = 16.dp)
                     .clickable {

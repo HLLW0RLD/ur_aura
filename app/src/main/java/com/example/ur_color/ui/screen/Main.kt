@@ -117,13 +117,11 @@ fun MainScreen(
                             .height(150.dp)
                             .padding(12.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .background(AuraColors.textPrimary)
-                            .padding(2.dp)
                             .border(
                                 shape = RoundedCornerShape(20.dp),
                                 border = BorderStroke(
-                                    color = AuraColors.background,
-                                    width = 2.dp
+                                    color = AuraColors.textPrimary,
+                                    width = 1.dp
                                 )
                             ),
                         bitmap = it.asImageBitmap(),

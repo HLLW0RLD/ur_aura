@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
+import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.calculateAge
 import kotlinx.coroutines.launch
@@ -28,7 +30,7 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 data class Profile(val user: String = "null") : Screen
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun ProfileScreen() {
 
@@ -44,6 +46,7 @@ fun ProfileScreen() {
             .statusBarsPadding()
             .imePadding()
             .fillMaxSize()
+            .background(AuraColors.background)
             .padding(16.dp)
     ) {
         user?.let { u ->
@@ -72,10 +75,12 @@ fun ProfileScreen() {
 
                 Column {
                     Text(
+                        color = AuraColors.textPrimary,
                         text = "${u.firstName}, ${calculateAge(u.birthDate)}",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
+                        color = AuraColors.textPrimary,
                         text = "(${u.zodiacSign.lowercase()})",
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -90,7 +95,8 @@ fun ProfileScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Aura Details",
+                    color = AuraColors.textPrimary,
+                    text = "Aura Details",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,32 +106,24 @@ fun ProfileScreen() {
                         .padding(8.dp)
                 )
                 Text(
-                    "Emotional map",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-//                            navController.navigate("diary")
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    "Diary",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-//                            navController.navigate("diary")
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    "Personal Tests",
+                    color = AuraColors.textPrimary,
+                    text = "Personal Tests",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
 //                            navController.navigate("personalTests")
+                        }
+                        .padding(8.dp)
+                )
+                Text(
+                    color = AuraColors.textPrimary,
+                    text = "Diary",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+//                            navController.navigate("diary")
                         }
                         .padding(8.dp)
                 )

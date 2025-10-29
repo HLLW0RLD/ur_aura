@@ -7,31 +7,38 @@ data class UserData(
     val firstName: String,
     val lastName: String,
     val middleName: String?,
-    val birthDate: String,   // ДД/ММ/ГГГГ
-    val birthTime: String?,   // ЧЧ:ММ
+    val birthDate: String,
+    val birthTime: String?,
     val birthPlace: String,
     val gender: String,
     val zodiacSign: String,
     val avatarUri: String? = null,
+    val birthTimestamp: Long = 0L,
 
-    val personalityType: String? = null,                                // устанавливается 1 раз
-    val element: String? = null,                                        // устанавливается 1 раз
-    val energyLevel: Int = 5,                                           // текущее значение, изменяется динамически
-    val energyCapacity: List<Int> = listOf(5, 5, 5),                    // максимум 3 последних значения
-    val dominantColor: String = "white",                                // пересчитывается динамически
-    val colorVector: List<String> = listOf("white", "white", "white"),  // максимум 3 последних значения
-    val birthTimestamp: Long = 0L
+    // дополнительные переменные пользователя
+    // устанавливается 1 раз
+    val personalityType: String? = null,
+    val element: String? = null,
+
+    // динамические переменные пользователя
+    val energyLevel: Int = 5,
+    val dominantColor: String = "white",
+
+    // динамический вектор пользователя
+    // 7 последних значения
+    val energyCapacity: List<Int> = listOf(5, 5, 5, 5, 5, 5, 5, 5, 5, 5),
+    val colorVector: List<String> = listOf("white", "white", "white", "white", "white", "white", "white", "white", "white", "white")
 )  {
     val auraSeed: Long = (firstName + lastName + birthPlace + zodiacSign).hashCode().toLong()
 }
 
 fun UserData.updateEnergy(newEnergy: Int): UserData {
-    val updatedList = (energyCapacity + newEnergy).takeLast(3)
+    val updatedList = (energyCapacity + newEnergy).takeLast(10)
     return this.copy(energyLevel = newEnergy, energyCapacity = updatedList)
 }
 
 fun UserData.updateColor(newColor: String): UserData {
-    val updatedList = (colorVector + newColor).takeLast(3)
+    val updatedList = (colorVector + newColor).takeLast(10)
     return this.copy(dominantColor = newColor, colorVector = updatedList)
 }
 

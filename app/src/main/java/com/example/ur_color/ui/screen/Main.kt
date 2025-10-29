@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
@@ -95,9 +97,7 @@ fun MainScreen(
                 showOptions = true,
                 onOptionsClick = {},
                 backgroundColor = AuraColors.background,
-                showBack = true,
                 isCentered = true,
-                onBackClick = {},
             )
 
             aura?.let {
@@ -114,7 +114,7 @@ fun MainScreen(
                     Image(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp)
+                            .height(200.dp)
                             .padding(12.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .border(
@@ -142,11 +142,41 @@ fun MainScreen(
                     )
                 }
             }
+            Spacer(modifier = Modifier.size(24.dp))
+
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                thickness = 0.5.dp,
+                color = AuraColors.textPrimary
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+
+            Text(
+                color = AuraColors.textSecondary,
+                text = "Какой-то текст на главном экране\n" +
+                        "Возможно воодушевляющая фраза\n" +
+                        "или совет дня",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 24.dp)
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                thickness = 0.5.dp,
+                color = AuraColors.textPrimary
+            )
+            Spacer(modifier = Modifier.size(24.dp))
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {

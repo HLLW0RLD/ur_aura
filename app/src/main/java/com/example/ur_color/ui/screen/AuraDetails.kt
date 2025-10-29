@@ -28,10 +28,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
+import com.example.ur_color.ui.theme.AuraColors
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -79,7 +81,11 @@ fun AuraDetailsScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AuraColors.background),
+    ) {
         aura?.let {
             Image(
                 bitmap = it.asImageBitmap(),
@@ -89,115 +95,107 @@ fun AuraDetailsScreen(
             )
         }
 
+
+        Button(
+            modifier = Modifier
+                .padding(36.dp)
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter),
+            shape = RoundedCornerShape(10.dp),
+            onClick = {
+                val rnd = Random(System.currentTimeMillis())
+                val newEnergyLevel = rnd.nextInt(1, 10)
+
+                val colorPalette = listOf(
+                    "red",
+                    "green",
+                    "blue",
+                    "yellow",
+                    "magenta",
+                    "cyan",
+                )
+                val colorInd = rnd.nextInt(1, 6)
+                val color = colorPalette.get(colorInd)
+
+                val elements = listOf("fire", "water", "air", "earth", "aether", "metal")
+                val element = elements.random(rnd)
+
+
+
+                profileViewModel.update(
+                    context,
+                    energyLevel = newEnergyLevel,
+                    dominantColor = color,
+                    element = element,
+                )
+            },
+            content = {
+                Text(
+                    color = AuraColors.textPrimary,
+                    text = "история",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
+        )
+
         val currentOffset = offsetY.value.coerceIn(expandedY, collapsedY)
         val progress = ((currentOffset - expandedY) / (collapsedY - expandedY)).coerceIn(0f, 1f)
         val cornerDp = lerp(0.dp, 24.dp, progress)
 
-        Surface(
-            modifier = Modifier
-                .offset { IntOffset(0, currentOffset.roundToInt()) }
-                .fillMaxSize(),
-            shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
-            color = MaterialTheme.colorScheme.background,
-            tonalElevation = 8.dp
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Заголовок + handle
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(collapsedHeight)
-                        .pointerInput(Unit) {
-                            detectVerticalDragGestures(
-                                onVerticalDrag = { change, dragAmount ->
-                                    scope.launch {
-                                        change.consume()
-                                        val new = (offsetY.value + dragAmount).coerceIn(
-                                            expandedY,
-                                            collapsedY
-                                        )
-                                        offsetY.snapTo(new)
-                                    }
-                                },
-                                onDragEnd = {
-                                    val middle = (collapsedY + expandedY) / 2f
-                                    if (offsetY.value <= middle) animateToExpanded() else animateToCollapsed()
-                                }
-                            )
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Box(
-                            modifier = Modifier
-                                .width(48.dp)
-                                .height(4.dp)
-                                .background(Color.Gray, RoundedCornerShape(2.dp))
-                        )
-                        Text(
-                            text = "Aura Details",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-                }
-
-                // Контент
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    item {
-                        Button(
-                            shape = RoundedCornerShape(10.dp),
-                            onClick = {
-                                val rnd = Random(System.currentTimeMillis())
-                                val newEnergyLevel = rnd.nextInt(1, 10)
-
-                                val colorPalette = listOf(
-                                    "red",
-                                    "green",
-                                    "blue",
-                                    "yellow",
-                                    "magenta",
-                                    "cyan",
-                                )
-                                val colorInd = rnd.nextInt(1, 6)
-                                val color = colorPalette.get(colorInd)
-
-                                val elements = listOf("fire", "water", "air", "earth", "aether", "metal")
-                                val element = elements.random(rnd)
-
-
-
-                                profileViewModel.update(
-                                    context,
-                                    energyLevel = newEnergyLevel,
-                                    dominantColor = color,
-                                    element = element,
-                                )
-                            },
-                            content = {
-                                Text(
-                                    text = "upd",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                )
-                            }
-                        )
-                    }
-                    items(30) { i ->
-                        Text(
-                            text = "Элемент $i",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                        )
-                    }
-                }
-            }
-        }
+//        Surface(
+//            modifier = Modifier
+//                .offset { IntOffset(0, currentOffset.roundToInt()) }
+//                .fillMaxSize(),
+//            shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
+//            color = MaterialTheme.colorScheme.background,
+//            tonalElevation = 8.dp
+//        ) {
+//            Column(modifier = Modifier.fillMaxSize()) {
+//                // Заголовок + handle
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(collapsedHeight)
+//                        .pointerInput(Unit) {
+//                            detectVerticalDragGestures(
+//                                onVerticalDrag = { change, dragAmount ->
+//                                    scope.launch {
+//                                        change.consume()
+//                                        val new = (offsetY.value + dragAmount).coerceIn(
+//                                            expandedY,
+//                                            collapsedY
+//                                        )
+//                                        offsetY.snapTo(new)
+//                                    }
+//                                },
+//                                onDragEnd = {
+//                                    val middle = (collapsedY + expandedY) / 2f
+//                                    if (offsetY.value <= middle) animateToExpanded() else animateToCollapsed()
+//                                }
+//                            )
+//                        },
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                        Box(
+//                            modifier = Modifier
+//                                .width(48.dp)
+//                                .height(4.dp)
+//                                .background(Color.Gray, RoundedCornerShape(2.dp))
+//                        )
+//                        Text(
+//                            text = "Aura Details",
+//                            style = MaterialTheme.typography.titleMedium,
+//                            modifier = Modifier.padding(top = 4.dp)
+//                        )
+//                    }
+//                }
+//
+//
+//            }
+//        }
     }
 }

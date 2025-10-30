@@ -37,7 +37,7 @@ fun AuraTheme(
     val window = view.context.findActivity().window
     val insetsController = WindowCompat.getInsetsController(window, view)
 
-    val selectedColorPalette = ThemePalette.BURGUNDY
+    val selectedColorPalette = ThemePalette.TURQUOISE
 
     val dayNightColorScheme = remember(PrefCache.themeChanged.value, selectedColorPalette) {
         when (selectedColorPalette) {

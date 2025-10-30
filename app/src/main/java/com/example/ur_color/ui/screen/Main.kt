@@ -40,6 +40,7 @@ import com.example.ur_color.utils.LocalNavController
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -122,7 +123,7 @@ fun MainScreen(
         aura?.let {
             Image(
                 bitmap = it.asImageBitmap(),
-                contentDescription = "Фон ауры",
+                contentDescription = "",
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {
@@ -134,7 +135,7 @@ fun MainScreen(
         }
 
         CustomAppBar(
-            title = "a u r a",
+            title = "_a u r a_",
             showOptions = true,
             optionsIcon = if (progress >= 0.95f) {
                 painterResource(R.drawable.arrow_left)
@@ -157,7 +158,7 @@ fun MainScreen(
         aura?.let {
             Image(
                 bitmap = it.asImageBitmap(),
-                contentDescription = "Основная аура",
+                contentDescription = "",
                 modifier = Modifier
                     .size(250.dp)
                     .align(Alignment.Center)

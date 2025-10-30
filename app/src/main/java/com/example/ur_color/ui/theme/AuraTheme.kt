@@ -26,7 +26,6 @@ enum class ThemePalette {
     BURGUNDY
 }
 
-@SuppressLint("RememberReturnType")
 @Composable
 fun AuraTheme(
     isSystemDark: Boolean = isSystemInDarkTheme(),

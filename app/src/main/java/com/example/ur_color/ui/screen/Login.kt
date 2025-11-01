@@ -1,6 +1,5 @@
 package com.example.ur_color.ui.screen
 
-import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -17,7 +16,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +35,6 @@ import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.formatDateInput
 import com.example.ur_color.utils.formatTimeInput
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -201,7 +198,7 @@ fun LoginScreen(
                             zodiacSign = zodiac.nameRu
                         )
 
-                        loginViewModel.onSaveUser(context, user) {
+                        loginViewModel.saveUser(context, user) {
                             navController.navigate(Main.route())
                         }
                     }

@@ -2,7 +2,6 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.core.Animatable
@@ -10,34 +9,25 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
+import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.theme.AuraColors
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Serializable
@@ -47,11 +37,11 @@ data class AuraDetails(val color: String? = null) : Screen
 @Composable
 fun AuraDetailsScreen(
     cd: AuraDetails,
-    profileViewModel: ProfileViewModel = koinViewModel()
+    auraDetailsViewModel: AuraDetailsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
 
-    val aura by profileViewModel.aura.collectAsState()
+    val aura by auraDetailsViewModel.aura.collectAsState()
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -104,29 +94,12 @@ fun AuraDetailsScreen(
             shape = RoundedCornerShape(10.dp),
             onClick = {
                 val rnd = Random(System.currentTimeMillis())
-                val newEnergyLevel = rnd.nextInt(1, 10)
+                val rndInd = rnd.nextInt(1, 10)
 
-                val colorPalette = listOf(
-                    "red",
-                    "green",
-                    "blue",
-                    "yellow",
-                    "magenta",
-                    "cyan",
-                )
-                val colorInd = rnd.nextInt(1, 6)
-                val color = colorPalette.get(colorInd)
-
-                val elements = listOf("fire", "water", "air", "earth", "aether", "metal")
-                val element = elements.random(rnd)
-
-
-
-                profileViewModel.update(
-                    context,
-                    energyLevel = newEnergyLevel,
-                    dominantColor = color,
-                    element = element,
+                auraDetailsViewModel.consumeAnswer(
+                    context = context,
+                    question = question,
+                    answer = rndInd
                 )
             },
             content = {

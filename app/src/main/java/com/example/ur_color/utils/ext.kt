@@ -9,7 +9,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
-import com.example.ur_color.data.local.PrefCache.selectedTheme
+import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.ui.theme.ThemeMode
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -51,7 +51,7 @@ fun String?.parseBirthHour(): Int {
     }
 }
 
-val isDarkTheme: Boolean get() = selectedTheme == ThemeMode.DARK
+val isDarkTheme: Boolean get() = SystemDataManager.theme.value == ThemeMode.DARK
 
 fun getCurrentDate(): String {
     val dateFormat = SimpleDateFormat("yyyy_MM_dd", Locale.getDefault())

@@ -38,8 +38,8 @@ fun ProfileScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val vm: ProfileViewModel = koinViewModel()
-    val user by vm.user.collectAsState()
+    val profileViewModel: ProfileViewModel = koinViewModel()
+    val user by profileViewModel.user.collectAsState()
 
     Column(
         modifier = Modifier
@@ -135,7 +135,7 @@ fun ProfileScreen() {
                         .fillMaxWidth()
                         .clickable {
                             scope.launch {
-                                vm.deleteUser(context)
+                                profileViewModel.deleteUser(context)
                                 // например, вернуться на экран логина
                                 navController.navigate(Login.route()) {
                                     popUpTo(0) // очистить стек

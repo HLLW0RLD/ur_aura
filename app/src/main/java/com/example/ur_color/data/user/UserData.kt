@@ -1,5 +1,6 @@
 package com.example.ur_color.data.user
 
+import com.example.ur_color.data.model.AuraColors
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,28 +19,38 @@ data class UserData(
     // дополнительные переменные пользователя
     // устанавливается 1 раз
     val personalityType: String? = null,
-    val element: String? = null,
+    val element: String? = null,  // лучше убрать позже
 
     // динамические переменные пользователя
     val energyLevel: Int = 5,
-    val dominantColor: String = "white",
+    val mood: Int = 5,
+    val stressLevel: Int = 5,
+    val focus: Int = 5,
+    val motivation: Int = 5,
+    val creativity: Int = 5,
+    val emotionalBalance: Int = 5,
+    val physicalEnergy: Int = 5,
+    val sleepQuality: Int = 5,
+    val intuitionLevel: Int = 5,
+    val socialEnergy: Int = 5,
+    val dominantColor: String = AuraColors.WHITE.hex,
 
     // динамический вектор пользователя
-    // 7 последних значения
-    val energyCapacity: List<Int> = listOf(5, 5, 5, 5, 5, 5, 5, 5, 5, 5),
-    val colorVector: List<String> = listOf("white", "white", "white", "white", "white", "white", "white", "white", "white", "white")
+    // 10 последних значения
+    val energyCapacity: List<Int> = List(10) { 5 },
+    val moodVector: List<Int> = List(10) { 5 },
+    val stressVector: List<Int> = List(10) { 5 },
+    val focusVector: List<Int> = List(10) { 5 },
+    val motivationVector: List<Int> = List(10) { 5 },
+    val creativityVector: List<Int> = List(10) { 5 },
+    val emotionalBalanceVector: List<Int> = List(10) { 5 },
+    val physicalEnergyVector: List<Int> = List(10) { 5 },
+    val sleepQualityVector: List<Int> = List(10) { 5 },
+    val intuitionVector: List<Int> = List(10) { 5 },
+    val socialVector: List<Int> = List(10) { 5 },
+    val colorVector: List<String> = List(10) { AuraColors.WHITE.hex }
 )  {
     val auraSeed: Long = (firstName + lastName + birthPlace + zodiacSign).hashCode().toLong()
-}
-
-fun UserData.updateEnergy(newEnergy: Int): UserData {
-    val updatedList = (energyCapacity + newEnergy).takeLast(10)
-    return this.copy(energyLevel = newEnergy, energyCapacity = updatedList)
-}
-
-fun UserData.updateColor(newColor: String): UserData {
-    val updatedList = (colorVector + newColor).takeLast(10)
-    return this.copy(dominantColor = newColor, colorVector = updatedList)
 }
 
 enum class ZodiacSign(val value: String, val nameRu: String) {

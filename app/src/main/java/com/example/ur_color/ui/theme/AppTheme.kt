@@ -1,16 +1,14 @@
 package com.example.ur_color.ui.theme
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.example.ur_color.data.local.PrefCache
+import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.utils.findActivity
 
 enum class ThemeMode {
@@ -38,46 +36,46 @@ fun AuraTheme(
 
     val selectedColorPalette = ThemePalette.TURQUOISE
 
-    val dayNightColorScheme = remember(PrefCache.themeChanged.value, selectedColorPalette) {
+    val dayNightColorScheme = remember(SystemDataManager.theme, selectedColorPalette) {
         when (selectedColorPalette) {
 
-            ThemePalette.PINK -> when (PrefCache.selectedTheme) {
+            ThemePalette.PINK -> when (SystemDataManager.theme.value) {
                 ThemeMode.SYSTEM -> if (isSystemDark) DarkColorSchemePink else LightColorSchemePink
                 ThemeMode.DARK -> DarkColorSchemePink
                 ThemeMode.LIGHT -> LightColorSchemePink
             }
 
-            ThemePalette.YELLOW -> when (PrefCache.selectedTheme) {
+            ThemePalette.YELLOW -> when (SystemDataManager.theme.value) {
                 ThemeMode.SYSTEM -> if (isSystemDark) DarkYellowColorScheme else LightYellowColorScheme
                 ThemeMode.DARK -> DarkYellowColorScheme
                 ThemeMode.LIGHT -> LightYellowColorScheme
             }
 
-            ThemePalette.BLUE -> when (PrefCache.selectedTheme) {
+            ThemePalette.BLUE -> when (SystemDataManager.theme.value) {
                 ThemeMode.SYSTEM -> if (isSystemDark) DarkBlueColorScheme else LightBlueColorScheme
                 ThemeMode.DARK -> DarkBlueColorScheme
                 ThemeMode.LIGHT -> LightBlueColorScheme
             }
 
-            ThemePalette.TURQUOISE -> when (PrefCache.selectedTheme) {
+            ThemePalette.TURQUOISE -> when (SystemDataManager.theme.value) {
                 ThemeMode.SYSTEM -> if (isSystemDark) DarkTurquoiseColorScheme else LightTurquoiseColorScheme
                 ThemeMode.DARK -> DarkTurquoiseColorScheme
                 ThemeMode.LIGHT -> LightTurquoiseColorScheme
             }
 
-            ThemePalette.GREEN -> when (PrefCache.selectedTheme) {
+            ThemePalette.GREEN -> when (SystemDataManager.theme.value) {
                 ThemeMode.SYSTEM -> if (isSystemDark) DarkGreenColorScheme else LightGreenColorScheme
                 ThemeMode.DARK -> DarkGreenColorScheme
                 ThemeMode.LIGHT -> LightGreenColorScheme
             }
 
-            ThemePalette.BURGUNDY -> when (PrefCache.selectedTheme) {
+            ThemePalette.BURGUNDY -> when (SystemDataManager.theme.value) {
                 ThemeMode.SYSTEM -> if (isSystemDark) DarkBurgundyColorScheme else LightBurgundyColorScheme
                 ThemeMode.DARK -> DarkBurgundyColorScheme
                 ThemeMode.LIGHT -> LightBurgundyColorScheme
             }
             else -> {
-                when (PrefCache.selectedTheme) {
+                when (SystemDataManager.theme.value) {
                     ThemeMode.SYSTEM -> if (isSystemDark) DarkColorSchemePink else LightColorSchemePink
                     ThemeMode.DARK -> DarkColorSchemePink
                     ThemeMode.LIGHT -> LightColorSchemePink

@@ -33,17 +33,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.data.local.LocalDailyCardService
-import com.example.ur_color.data.local.PrefCache
 import com.example.ur_color.data.model.Card
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -81,9 +78,10 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
-    val user = PrefCache.user.collectAsState().value
-    val aura by profileViewModel.aura.collectAsState()
     val dailyCardService = remember { LocalDailyCardService() }
+
+    val user = profileViewModel.user.collectAsState().value
+    val aura by profileViewModel.aura.collectAsState()
     val zodiacSign = ZodiacSign.fromName(user!!.zodiacSign) ?: ZodiacSign.GEMINI
 
     var card by remember { mutableStateOf<Card?>(null) }

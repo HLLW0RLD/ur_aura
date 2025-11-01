@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.ur_color.data.local.PrefCache
+import com.example.ur_color.data.local.dataManager.UserDataManager
 import com.example.ur_color.ui.screen.AuraDetails
 import com.example.ur_color.ui.screen.AuraDetailsScreen
 import com.example.ur_color.ui.screen.Login
@@ -47,9 +47,7 @@ class MainActivity : ComponentActivity() {
                 var isInitialized by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
-                    PrefCache.initialize(context)
-
-                    val user = PrefCache.user.firstOrNull()
+                    val user = UserDataManager.user.firstOrNull()
                     startRoute = if (user != null) Main else Login
                     isInitialized = true
                 }

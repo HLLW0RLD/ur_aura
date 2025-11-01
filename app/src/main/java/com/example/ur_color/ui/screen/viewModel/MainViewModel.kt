@@ -1,21 +1,14 @@
 package com.example.ur_color.ui.screen.viewModel
 
-import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ur_color.data.local.PrefCache
+import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.model.Horoscope
 import com.example.ur_color.data.repo.HoroscopeDate
 import com.example.ur_color.data.repo.HoroscopeRepository
-import com.example.ur_color.data.user.AuraGenerator
-import com.example.ur_color.data.user.UserData
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 sealed class HoroscopeUiState {
@@ -26,7 +19,7 @@ sealed class HoroscopeUiState {
 
 class MainViewModel(
     private val horoscopeRepository: HoroscopeRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _horoscopeState = MutableStateFlow<HoroscopeUiState>(HoroscopeUiState.Loading)
     val horoscopeState: StateFlow<HoroscopeUiState> = _horoscopeState

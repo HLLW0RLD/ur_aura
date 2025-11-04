@@ -39,4 +39,6 @@ object SystemStorage {
             it.remove(PALETTE_KEY)
         }
     }
+
+    // настройкки приватности, подписки, данных
 }

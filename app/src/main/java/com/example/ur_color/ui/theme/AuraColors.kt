@@ -1,4 +1,4 @@
-package com.example.ur_color.data.model
+package com.example.ur_color.ui.theme
 
 enum class AuraColors(val hex: String) {
     WHITE("#FFFFFF"),

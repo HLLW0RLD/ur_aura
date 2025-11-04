@@ -38,9 +38,12 @@ object UserDataManager {
 //        HistoryStorage.save(context, user)
     }
 
-    suspend fun update(context: Context, block: (UserData) -> UserData) {
-        val current = _user.value ?: return
-        save(context, user = block(current)) // пример UserRepository.update(context) { it.copy(energyLevel = 7) }
+    suspend fun updateUser(context: Context, user: UserData) {
+        save(context, user = user)
+    }
+
+    suspend fun updateAura(context: Context, bitmap: Bitmap) {
+        save(context, aura = bitmap)
     }
 
     suspend fun delete(context: Context) {

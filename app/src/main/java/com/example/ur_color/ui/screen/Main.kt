@@ -58,7 +58,7 @@ import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
@@ -116,7 +116,7 @@ fun MainScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AuraColors.background)
+            .background(AppColors.background)
     ) {
         aura?.let {
             Image(
@@ -148,7 +148,7 @@ fun MainScreen(
                 }
             },
             isCentered = true,
-            backgroundColor = AuraColors.background,
+            backgroundColor = AppColors.background,
 //            backgroundColor = AuraColors.background.copy(alpha = 0.85f * progress),
             modifier = Modifier.statusBarsPadding()
         )
@@ -200,7 +200,7 @@ fun MainScreen(
                 topStart = (28.dp * (1 - progress)).coerceAtLeast(0.dp),
                 topEnd = (28.dp * (1 - progress)).coerceAtLeast(0.dp)
             ),
-            color = AuraColors.background.copy(alpha = 0.95f * progress),
+            color = AppColors.background.copy(alpha = 0.95f * progress),
             tonalElevation = 8.dp
         ) {
             Column(
@@ -211,7 +211,7 @@ fun MainScreen(
             ) {
                 Column {
                     Text(
-                        color = AuraColors.textSecondary,
+                        color = AppColors.textSecondary,
                         text = "Какой-то текст на главном экране\n" +
                                 "Возможно воодушевляющая фраза\n" +
                                 "или совет дня",
@@ -228,7 +228,7 @@ fun MainScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
                         thickness = 0.5.dp,
-                        color = AuraColors.textPrimary
+                        color = AppColors.textPrimary
                     )
 
                     Spacer(modifier = Modifier.size(24.dp))
@@ -255,35 +255,35 @@ fun MainScreen(
                                     horizontalAlignment = Alignment.Start
                                 ) {
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = card?.name ?: "oops",
                                         style = MaterialTheme.typography.titleLarge
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = "Стихия: ${card?.element}, Номер: ${card?.number}"
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = card?.fullMeaning ?: "oops",
                                         style = MaterialTheme.typography.bodyLarge
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = "Совет: ${card?.advice}",
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = "Ключевые слова: ${card?.keywords?.joinToString(", ")}"
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = "Совместимые карты: ${card?.compatibleWith?.joinToString(", ")}"
                                     )
                                 }
@@ -307,7 +307,7 @@ fun MainScreen(
                                             .padding(16.dp)
                                     ) {
                                         Text(
-                                            color = AuraColors.textPrimary,
+                                            color = AppColors.textPrimary,
                                             text = horoscope.horoscope,
                                             style = MaterialTheme.typography.bodyLarge
                                         )
@@ -334,7 +334,7 @@ fun MainScreen(
                                     canShowFull = false
                                 ) {
                                     Text(
-                                        color = AuraColors.textPrimary,
+                                        color = AppColors.textPrimary,
                                         text = uiState.message
                                     )
                                 }
@@ -369,7 +369,7 @@ fun MainScreen(
 
                 repeat(30) { i ->
                     Text(
-                        color = AuraColors.textPrimary,
+                        color = AppColors.textPrimary,
                         text = "да-да, этот ${i}й элемент просто так",
                         modifier = Modifier
                             .fillMaxWidth()

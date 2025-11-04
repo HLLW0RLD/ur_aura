@@ -27,7 +27,7 @@ import com.example.ur_color.ui.screen.ProfileScreen
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.screen.screenComposable
-import com.example.ur_color.ui.theme.AuraTheme
+import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AuraTheme {
+            AppTheme {
                 val navController = rememberNavController()
                 val context = LocalContext.current
 
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     isInitialized = true
                 }
 
-                if (!isInitialized) return@AuraTheme
+                if (!isInitialized) return@AppTheme
 
 
                 CompositionLocalProvider(LocalNavController provides navController) {

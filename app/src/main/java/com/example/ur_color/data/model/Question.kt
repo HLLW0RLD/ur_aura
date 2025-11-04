@@ -2,7 +2,7 @@ package com.example.ur_color.data.model
 
 data class Question(
     val id: String,
-    val type: QuestionType,
+//    val type: QuestionType,
     val text: String,
     val mods: List<Mod> = emptyList()
 )
@@ -33,6 +33,6 @@ enum class QuestionType {
     MOOD,         // настроение, стресс
     HEALTH,       // энергия, физическое состояние, сон
     SOCIAL,       // социальная энергия, коммуникация
+    STRESS,
     GENERAL,       // универсальные вопросы, влияют на несколько областей
-    STRESS
 }

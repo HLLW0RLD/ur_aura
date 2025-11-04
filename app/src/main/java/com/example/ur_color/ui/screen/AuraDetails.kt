@@ -23,8 +23,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import com.example.ur_color.data.local.LocalDailyTestService
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -56,6 +57,8 @@ fun AuraDetailsScreen(
     val expandedY = topInsetPx
     val collapsedY = screenHeightPx - collapsedHeightPx
 
+    var i = remember { mutableIntStateOf(0) }
+
     val offsetY = remember { Animatable(collapsedY) }
     val scope = rememberCoroutineScope()
 
@@ -74,7 +77,7 @@ fun AuraDetailsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AuraColors.background),
+            .background(AppColors.background),
     ) {
         aura?.let {
             Image(
@@ -93,19 +96,22 @@ fun AuraDetailsScreen(
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(10.dp),
             onClick = {
+                i.value++
                 val rnd = Random(System.currentTimeMillis())
                 val rndInd = rnd.nextInt(1, 10)
+                val question = LocalDailyTestService().firstVarTest[i.value]
 
                 auraDetailsViewModel.consumeAnswer(
                     context = context,
                     question = question,
                     answer = rndInd
                 )
+                if (i.value == 9) i.value = 0
             },
             content = {
                 Text(
-                    color = AuraColors.textPrimary,
-                    text = "история",
+                    color = AppColors.textPrimary,
+                    text = "тесты",
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()

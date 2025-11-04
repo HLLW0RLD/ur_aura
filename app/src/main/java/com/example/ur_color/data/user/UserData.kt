@@ -1,6 +1,7 @@
 package com.example.ur_color.data.user
 
-import com.example.ur_color.data.model.AuraColors
+import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.ui.theme.AuraColors
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,7 +20,6 @@ data class UserData(
     // дополнительные переменные пользователя
     // устанавливается 1 раз
     val personalityType: String? = null,
-    val element: String? = null,  // лучше убрать позже
 
     // динамические переменные пользователя
     val energyLevel: Int = 5,

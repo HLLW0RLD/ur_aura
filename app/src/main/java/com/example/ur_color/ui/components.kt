@@ -66,7 +66,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.R
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.getCurrentDateTime
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -160,7 +160,7 @@ fun ReturnAuraPickerDialog(
             AuraTextButton(text = "Отмена", color = color) { onDismiss }
         },
         colors = DatePickerDefaults.colors(
-            containerColor = color ?: AuraColors.accentPrimary,
+            containerColor = color ?: AppColors.accentPrimary,
         ),
     ) {
         DatePicker(state = datePickerState)
@@ -179,8 +179,8 @@ fun AuraTextButton(
 ) {
     Button(
         colors = ButtonDefaults.buttonColors(
-            containerColor = color ?: AuraColors.accentPrimary,
-            disabledContainerColor = color ?: AuraColors.surface,
+            containerColor = color ?: AppColors.accentPrimary,
+            disabledContainerColor = color ?: AppColors.surface,
         ),
         onClick = {
             onClick()
@@ -193,7 +193,7 @@ fun AuraTextButton(
     ) {
         Text(
             text = text,
-            color = AuraColors.background
+            color = AppColors.background
         )
     }
 }
@@ -221,13 +221,13 @@ fun AuraRadioButton(
             selected = selected,
             onClick = { onClick() },
             colors = RadioButtonDefaults.colors(
-                selectedColor = color ?: AuraColors.accentPrimary,
-                unselectedColor = AuraColors.surface
+                selectedColor = color ?: AppColors.accentPrimary,
+                unselectedColor = AppColors.surface
             )
         )
         Text(
             text = text,
-            color = if (selected) AuraColors.textPrimary else AuraColors.textSecondary
+            color = if (selected) AppColors.textPrimary else AppColors.textSecondary
         )
     }
 }
@@ -254,10 +254,10 @@ fun AuraOutlinedTextField(
 ) {
     OutlinedTextField(
         colors = OutlinedTextFieldDefaults.colors(
-            focusedLabelColor = color ?: AuraColors.textPrimary,
-            unfocusedLabelColor = color ?: AuraColors.textPrimary,
-            focusedBorderColor = color ?: AuraColors.textPrimary,
-            unfocusedBorderColor = color ?: AuraColors.textPrimary,
+            focusedLabelColor = color ?: AppColors.textPrimary,
+            unfocusedLabelColor = color ?: AppColors.textPrimary,
+            focusedBorderColor = color ?: AppColors.textPrimary,
+            unfocusedBorderColor = color ?: AppColors.textPrimary,
         ),
         value = value,
         onValueChange = {
@@ -293,9 +293,9 @@ fun CustomAppBar(
     onOptionsClick: (() -> Unit)? = null,
     backIcon: Painter = painterResource(R.drawable.arrow_left),
     optionsIcon: Painter = painterResource(R.drawable.switcher_options),
-    backIconTint: Color = AuraColors.surface,
-    optionsIconTint: Color = AuraColors.surface,
-    backgroundColor: Color = AuraColors.background,
+    backIconTint: Color = AppColors.surface,
+    optionsIconTint: Color = AppColors.surface,
+    backgroundColor: Color = AppColors.background,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -356,7 +356,7 @@ fun CustomAppBar(
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
                 thickness = 0.5.dp,
-                color = AuraColors.textPrimary
+                color = AppColors.textPrimary
             )
         }
     }
@@ -484,12 +484,12 @@ private fun ExpandableBase(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .background(if (expanded) AuraColors.background else AuraColors.surface)
+            .background(if (expanded) AppColors.background else AppColors.surface)
             .padding(2.dp)
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
-                    color = if (expanded) AuraColors.surface else AuraColors.background,
+                    color = if (expanded) AppColors.surface else AppColors.background,
                     width = 2.dp
                 )
             )
@@ -523,7 +523,7 @@ private fun ExpandableBase(
                     textAlign = TextAlign.Center,
                     text = closedTitle,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = AuraColors.textPrimary
+                    color = AppColors.textPrimary
                 )
             }
         }
@@ -535,7 +535,7 @@ private fun ExpandableContent(
     expandedTitle: String,
     scrollState: ScrollState,
     alpha: Float,
-    titleColor: Color = AuraColors.textPrimary,
+    titleColor: Color = AppColors.textPrimary,
     onCancel: (() -> Unit)?,
     onConfirm: (() -> Unit)?,
     onClose: () -> Unit,
@@ -558,7 +558,7 @@ private fun ExpandableContent(
                 modifier = Modifier.weight(1f)
             )
             Icon(
-                tint = AuraColors.textPrimary,
+                tint = AppColors.textPrimary,
                 painter = painterResource(R.drawable.close_filled),
                 contentDescription = "Закрыть",
                 modifier = Modifier.clickable { onClose() }
@@ -566,7 +566,7 @@ private fun ExpandableContent(
         }
 
         Spacer(Modifier.height(4.dp))
-        HorizontalDivider(thickness = 0.5.dp, color = AuraColors.accentPrimary)
+        HorizontalDivider(thickness = 0.5.dp, color = AppColors.accentPrimary)
 
         Column(
             Modifier
@@ -585,7 +585,7 @@ private fun ExpandableContent(
                     TextButton(onClick = it) {
                         Text(
                             text = "Отмена",
-                            color = AuraColors.textPrimary,
+                            color = AppColors.textPrimary,
                         )
                     }
                 }
@@ -593,7 +593,7 @@ private fun ExpandableContent(
                     TextButton(onClick = it) {
                         Text(
                             text = "ОК",
-                            color = AuraColors.textPrimary,
+                            color = AppColors.textPrimary,
                         )
                     }
                 }

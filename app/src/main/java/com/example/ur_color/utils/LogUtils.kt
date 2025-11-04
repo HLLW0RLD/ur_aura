@@ -1,5 +1,6 @@
 package com.example.ur_color.utils
 
+import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import java.text.SimpleDateFormat
@@ -60,9 +61,9 @@ private fun log(
     val fileLocation = if (caller != null) {
         val fileName = caller.fileName ?: caller.className.substringAfterLast('.')
         val line = caller.lineNumber
-        "call by - $fileName:$line"
+        "$fileName:$line"
     } else {
-        "call by - <unknown>"
+        "<unknown>"
     }
 
     val gson = GsonBuilder()
@@ -84,11 +85,10 @@ private fun log(
 
     println(
         buildString {
-            appendLine("\n<<<< START [$fixedLabel] ${if (resolvedTag != null) "[$resolvedTag] " else ""}LOG ----------------------------------------------------------")
-            appendLine(formattedMessage)
-            appendLine("\n$fileLocation at $callingTime")
-            appendLine("<<<< END [$fixedLabel] ${if (resolvedTag != null) "[$resolvedTag] " else ""}LOG ----------------------------------------------------------")
-            append(LogColor.RESET)
+            appendLine("\n<<<< START $fixedLabel ${if (resolvedTag != null) "[$resolvedTag] " else ""}LOG ----------------------------------------------------------")
+            appendLine("\n${formattedMessage}")
+            appendLine("\n$fileLocation ($callingTime)")
+            appendLine("<<<< END $fixedLabel LOG ----------------------------------------------------------")
         }
     )
 }

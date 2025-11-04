@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.calculateAge
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ fun ProfileScreen() {
             .statusBarsPadding()
             .imePadding()
             .fillMaxSize()
-            .background(AuraColors.background)
+            .background(AppColors.background)
             .padding(16.dp)
     ) {
         user?.let { u ->
@@ -75,12 +75,12 @@ fun ProfileScreen() {
 
                 Column {
                     Text(
-                        color = AuraColors.textPrimary,
+                        color = AppColors.textPrimary,
                         text = "${u.firstName}, ${calculateAge(u.birthDate)}",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
-                        color = AuraColors.textPrimary,
+                        color = AppColors.textPrimary,
                         text = "(${u.zodiacSign.lowercase()})",
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -95,7 +95,7 @@ fun ProfileScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    color = AuraColors.textPrimary,
+                    color = AppColors.textPrimary,
                     text = "Aura Details",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
@@ -106,7 +106,7 @@ fun ProfileScreen() {
                         .padding(8.dp)
                 )
                 Text(
-                    color = AuraColors.textPrimary,
+                    color = AppColors.textPrimary,
                     text = "Personal Tests",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
@@ -117,7 +117,7 @@ fun ProfileScreen() {
                         .padding(8.dp)
                 )
                 Text(
-                    color = AuraColors.textPrimary,
+                    color = AppColors.textPrimary,
                     text = "Diary",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier

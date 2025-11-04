@@ -25,7 +25,7 @@ enum class ThemePalette {
 }
 
 @Composable
-fun AuraTheme(
+fun AppTheme(
     isSystemDark: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

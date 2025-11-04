@@ -31,7 +31,7 @@ import com.example.ur_color.data.user.UserData
 import com.example.ur_color.data.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.formatDateInput
 import com.example.ur_color.utils.formatTimeInput
@@ -64,7 +64,7 @@ fun LoginScreen(
             .statusBarsPadding()
             .imePadding()
             .fillMaxSize()
-            .background(AuraColors.background),
+            .background(AppColors.background),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CustomAppBar(
@@ -78,12 +78,12 @@ fun LoginScreen(
         ) {
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = AuraColors.textPrimary,
-                    unfocusedTextColor = AuraColors.textPrimary,
-                    focusedContainerColor = AuraColors.background,
-                    unfocusedContainerColor = AuraColors.background,
-                    focusedLabelColor = AuraColors.accentPrimary,
-                    unfocusedLabelColor = AuraColors.accentPrimary,
+                    focusedTextColor = AppColors.textPrimary,
+                    unfocusedTextColor = AppColors.textPrimary,
+                    focusedContainerColor = AppColors.background,
+                    unfocusedContainerColor = AppColors.background,
+                    focusedLabelColor = AppColors.accentPrimary,
+                    unfocusedLabelColor = AppColors.accentPrimary,
                 ),
                 value = lastName,
                 onValueChange = { lastName = it },
@@ -92,12 +92,12 @@ fun LoginScreen(
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = AuraColors.textPrimary,
-                    unfocusedTextColor = AuraColors.textPrimary,
-                    focusedContainerColor = AuraColors.background,
-                    unfocusedContainerColor = AuraColors.background,
-                    focusedLabelColor = AuraColors.accentPrimary,
-                    unfocusedLabelColor = AuraColors.accentPrimary,
+                    focusedTextColor = AppColors.textPrimary,
+                    unfocusedTextColor = AppColors.textPrimary,
+                    focusedContainerColor = AppColors.background,
+                    unfocusedContainerColor = AppColors.background,
+                    focusedLabelColor = AppColors.accentPrimary,
+                    unfocusedLabelColor = AppColors.accentPrimary,
                 ),
                 value = firstName,
                 onValueChange = { firstName = it },
@@ -106,12 +106,12 @@ fun LoginScreen(
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = AuraColors.textPrimary,
-                    unfocusedTextColor = AuraColors.textPrimary,
-                    focusedContainerColor = AuraColors.background,
-                    unfocusedContainerColor = AuraColors.background,
-                    focusedLabelColor = AuraColors.accentPrimary,
-                    unfocusedLabelColor = AuraColors.accentPrimary,
+                    focusedTextColor = AppColors.textPrimary,
+                    unfocusedTextColor = AppColors.textPrimary,
+                    focusedContainerColor = AppColors.background,
+                    unfocusedContainerColor = AppColors.background,
+                    focusedLabelColor = AppColors.accentPrimary,
+                    unfocusedLabelColor = AppColors.accentPrimary,
                 ),
                 value = middleName,
                 onValueChange = { middleName = it },
@@ -120,12 +120,12 @@ fun LoginScreen(
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = AuraColors.textPrimary,
-                    unfocusedTextColor = AuraColors.textPrimary,
-                    focusedContainerColor = AuraColors.background,
-                    unfocusedContainerColor = AuraColors.background,
-                    focusedLabelColor = AuraColors.accentPrimary,
-                    unfocusedLabelColor = AuraColors.accentPrimary,
+                    focusedTextColor = AppColors.textPrimary,
+                    unfocusedTextColor = AppColors.textPrimary,
+                    focusedContainerColor = AppColors.background,
+                    unfocusedContainerColor = AppColors.background,
+                    focusedLabelColor = AppColors.accentPrimary,
+                    unfocusedLabelColor = AppColors.accentPrimary,
                 ),
                 value = birthDate,
                 onValueChange = { input -> birthDate = formatDateInput(birthDate, input) },
@@ -134,12 +134,12 @@ fun LoginScreen(
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = AuraColors.textPrimary,
-                    unfocusedTextColor = AuraColors.textPrimary,
-                    focusedContainerColor = AuraColors.background,
-                    unfocusedContainerColor = AuraColors.background,
-                    focusedLabelColor = AuraColors.accentPrimary,
-                    unfocusedLabelColor = AuraColors.accentPrimary,
+                    focusedTextColor = AppColors.textPrimary,
+                    unfocusedTextColor = AppColors.textPrimary,
+                    focusedContainerColor = AppColors.background,
+                    unfocusedContainerColor = AppColors.background,
+                    focusedLabelColor = AppColors.accentPrimary,
+                    unfocusedLabelColor = AppColors.accentPrimary,
                 ),
                 value = birthTime,
                 onValueChange = { input -> birthTime = formatTimeInput(birthTime, input)},
@@ -148,12 +148,12 @@ fun LoginScreen(
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = AuraColors.textPrimary,
-                    unfocusedTextColor = AuraColors.textPrimary,
-                    focusedContainerColor = AuraColors.background,
-                    unfocusedContainerColor = AuraColors.background,
-                    focusedLabelColor = AuraColors.accentPrimary,
-                    unfocusedLabelColor = AuraColors.accentPrimary,
+                    focusedTextColor = AppColors.textPrimary,
+                    unfocusedTextColor = AppColors.textPrimary,
+                    focusedContainerColor = AppColors.background,
+                    unfocusedContainerColor = AppColors.background,
+                    focusedLabelColor = AppColors.accentPrimary,
+                    unfocusedLabelColor = AppColors.accentPrimary,
                 ),
                 value = birthPlace,
                 onValueChange = { birthPlace = it },

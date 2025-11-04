@@ -6,7 +6,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-object AuraColors {
+object AppColors {
 
     val tertiary: Color
         @Composable get() = MaterialTheme.colorScheme.tertiary

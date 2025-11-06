@@ -10,12 +10,12 @@ class LocalDailyTestService {
     val baseQuestions = listOf(
         Pair(
             listOf(
-                Mod(ModType.ENERGY_LEVEL, 0.7),
-                Mod(ModType.MOTIVATION, 0.6),
+                Mod(ModType.ENERGY_LEVEL, 0.6),
                 Mod(ModType.CREATIVITY, 0.5),
-                Mod(ModType.STRESS_LEVEL, -0.5),
-                Mod(ModType.MOOD, -0.4),
-                Mod(ModType.SLEEP_QUALITY, -0.3)
+                Mod(ModType.EMOTIONAL_BALANCE, 0.4),
+                Mod(ModType.PHYSICAL_ENERGY, -0.3),
+                Mod(ModType.SLEEP_QUALITY, -0.2),
+                Mod(ModType.INTUITION_LEVEL, -0.4)
             ),
             listOf(
                 "Сегодня вы ощущаете прилив энергии для начала новых дел?",
@@ -25,12 +25,12 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.FOCUS, 0.9),
-                Mod(ModType.INTUITION_LEVEL, 0.3),
-                Mod(ModType.MOOD, 0.2),
-                Mod(ModType.STRESS_LEVEL, -0.4),
-                Mod(ModType.ENERGY_LEVEL, -0.2),
-                Mod(ModType.SLEEP_QUALITY, -0.3)
+                Mod(ModType.FOCUS, 0.8),
+                Mod(ModType.ENERGY_LEVEL, 0.3),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
+                Mod(ModType.CREATIVITY, -0.3),
+                Mod(ModType.SLEEP_QUALITY, -0.4),
+                Mod(ModType.PHYSICAL_ENERGY, -0.3)
             ),
             listOf(
                 "Сегодня вам легко сосредоточиться на одной задаче?",
@@ -40,12 +40,12 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, 0.8),
-                Mod(ModType.MOOD, 0.4),
-                Mod(ModType.FOCUS, 0.3),
-                Mod(ModType.STRESS_LEVEL, -0.3),
-                Mod(ModType.ENERGY_LEVEL, -0.2),
-                Mod(ModType.SLEEP_QUALITY, -0.2)
+                Mod(ModType.EMOTIONAL_BALANCE, 0.7),
+                Mod(ModType.INTUITION_LEVEL, 0.4),
+                Mod(ModType.CREATIVITY, 0.3),
+                Mod(ModType.SLEEP_QUALITY, -0.3),
+                Mod(ModType.PHYSICAL_ENERGY, -0.2),
+                Mod(ModType.ENERGY_LEVEL, -0.4)
             ),
             listOf(
                 "Сегодня вы чувствуете внутреннюю гармонию при выполнении своих дел?",
@@ -56,10 +56,10 @@ class LocalDailyTestService {
         Pair(
             listOf(
                 Mod(ModType.CREATIVITY, 0.9),
-                Mod(ModType.MOTIVATION, 0.5),
-                Mod(ModType.SOCIAL_ENERGY, 0.2),
-                Mod(ModType.STRESS_LEVEL, -0.4),
-                Mod(ModType.MOOD, -0.3),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.4),
+                Mod(ModType.INTUITION_LEVEL, 0.3),
+                Mod(ModType.SLEEP_QUALITY, -0.4),
+                Mod(ModType.PHYSICAL_ENERGY, -0.3),
                 Mod(ModType.ENERGY_LEVEL, -0.2)
             ),
             listOf(
@@ -71,11 +71,11 @@ class LocalDailyTestService {
         Pair(
             listOf(
                 Mod(ModType.ENERGY_LEVEL, -0.6),
-                Mod(ModType.MOOD, -0.4),
-                Mod(ModType.STRESS_LEVEL, 0.5),
-                Mod(ModType.FOCUS, -0.2),
-                Mod(ModType.MOTIVATION, -0.3),
-                Mod(ModType.SLEEP_QUALITY, -0.3)
+                Mod(ModType.SLEEP_QUALITY, -0.5),
+                Mod(ModType.PHYSICAL_ENERGY, -0.4),
+                Mod(ModType.CREATIVITY, 0.3),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
+                Mod(ModType.INTUITION_LEVEL, 0.2)
             ),
             listOf(
                 "Сегодня выполнение рутинной работы вызывает у вас усталость?",
@@ -86,11 +86,11 @@ class LocalDailyTestService {
         Pair(
             listOf(
                 Mod(ModType.INTUITION_LEVEL, 0.8),
-                Mod(ModType.FOCUS, 0.3),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
-                Mod(ModType.MOOD, -0.2),
-                Mod(ModType.STRESS_LEVEL, -0.3),
-                Mod(ModType.ENERGY_LEVEL, -0.2)
+                Mod(ModType.EMOTIONAL_BALANCE, 0.3),
+                Mod(ModType.CREATIVITY, 0.2),
+                Mod(ModType.PHYSICAL_ENERGY, -0.2),
+                Mod(ModType.SLEEP_QUALITY, -0.3),
+                Mod(ModType.ENERGY_LEVEL, -0.3)
             ),
             listOf(
                 "Сегодня вы готовы полагаться на интуицию при принятии решений?",
@@ -100,12 +100,12 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.STRESS_LEVEL, 0.8),
-                Mod(ModType.MOOD, -0.5),
-                Mod(ModType.FOCUS, -0.3),
-                Mod(ModType.ENERGY_LEVEL, -0.2),
-                Mod(ModType.SOCIAL_ENERGY, -0.2),
-                Mod(ModType.SLEEP_QUALITY, -0.2)
+                Mod(ModType.EMOTIONAL_BALANCE, -0.6),
+                Mod(ModType.SLEEP_QUALITY, -0.4),
+                Mod(ModType.ENERGY_LEVEL, -0.3),
+                Mod(ModType.PHYSICAL_ENERGY, 0.3),
+                Mod(ModType.CREATIVITY, 0.2),
+                Mod(ModType.INTUITION_LEVEL, 0.4)
             ),
             listOf(
                 "Сегодня вы чувствуете стресс из-за необходимости соблюдать сроки?",
@@ -115,12 +115,12 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SOCIAL_ENERGY, 0.7),
-                Mod(ModType.MOOD, 0.3),
-                Mod(ModType.CREATIVITY, 0.2),
-                Mod(ModType.STRESS_LEVEL, -0.3),
-                Mod(ModType.FOCUS, -0.2),
-                Mod(ModType.ENERGY_LEVEL, -0.1)
+                Mod(ModType.CREATIVITY, 0.4),
+                Mod(ModType.PHYSICAL_ENERGY, 0.3),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
+                Mod(ModType.SLEEP_QUALITY, -0.2),
+                Mod(ModType.ENERGY_LEVEL, -0.3),
+                Mod(ModType.INTUITION_LEVEL, -0.4)
             ),
             listOf(
                 "Сегодня вы готовы делиться своими идеями с окружающими?",
@@ -130,12 +130,12 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.MOTIVATION, 0.6),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.4),
-                Mod(ModType.FOCUS, 0.3),
-                Mod(ModType.STRESS_LEVEL, -0.2),
-                Mod(ModType.MOOD, -0.2),
-                Mod(ModType.ENERGY_LEVEL, -0.1)
+                Mod(ModType.EMOTIONAL_BALANCE, 0.5),
+                Mod(ModType.CREATIVITY, 0.4),
+                Mod(ModType.ENERGY_LEVEL, 0.3),
+                Mod(ModType.PHYSICAL_ENERGY, -0.3),
+                Mod(ModType.SLEEP_QUALITY, -0.3),
+                Mod(ModType.INTUITION_LEVEL, -0.2)
             ),
             listOf(
                 "Сегодня вы удовлетворены своей продуктивностью?",
@@ -146,11 +146,11 @@ class LocalDailyTestService {
         Pair(
             listOf(
                 Mod(ModType.ENERGY_LEVEL, -0.7),
-                Mod(ModType.STRESS_LEVEL, 0.5),
-                Mod(ModType.SLEEP_QUALITY, -0.4),
-                Mod(ModType.MOOD, -0.2),
-                Mod(ModType.FOCUS, -0.2),
-                Mod(ModType.MOTIVATION, -0.1)
+                Mod(ModType.SLEEP_QUALITY, -0.5),
+                Mod(ModType.PHYSICAL_ENERGY, -0.4),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.3),
+                Mod(ModType.CREATIVITY, 0.2),
+                Mod(ModType.INTUITION_LEVEL, 0.1)
             ),
             listOf(
                 "Сегодня вы чувствуете упадок сил после умственного напряжения?",
@@ -161,14 +161,12 @@ class LocalDailyTestService {
     )
 
     val firstVarTest = baseQuestions.mapIndexed { idx, base ->
-        Question(id = "${11+idx}", text = base.second[0], mods = base.first)
+        Question(id = "${1+idx}", text = base.second[0], mods = base.first)
     }
-
     val secondVarTest = baseQuestions.mapIndexed { idx, base ->
-        Question(id = "${21+idx}", text = base.second[1], mods = base.first)
+        Question(id = "${2+idx}", text = base.second[1], mods = base.first)
     }
-
     val thirdVarTest = baseQuestions.mapIndexed { idx, base ->
-        Question(id = "${31+idx}", text = base.second[2], mods = base.first)
+        Question(id = "${3+idx}", text = base.second[2], mods = base.first)
     }
 }

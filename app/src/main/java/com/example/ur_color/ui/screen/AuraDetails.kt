@@ -9,26 +9,39 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import androidx.compose.ui.unit.sp
 import com.example.ur_color.data.local.LocalDailyTestService
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.theme.AppColors
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Serializable
@@ -43,6 +56,7 @@ fun AuraDetailsScreen(
     val context = LocalContext.current
 
     val aura by auraDetailsViewModel.aura.collectAsState()
+    val userData by auraDetailsViewModel.user.collectAsState()
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -57,7 +71,7 @@ fun AuraDetailsScreen(
     val expandedY = topInsetPx
     val collapsedY = screenHeightPx - collapsedHeightPx
 
-    var i = remember { mutableIntStateOf(0) }
+    var i = remember { mutableStateOf(0) }
 
     val offsetY = remember { Animatable(collapsedY) }
     val scope = rememberCoroutineScope()
@@ -88,93 +102,125 @@ fun AuraDetailsScreen(
             )
         }
 
-
-        Button(
-            modifier = Modifier
-                .padding(36.dp)
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            shape = RoundedCornerShape(10.dp),
-            onClick = {
-                i.value++
-                val rnd = Random(System.currentTimeMillis())
-                val rndInd = rnd.nextInt(1, 10)
-                val question = LocalDailyTestService().firstVarTest[i.value]
-
-                auraDetailsViewModel.consumeAnswer(
-                    context = context,
-                    question = question,
-                    answer = rndInd
-                )
-                if (i.value == 9) i.value = 0
-            },
-            content = {
-                Text(
-                    color = AppColors.textPrimary,
-                    text = "тесты",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
-            }
-        )
-
         val currentOffset = offsetY.value.coerceIn(expandedY, collapsedY)
         val progress = ((currentOffset - expandedY) / (collapsedY - expandedY)).coerceIn(0f, 1f)
         val cornerDp = lerp(0.dp, 24.dp, progress)
 
-//        Surface(
-//            modifier = Modifier
-//                .offset { IntOffset(0, currentOffset.roundToInt()) }
-//                .fillMaxSize(),
-//            shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
-//            color = MaterialTheme.colorScheme.background,
-//            tonalElevation = 8.dp
-//        ) {
-//            Column(modifier = Modifier.fillMaxSize()) {
-//                // Заголовок + handle
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(collapsedHeight)
-//                        .pointerInput(Unit) {
-//                            detectVerticalDragGestures(
-//                                onVerticalDrag = { change, dragAmount ->
-//                                    scope.launch {
-//                                        change.consume()
-//                                        val new = (offsetY.value + dragAmount).coerceIn(
-//                                            expandedY,
-//                                            collapsedY
-//                                        )
-//                                        offsetY.snapTo(new)
-//                                    }
-//                                },
-//                                onDragEnd = {
-//                                    val middle = (collapsedY + expandedY) / 2f
-//                                    if (offsetY.value <= middle) animateToExpanded() else animateToCollapsed()
-//                                }
-//                            )
-//                        },
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//                        Box(
-//                            modifier = Modifier
-//                                .width(48.dp)
-//                                .height(4.dp)
-//                                .background(Color.Gray, RoundedCornerShape(2.dp))
-//                        )
-//                        Text(
-//                            text = "Aura Details",
-//                            style = MaterialTheme.typography.titleMedium,
-//                            modifier = Modifier.padding(top = 4.dp)
-//                        )
-//                    }
-//                }
-//
-//
-//            }
-//        }
+        Surface(
+            modifier = Modifier
+                .offset { IntOffset(0, currentOffset.roundToInt()) }
+                .fillMaxSize()
+                .border(
+                    color = AppColors.surface,
+                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
+                    width = 2.dp
+                ),
+            shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
+            color = AppColors.background,
+            tonalElevation = 8.dp
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(collapsedHeight)
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onVerticalDrag = { change, dragAmount ->
+                                scope.launch {
+                                    change.consume()
+                                    val new = (offsetY.value + dragAmount).coerceIn(
+                                        expandedY,
+                                        collapsedY
+                                    )
+                                    offsetY.snapTo(new)
+                                }
+                            },
+                            onDragEnd = {
+                                val middle = (collapsedY + expandedY) / 2f
+                                if (offsetY.value <= middle) animateToExpanded() else animateToCollapsed()
+                            }
+                        )
+                    }
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopStart
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
+                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
+                    Item("Stress Level", userData?.stressLevel ?: "0", userData?.stressVector)
+                    Item("Focus", userData?.focus ?: "0", userData?.focusVector)
+                    Item("Motivation", userData?.motivation ?: "0", userData?.motivationVector)
+                    Item("Creativity", userData?.creativity ?: "0", userData?.creativityVector)
+                    Item("Emotional Balance", userData?.emotionalBalance ?: "0", userData?.emotionalBalanceVector)
+                    Item("Physical Energy", userData?.physicalEnergy ?: "0", userData?.physicalEnergyVector)
+                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
+                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
+                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
+                    Item("Dominant Color", userData?.dominantColor ?: "0", userData?.colorVector)
+//                    Spacer(Modifier.size(16.dp))
+                    Button(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = {
+                            i.value++
+                            val rnd = Random(System.currentTimeMillis())
+                            val rndInd = rnd.nextInt(1, 10)
+                            val question = LocalDailyTestService().firstVarTest[i.value]
+
+                            auraDetailsViewModel.consumeAnswer(
+                                context = context,
+                                question = question,
+                                answer = rndInd
+                            )
+                            if (i.value == 9) i.value = 0
+                        },
+                        content = {
+                            Text(
+                                color = AppColors.textPrimary,
+                                text = "тесты",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp)
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Item(
+    label: String,
+    value: Any,
+    vector: List<Any>?
+) {
+    val textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)) {
+        Text(
+            text = "$label: $value",
+            style = textStyle,
+            fontWeight = FontWeight.Bold,
+            color = AppColors.textPrimary
+        )
+
+        if (vector != null) {
+            Text(
+                text = "${vector.joinToString(", ")}",
+                style = textStyle,
+                color = AppColors.surface
+            )
+        }
+
+        Divider(modifier = Modifier.padding(top = 6.dp))
     }
 }

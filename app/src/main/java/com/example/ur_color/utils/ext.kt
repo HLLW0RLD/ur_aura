@@ -6,10 +6,16 @@ import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavController
 import com.example.ur_color.data.local.dataManager.SystemDataManager
+import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.ui.theme.ThemeMode
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -18,6 +24,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
+import androidx.core.graphics.toColorInt
 
 //  SYSTEM
 /*==============================================================================================*/
@@ -203,4 +210,37 @@ fun String.setColorDate(isDeadLine: Boolean = true): androidx.compose.ui.graphic
         logError("string: $this \nerror $e")
     }
     return androidx.compose.ui.graphics.Color.Red
+}
+
+fun List<Int>.toColoredText(): AnnotatedString {
+    val lowColors = listOf(
+        AuraColors.RED,
+        AuraColors.ORANGE,
+        AuraColors.YELLOW,
+        AuraColors.LIME,
+        AuraColors.GREEN
+    )
+
+    val highColors = listOf(
+        AuraColors.GREEN,
+        AuraColors.CYAN,
+        AuraColors.BLUE,
+        AuraColors.INDIGO,
+        AuraColors.VIOLET
+    )
+
+    return buildAnnotatedString {
+        this@toColoredText.forEachIndexed { index, num ->
+            val color = when (num) {
+                in 1..5 -> Color(lowColors[num - 1].hex.toColorInt())
+                in 6..10 -> Color(highColors[num - 6].hex.toColorInt())
+                else -> Color.White
+            }
+
+            withStyle(SpanStyle(color = color)) {
+                append(num.toString())
+                if (index != this@toColoredText.lastIndex) append(" ")
+            }
+        }
+    }
 }

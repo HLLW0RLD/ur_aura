@@ -12,10 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -36,8 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import com.example.ur_color.data.local.LocalDailyTestService
+import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.utils.toColoredText
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -71,7 +70,7 @@ fun AuraDetailsScreen(
     val expandedY = topInsetPx
     val collapsedY = screenHeightPx - collapsedHeightPx
 
-    var i = remember { mutableStateOf(0) }
+    val i = remember { mutableStateOf(0) }
 
     val offsetY = remember { Animatable(collapsedY) }
     val scope = rememberCoroutineScope()
@@ -147,36 +146,22 @@ fun AuraDetailsScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
-                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
-                    Item("Stress Level", userData?.stressLevel ?: "0", userData?.stressVector)
-                    Item("Focus", userData?.focus ?: "0", userData?.focusVector)
-                    Item("Motivation", userData?.motivation ?: "0", userData?.motivationVector)
-                    Item("Creativity", userData?.creativity ?: "0", userData?.creativityVector)
-                    Item("Emotional Balance", userData?.emotionalBalance ?: "0", userData?.emotionalBalanceVector)
-                    Item("Physical Energy", userData?.physicalEnergy ?: "0", userData?.physicalEnergyVector)
-                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
-                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
-                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
-                    Item("Dominant Color", userData?.dominantColor ?: "0", userData?.colorVector)
-//                    Spacer(Modifier.size(16.dp))
                     Button(
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp),
                         onClick = {
-                            i.value++
                             val rnd = Random(System.currentTimeMillis())
                             val rndInd = rnd.nextInt(1, 10)
                             val question = LocalDailyTestService().firstVarTest[i.value]
-
                             auraDetailsViewModel.consumeAnswer(
                                 context = context,
                                 question = question,
                                 answer = rndInd
                             )
-                            if (i.value == 9) i.value = 0
+                            i.value++
+                            if (i.value == 29) i.value = 0
                         },
                         content = {
                             Text(
@@ -189,6 +174,72 @@ fun AuraDetailsScreen(
                             )
                         }
                     )
+
+                    ExpandableGradientGraphBox(
+                        values = userData?.energyCapacity ?: listOf(),
+                        collapsedText = "Energy Level",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.moodVector ?: listOf(),
+                        collapsedText = "Mood",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.stressVector ?: listOf(),
+                        collapsedText = "Stress Level",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.motivationVector ?: listOf(),
+                        collapsedText = "Motivation",
+                        collapsed = {}
+                    )
+
+                    ExpandableGradientGraphBox(
+                        values = userData?.creativityVector ?: listOf(),
+                        collapsedText = "Creativity",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.emotionalBalanceVector ?: listOf(),
+                        collapsedText = "Emotional Balance",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.physicalEnergyVector ?: listOf(),
+                        collapsedText = "Physical Energy",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.sleepQualityVector ?: listOf(),
+                        collapsedText = "Sleep Quality",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.intuitionVector ?: listOf(),
+                        collapsedText = "Intuition Level",
+                        collapsed = {}
+                    )
+                    ExpandableGradientGraphBox(
+                        values = userData?.socialVector ?: listOf(),
+                        collapsedText = "Social Energy",
+                        collapsed = {}
+                    )
+
+
+//                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
+//                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
+//                    Item("Stress Level", userData?.stressLevel ?: "0", userData?.stressVector)
+//                    Item("Focus", userData?.focus ?: "0", userData?.focusVector)
+//                    Item("Motivation", userData?.motivation ?: "0", userData?.motivationVector)
+//                    Item("Creativity", userData?.creativity ?: "0", userData?.creativityVector)
+//                    Item("Emotional Balance", userData?.emotionalBalance ?: "0", userData?.emotionalBalanceVector)
+//                    Item("Physical Energy", userData?.physicalEnergy ?: "0", userData?.physicalEnergyVector)
+//                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
+//                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
+//                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
+////                    Spacer(Modifier.size(16.dp))
                 }
             }
         }
@@ -199,7 +250,7 @@ fun AuraDetailsScreen(
 fun Item(
     label: String,
     value: Any,
-    vector: List<Any>?
+    vector: List<Int>?
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
 
@@ -215,7 +266,7 @@ fun Item(
 
         if (vector != null) {
             Text(
-                text = "${vector.joinToString(", ")}",
+                text = vector.toColoredText(),
                 style = textStyle,
                 color = AppColors.surface
             )

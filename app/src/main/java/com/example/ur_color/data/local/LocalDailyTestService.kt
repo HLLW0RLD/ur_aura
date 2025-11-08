@@ -7,155 +7,306 @@ import com.example.ur_color.data.model.QuestionType
 
 class LocalDailyTestService {
 
+    // опросник в формате свайп-карточек, между вопросами можно будет потом размещать призы/рекламу
     val baseQuestions = listOf(
         Pair(
             listOf(
-                Mod(ModType.ENERGY_LEVEL, 0.6),
-                Mod(ModType.CREATIVITY, 0.5),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.4),
-                Mod(ModType.PHYSICAL_ENERGY, -0.3),
-                Mod(ModType.SLEEP_QUALITY, -0.2),
-                Mod(ModType.INTUITION_LEVEL, -0.4)
+                Mod(ModType.ENERGY_LEVEL, 0.8),
+                Mod(ModType.MOTIVATION, 0.7)
             ),
             listOf(
-                "Сегодня вы ощущаете прилив энергии для начала новых дел?",
-                "Сегодня у вас достаточно сил, чтобы браться за новые дела?",
-                "Сегодня вы чувствуете заряд энергии для начала новых задач?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.FOCUS, 0.8),
-                Mod(ModType.ENERGY_LEVEL, 0.3),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
-                Mod(ModType.CREATIVITY, -0.3),
-                Mod(ModType.SLEEP_QUALITY, -0.4),
-                Mod(ModType.PHYSICAL_ENERGY, -0.3)
-            ),
-            listOf(
-                "Сегодня вам легко сосредоточиться на одной задаче?",
-                "Сегодня вам легко концентрироваться на одной задаче?",
-                "Сегодня легко удерживать внимание на одной задаче без отвлечений?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, 0.7),
-                Mod(ModType.INTUITION_LEVEL, 0.4),
-                Mod(ModType.CREATIVITY, 0.3),
-                Mod(ModType.SLEEP_QUALITY, -0.3),
-                Mod(ModType.PHYSICAL_ENERGY, -0.2),
-                Mod(ModType.ENERGY_LEVEL, -0.4)
-            ),
-            listOf(
-                "Сегодня вы чувствуете внутреннюю гармонию при выполнении своих дел?",
-                "Сегодня вы ощущаете внутреннее спокойствие при работе?",
-                "Сегодня вы ощущаете спокойствие и внутренний баланс при работе?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.CREATIVITY, 0.9),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.4),
-                Mod(ModType.INTUITION_LEVEL, 0.3),
-                Mod(ModType.SLEEP_QUALITY, -0.4),
-                Mod(ModType.PHYSICAL_ENERGY, -0.3),
-                Mod(ModType.ENERGY_LEVEL, -0.2)
-            ),
-            listOf(
-                "Сегодня вы легко погружаетесь в творческий процесс без внешнего давления?",
-                "Сегодня вы легко погружаетесь в творческое мышление?",
-                "Сегодня вам легко погружаться в творческий процесс?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.ENERGY_LEVEL, -0.6),
-                Mod(ModType.SLEEP_QUALITY, -0.5),
-                Mod(ModType.PHYSICAL_ENERGY, -0.4),
-                Mod(ModType.CREATIVITY, 0.3),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
-                Mod(ModType.INTUITION_LEVEL, 0.2)
-            ),
-            listOf(
-                "Сегодня выполнение рутинной работы вызывает у вас усталость?",
-                "Сегодня обычная работа кажется вам тяжелой или утомительной?",
-                "Сегодня выполнение рутинной работы кажется утомительным?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.INTUITION_LEVEL, 0.8),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.3),
-                Mod(ModType.CREATIVITY, 0.2),
-                Mod(ModType.PHYSICAL_ENERGY, -0.2),
-                Mod(ModType.SLEEP_QUALITY, -0.3),
-                Mod(ModType.ENERGY_LEVEL, -0.3)
-            ),
-            listOf(
-                "Сегодня вы готовы полагаться на интуицию при принятии решений?",
-                "Сегодня вы полагаетесь на свою интуицию в текущих делах?",
-                "Сегодня вы доверяете своей интуиции при принятии решений?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, -0.6),
-                Mod(ModType.SLEEP_QUALITY, -0.4),
-                Mod(ModType.ENERGY_LEVEL, -0.3),
-                Mod(ModType.PHYSICAL_ENERGY, 0.3),
-                Mod(ModType.CREATIVITY, 0.2),
-                Mod(ModType.INTUITION_LEVEL, 0.4)
-            ),
-            listOf(
-                "Сегодня вы чувствуете стресс из-за необходимости соблюдать сроки?",
-                "Сегодня вас напрягают сроки выполнения задач?",
-                "Сегодня соблюдение сроков вызывает у вас напряжение?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.CREATIVITY, 0.4),
-                Mod(ModType.PHYSICAL_ENERGY, 0.3),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.2),
-                Mod(ModType.SLEEP_QUALITY, -0.2),
-                Mod(ModType.ENERGY_LEVEL, -0.3),
-                Mod(ModType.INTUITION_LEVEL, -0.4)
-            ),
-            listOf(
-                "Сегодня вы готовы делиться своими идеями с окружающими?",
-                "Сегодня вы готовы обсуждать идеи и делиться мыслями с другими?",
-                "Сегодня вы готовы обсуждать свои идеи с коллегами или друзьями?"
-            )
-        ),
-        Pair(
-            listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, 0.5),
-                Mod(ModType.CREATIVITY, 0.4),
-                Mod(ModType.ENERGY_LEVEL, 0.3),
-                Mod(ModType.PHYSICAL_ENERGY, -0.3),
-                Mod(ModType.SLEEP_QUALITY, -0.3),
-                Mod(ModType.INTUITION_LEVEL, -0.2)
-            ),
-            listOf(
-                "Сегодня вы удовлетворены своей продуктивностью?",
-                "Сегодня вы довольны своей эффективностью?",
-                "Сегодня вы довольны тем, как справляетесь с делами?"
+                "Сегодня чувствуете прилив сил?",
+                "Хочется что-то начать?"
             )
         ),
         Pair(
             listOf(
                 Mod(ModType.ENERGY_LEVEL, -0.7),
-                Mod(ModType.SLEEP_QUALITY, -0.5),
-                Mod(ModType.PHYSICAL_ENERGY, -0.4),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.3),
-                Mod(ModType.CREATIVITY, 0.2),
-                Mod(ModType.INTUITION_LEVEL, 0.1)
+                Mod(ModType.PHYSICAL_ENERGY, -0.6)
             ),
             listOf(
-                "Сегодня вы чувствуете упадок сил после умственного напряжения?",
-                "Сегодня вы чувствуете усталость после интеллектуальной работы?",
-                "Сегодня вы ощущаете усталость после умственной нагрузки?"
+                "Чувствуете упадок энергии?",
+                "Тело будто не слушается?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.FOCUS, 0.8),
+                Mod(ModType.MOTIVATION, 0.5)
+            ),
+            listOf(
+                "Легко сосредоточиться?",
+                "Можете удерживать внимание?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.FOCUS, -0.6),
+                Mod(ModType.STRESS_LEVEL, 0.7)
+            ),
+            listOf(
+                "Рассеяны и не можете собраться?",
+                "В голове каша?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.CREATIVITY, 0.9),
+                Mod(ModType.INTUITION_LEVEL, 0.6)
+            ),
+            listOf(
+                "Идеи приходят сами собой?",
+                "Чувствуете внутреннее вдохновение?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.CREATIVITY, -0.5),
+                Mod(ModType.MOOD, -0.4)
+            ),
+            listOf(
+                "Всё кажется скучным?",
+                "Нет желания что-то создавать?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.EMOTIONAL_BALANCE, 0.7),
+                Mod(ModType.MOOD, 0.6)
+            ),
+            listOf(
+                "Чувствуете внутреннее спокойствие?",
+                "Настроение ровное и комфортное?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.EMOTIONAL_BALANCE, -0.6),
+                Mod(ModType.STRESS_LEVEL, 0.6)
+            ),
+            listOf(
+                "Чувствуете напряжение внутри?",
+                "Эмоции не под контролем?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.SOCIAL_ENERGY, 0.6),
+                Mod(ModType.MOOD, 0.5)
+            ),
+            listOf(
+                "Общение даёт энергию?",
+                "Хочется поговорить с кем-то?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.SOCIAL_ENERGY, -0.5),
+                Mod(ModType.EMOTIONAL_BALANCE, -0.4)
+            ),
+            listOf(
+                "Общение истощает?",
+                "Чувствуете себя одиноко?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.PHYSICAL_ENERGY, 0.7),
+                Mod(ModType.SLEEP_QUALITY, 0.6)
+            ),
+            listOf(
+                "Чувствуете бодрость в теле?",
+                "Выспались хорошо?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.PHYSICAL_ENERGY, -0.5),
+                Mod(ModType.SLEEP_QUALITY, -0.9)
+            ),
+            listOf(
+                "Тело тяжёлое после сна?",
+                "Не выспались и чувствуете усталость?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.MOTIVATION, 0.6),
+                Mod(ModType.ENERGY_LEVEL, 0.5)
+            ),
+            listOf(
+                "Есть желание действовать?",
+                "Чувствуете импульс к делам?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.MOTIVATION, -0.7),
+                Mod(ModType.MOOD, -0.6)
+            ),
+            listOf(
+                "Апатия и безразличие?",
+                "Ничего не хочется делать?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.STRESS_LEVEL, -0.5),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.6)
+            ),
+            listOf(
+                "Чувствуете контроль над стрессом?",
+                "Можете успокаиваться?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.STRESS_LEVEL, 0.8),
+                Mod(ModType.FOCUS, -0.5)
+            ),
+            listOf(
+                "Чувствуете давление времени?",
+                "Стресс мешает мыслить ясно?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.INTUITION_LEVEL, 0.7),
+                Mod(ModType.CREATIVITY, 0.4)
+            ),
+            listOf(
+                "Доверяете своим ощущениям?",
+                "Чувствуете внутренний компас?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.INTUITION_LEVEL, -0.5),
+                Mod(ModType.EMOTIONAL_BALANCE, -0.3)
+            ),
+            listOf(
+                "Сомневаетесь во всём?",
+                "Не чувствуете уверенности в выборе?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.SOCIAL_ENERGY, 0.5),
+                Mod(ModType.ENERGY_LEVEL, 0.4)
+            ),
+            listOf(
+                "Общение заряжает?",
+                "Люди дают жизненную силу?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.SOCIAL_ENERGY, -0.6),
+                Mod(ModType.STRESS_LEVEL, 0.5)
+            ),
+            listOf(
+                "Общение вызывает напряжение?",
+                "После разговоров чувствуете опустошение?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.MOOD, 0.7),
+                Mod(ModType.EMOTIONAL_BALANCE, 0.5)
+            ),
+            listOf(
+                "Настроение хорошее?",
+                "Чувствуете лёгкость внутри?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.MOOD, -0.6),
+                Mod(ModType.STRESS_LEVEL, 0.4)
+            ),
+            listOf(
+                "Подавленность и тяжесть?",
+                "Настроение плохое без причины?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.FOCUS, 0.6),
+                Mod(ModType.PHYSICAL_ENERGY, 0.4)
+            ),
+            listOf(
+                "Работаете без усталости?",
+                "Можете долго концентрироваться?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.FOCUS, -0.7),
+                Mod(ModType.PHYSICAL_ENERGY, -0.5)
+            ),
+            listOf(
+                "Устали уже через минуту?",
+                "Концентрация рассыпается?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.CREATIVITY, 0.6),
+                Mod(ModType.MOOD, 0.5)
+            ),
+            listOf(
+                "Чувствуете творческий поток?",
+                "Идеи рождаются легко?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.CREATIVITY, -0.6),
+                Mod(ModType.MOTIVATION, -0.5)
+            ),
+            listOf(
+                "Нет вдохновения?",
+                "Творчество не получается?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.SLEEP_QUALITY, 0.8),
+                Mod(ModType.ENERGY_LEVEL, 0.6)
+            ),
+            listOf(
+                "Проснулись отдохнувшим?",
+                "Чувствуете свежесть ума?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.SLEEP_QUALITY, -0.7),
+                Mod(ModType.MOOD, -0.5)
+            ),
+            listOf(
+                "Сон был беспокойным?",
+                "Проснулись с тревогой?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.EMOTIONAL_BALANCE, 0.6),
+                Mod(ModType.SOCIAL_ENERGY, 0.4)
+            ),
+            listOf(
+                "Чувствуете гармонию с собой?",
+                "Комфортно общаться с другими?"
+            )
+        ),
+        Pair(
+            listOf(
+                Mod(ModType.ENERGY_LEVEL, -0.6),
+                Mod(ModType.MOTIVATION, -0.6)
+            ),
+            listOf(
+                "Чувствуете внутреннюю пустоту?",
+                "Нет желания ничего начинать?"
             )
         )
     )
@@ -165,8 +316,5 @@ class LocalDailyTestService {
     }
     val secondVarTest = baseQuestions.mapIndexed { idx, base ->
         Question(id = "${2+idx}", text = base.second[1], mods = base.first)
-    }
-    val thirdVarTest = baseQuestions.mapIndexed { idx, base ->
-        Question(id = "${3+idx}", text = base.second[2], mods = base.first)
     }
 }

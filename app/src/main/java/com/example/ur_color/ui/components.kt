@@ -71,6 +71,18 @@ import com.example.ur_color.utils.getCurrentDateTime
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 enum class WindowType { Slim, Regular, Full }
 
@@ -600,4 +612,165 @@ private fun ExpandableContent(
             }
         }
     }
+}
+
+@Composable
+fun ExpandableGradientGraphBox(
+    values: List<Int>,
+    collapsedText: String? = null,
+    collapsed: (() -> Unit),
+    modifier: Modifier = Modifier,
+) {
+    val safeValues = values.takeLast(10).map { it.coerceIn(0, 10) }
+
+    var collapsed by remember { mutableStateOf(true) }
+
+    val defaultCollapsedText = remember(safeValues) {
+        if (safeValues.isEmpty()) "—"
+        else "Avg: ${("%.1f".format(safeValues.average()))}"
+    }
+    val textToShow = collapsedText ?: defaultCollapsedText
+
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(10.dp),
+        tonalElevation = 2.dp,
+        shadowElevation = 4.dp,
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable { collapsed = !collapsed }
+                .padding(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = textToShow,
+                    fontSize = 14.sp,
+                    color = Color(0xFF222222)
+                )
+                Text(
+                    text = if (collapsed) "Показать" else "Свернуть",
+                    fontSize = 12.sp,
+                    color = Color(0xFF666666),
+                    textAlign = TextAlign.End
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            AnimatedVisibility(
+                visible = !collapsed,
+                enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
+                exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
+            ) {
+                GradientGraphBox(
+                    values = safeValues,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GradientGraphBox(
+    values: List<Int>,
+    modifier: Modifier = Modifier,
+    barSpacingDp: Int = 6,
+) {
+    val safeValues = values.map { it.coerceIn(0, 10) }
+    val barCount = values.size
+    val anims = remember(values) {
+        values.map { Animatable(0f) }
+    }
+
+    LaunchedEffect(values) {
+        anims.forEach { it.snapTo(0f) }
+        val scope = this
+        values.forEachIndexed { idx, v ->
+            val target = (v.coerceIn(0, 10) / 10f)
+            scope.launch {
+                delay(idx * 40L)
+                anims[idx].animateTo(
+                    target,
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            }
+        }
+    }
+
+    Canvas(modifier = modifier) {
+        val w = size.width
+        val h = size.height
+
+        if (barCount == 0) return@Canvas
+
+        val spacing = barSpacingDp.dp.toPx()
+        val totalSpacing = spacing * (barCount - 1).coerceAtLeast(0)
+        val barWidth = (w - totalSpacing) / barCount
+
+        fun colorForValue(fraction: Float): Color {
+            return when {
+                fraction <= 0.5f -> {
+                    lerp(Color(0xFFFF4D4D), Color(0xFF45D07B), fraction / 0.5f)
+                }
+                else -> {
+                    lerp(Color(0xFF45D07B), Color(0xFF8F00FF), (fraction - 0.5f) / 0.5f)
+                }
+            }
+        }
+
+        values.forEachIndexed { i, v ->
+            val x = i * (barWidth + spacing)
+            val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0, 10) / 10f)
+            val barHeight = frac * h
+            val top = h - barHeight
+
+            val rect = Rect(x, top, x + barWidth, h)
+            drawRoundRect(
+                color = colorForValue(frac),
+                topLeft = Offset(rect.left, rect.top),
+                size = rect.size,
+                cornerRadius = CornerRadius(x = 4.dp.toPx(), y = 4.dp.toPx())
+            )
+
+            // small semi-transparent overlay to give depth
+            drawRoundRect(
+                color = Color.Black.copy(alpha = 0.06f),
+                topLeft = Offset(rect.left, rect.top),
+                size = rect.size,
+                cornerRadius = CornerRadius(x = 4.dp.toPx(), y = 4.dp.toPx()),
+                blendMode = BlendMode.SrcOver
+            )
+        }
+
+        // optional baseline
+        drawLine(
+            color = Color(0x22000000),
+            strokeWidth = 1.dp.toPx(),
+            start = Offset(0f, h),
+            end = Offset(w, h)
+        )
+    }
+}
+
+
+private fun lerp(start: Color, stop: Color, fraction: Float): Color {
+    val f = fraction.coerceIn(0f, 1f)
+    return Color(
+        red = start.red + (stop.red - start.red) * f,
+        green = start.green + (stop.green - start.green) * f,
+        blue = start.blue + (stop.blue - start.blue) * f,
+        alpha = start.alpha + (stop.alpha - start.alpha) * f
+    )
 }

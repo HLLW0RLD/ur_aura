@@ -83,6 +83,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.core.graphics.toColorInt
 
 enum class WindowType { Slim, Regular, Full }
 
@@ -618,8 +619,8 @@ private fun ExpandableContent(
 fun ExpandableGradientGraphBox(
     values: List<Int>,
     collapsedText: String? = null,
-    collapsed: (() -> Unit),
     modifier: Modifier = Modifier,
+    showStat: Boolean = true,
 ) {
     val safeValues = values.takeLast(10).map { it.coerceIn(0, 10) }
 
@@ -670,6 +671,7 @@ fun ExpandableGradientGraphBox(
             ) {
                 GradientGraphBox(
                     values = safeValues,
+                    showStat = showStat,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp)
@@ -684,17 +686,18 @@ private fun GradientGraphBox(
     values: List<Int>,
     modifier: Modifier = Modifier,
     barSpacingDp: Int = 6,
+    showStat: Boolean = true
 ) {
     val safeValues = values.map { it.coerceIn(0, 10) }
-    val barCount = values.size
+    val barCount = safeValues.size
     val anims = remember(values) {
-        values.map { Animatable(0f) }
+        safeValues.map { Animatable(0f) }
     }
 
-    LaunchedEffect(values) {
+    LaunchedEffect(safeValues) {
         anims.forEach { it.snapTo(0f) }
         val scope = this
-        values.forEachIndexed { idx, v ->
+        safeValues.forEachIndexed { idx, v ->
             val target = (v.coerceIn(0, 10) / 10f)
             scope.launch {
                 delay(idx * 40L)
@@ -715,9 +718,19 @@ private fun GradientGraphBox(
 
         if (barCount == 0) return@Canvas
 
+        val labelAreaHeight = if (showStat) 18.dp.toPx() else 0f
+        val graphHeight = h - labelAreaHeight
+
         val spacing = barSpacingDp.dp.toPx()
         val totalSpacing = spacing * (barCount - 1).coerceAtLeast(0)
         val barWidth = (w - totalSpacing) / barCount
+
+        val textPaint = android.graphics.Paint().apply {
+            color = "#444444".toColorInt()
+            textAlign = android.graphics.Paint.Align.CENTER
+            textSize = 13.sp.toPx()
+            isAntiAlias = true
+        }
 
         fun colorForValue(fraction: Float): Color {
             return when {
@@ -730,36 +743,44 @@ private fun GradientGraphBox(
             }
         }
 
-        values.forEachIndexed { i, v ->
+        safeValues.forEachIndexed { i, v ->
             val x = i * (barWidth + spacing)
             val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0, 10) / 10f)
-            val barHeight = frac * h
-            val top = h - barHeight
+            val barHeight = frac * graphHeight
+            val top = graphHeight - barHeight
 
-            val rect = Rect(x, top, x + barWidth, h)
+            val rect = Rect(x, top, x + barWidth, graphHeight)
             drawRoundRect(
                 color = colorForValue(frac),
                 topLeft = Offset(rect.left, rect.top),
                 size = rect.size,
-                cornerRadius = CornerRadius(x = 4.dp.toPx(), y = 4.dp.toPx())
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
             )
 
-            // small semi-transparent overlay to give depth
             drawRoundRect(
                 color = Color.Black.copy(alpha = 0.06f),
                 topLeft = Offset(rect.left, rect.top),
                 size = rect.size,
-                cornerRadius = CornerRadius(x = 4.dp.toPx(), y = 4.dp.toPx()),
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
                 blendMode = BlendMode.SrcOver
             )
+
+            if (showStat) {
+                val textY = h - 4.dp.toPx() // нижняя часть Canvas
+                drawContext.canvas.nativeCanvas.drawText(
+                    v.toString(),
+                    x + barWidth / 2,
+                    textY,
+                    textPaint
+                )
+            }
         }
 
-        // optional baseline
         drawLine(
             color = Color(0x22000000),
             strokeWidth = 1.dp.toPx(),
-            start = Offset(0f, h),
-            end = Offset(w, h)
+            start = Offset(0f, graphHeight),
+            end = Offset(w, graphHeight)
         )
     }
 }

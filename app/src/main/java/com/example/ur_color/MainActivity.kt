@@ -24,6 +24,8 @@ import com.example.ur_color.ui.screen.Main
 import com.example.ur_color.ui.screen.MainScreen
 import com.example.ur_color.ui.screen.Profile
 import com.example.ur_color.ui.screen.ProfileScreen
+import com.example.ur_color.ui.screen.QuestionSwipe
+import com.example.ur_color.ui.screen.QuestionSwipeScreen
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.screen.screenComposable
@@ -64,6 +66,7 @@ class MainActivity : ComponentActivity() {
                         screenComposable<Main> { MainScreen() }
                         screenComposable<AuraDetails> { AuraDetailsScreen(it) }
                         screenComposable<Profile> { ProfileScreen() }
+                        screenComposable<QuestionSwipe> { QuestionSwipeScreen() }
                     }
                 }
             }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -146,87 +147,101 @@ fun AuraDetailsScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Button(
+                    LazyColumn(
                         modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(10.dp),
-                        onClick = {
-                            val rnd = Random(System.currentTimeMillis())
-                            val rndInd = rnd.nextInt(1, 10)
-                            val question = LocalDailyTestService().firstVarTest[i.value]
-                            auraDetailsViewModel.consumeAnswer(
-                                context = context,
-                                question = question,
-                                answer = rndInd
-                            )
-                            i.value++
-                            if (i.value == 29) i.value = 0
-                        },
-                        content = {
-                            Text(
-                                color = AppColors.textPrimary,
-                                text = "тесты",
-                                textAlign = TextAlign.Center,
+                            .padding(bottom = 24.dp)
+                    ) {
+                        item {
+                            ExpandableGradientGraphBox(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
+                                    .padding(8.dp),
+                                values = userData?.energyCapacity ?: listOf(),
+                                collapsedText = "Energy Level",
                             )
                         }
-                    )
-
-                    ExpandableGradientGraphBox(
-                        values = userData?.energyCapacity ?: listOf(),
-                        collapsedText = "Energy Level",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.moodVector ?: listOf(),
-                        collapsedText = "Mood",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.stressVector ?: listOf(),
-                        collapsedText = "Stress Level",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.motivationVector ?: listOf(),
-                        collapsedText = "Motivation",
-                        collapsed = {}
-                    )
-
-                    ExpandableGradientGraphBox(
-                        values = userData?.creativityVector ?: listOf(),
-                        collapsedText = "Creativity",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.emotionalBalanceVector ?: listOf(),
-                        collapsedText = "Emotional Balance",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.physicalEnergyVector ?: listOf(),
-                        collapsedText = "Physical Energy",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.sleepQualityVector ?: listOf(),
-                        collapsedText = "Sleep Quality",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.intuitionVector ?: listOf(),
-                        collapsedText = "Intuition Level",
-                        collapsed = {}
-                    )
-                    ExpandableGradientGraphBox(
-                        values = userData?.socialVector ?: listOf(),
-                        collapsedText = "Social Energy",
-                        collapsed = {}
-                    )
-
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.moodVector ?: listOf(),
+                                collapsedText = "Mood",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.stressVector ?: listOf(),
+                                collapsedText = "Stress Level",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.motivationVector ?: listOf(),
+                                collapsedText = "Motivation",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.creativityVector ?: listOf(),
+                                collapsedText = "Creativity",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.emotionalBalanceVector ?: listOf(),
+                                collapsedText = "Emotional Balance",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.physicalEnergyVector ?: listOf(),
+                                collapsedText = "Physical Energy",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.sleepQualityVector ?: listOf(),
+                                collapsedText = "Sleep Quality",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.intuitionVector ?: listOf(),
+                                collapsedText = "Intuition Level",
+                            )
+                        }
+                        item {
+                            ExpandableGradientGraphBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                values = userData?.socialVector ?: listOf(),
+                                collapsedText = "Social Energy",
+                            )
+                        }
+                    }
 
 //                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
 //                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
@@ -239,7 +254,6 @@ fun AuraDetailsScreen(
 //                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
 //                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
 //                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
-////                    Spacer(Modifier.size(16.dp))
                 }
             }
         }

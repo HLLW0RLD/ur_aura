@@ -2,7 +2,6 @@ package com.example.ur_color.data.model
 
 data class Question(
     val id: String,
-//    val type: QuestionType,
     val text: String,
     val mods: List<Mod> = emptyList()
 )
@@ -28,11 +27,10 @@ enum class ModType {
     DOMINANT_COLOR // можно оставить для будущих визуальных метрик
 }
 
-enum class QuestionType {
-    MENTAL,       // мотивация, креативность, фокус
-    MOOD,         // настроение, стресс
-    HEALTH,       // энергия, физическое состояние, сон
-    SOCIAL,       // социальная энергия, коммуникация
-    STRESS,
-    GENERAL,       // универсальные вопросы, влияют на несколько областей
+object ModFactors {
+    const val VERY_HIGH = 0.9
+    const val HIGH = 0.8
+    const val MEDIUM = 0.7
+    const val LOW = 0.6
+    const val VERY_LOW = 0.5
 }

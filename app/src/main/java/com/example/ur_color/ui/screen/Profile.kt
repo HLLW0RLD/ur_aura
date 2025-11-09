@@ -112,7 +112,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-//                            navController.navigate("personalTests")
+                            navController.navigate(QuestionSwipe.route())
                         }
                         .padding(8.dp)
                 )

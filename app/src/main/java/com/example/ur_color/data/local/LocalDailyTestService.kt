@@ -1,9 +1,9 @@
 package com.example.ur_color.data.local
 
 import com.example.ur_color.data.model.Mod
+import com.example.ur_color.data.model.ModFactors
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
-import com.example.ur_color.data.model.QuestionType
 
 class LocalDailyTestService {
 
@@ -11,8 +11,10 @@ class LocalDailyTestService {
     val baseQuestions = listOf(
         Pair(
             listOf(
-                Mod(ModType.ENERGY_LEVEL, 0.8),
-                Mod(ModType.MOTIVATION, 0.7)
+                Mod(ModType.ENERGY_LEVEL, ModFactors.HIGH),
+                Mod(ModType.MOTIVATION, ModFactors.HIGH),
+                Mod(ModType.PHYSICAL_ENERGY, ModFactors.MEDIUM),
+                Mod(ModType.MOOD, ModFactors.LOW)
             ),
             listOf(
                 "Сегодня чувствуете прилив сил?",
@@ -21,8 +23,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.ENERGY_LEVEL, -0.7),
-                Mod(ModType.PHYSICAL_ENERGY, -0.6)
+                Mod(ModType.ENERGY_LEVEL, -ModFactors.VERY_HIGH),
+                Mod(ModType.PHYSICAL_ENERGY, -ModFactors.HIGH),
+                Mod(ModType.SLEEP_QUALITY, -ModFactors.MEDIUM),
+                Mod(ModType.MOOD, -ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете упадок энергии?",
@@ -31,8 +35,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.FOCUS, 0.8),
-                Mod(ModType.MOTIVATION, 0.5)
+                Mod(ModType.FOCUS, ModFactors.VERY_HIGH),
+                Mod(ModType.MOTIVATION, ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.MEDIUM),
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.LOW)
             ),
             listOf(
                 "Легко сосредоточиться?",
@@ -41,8 +47,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.FOCUS, -0.6),
-                Mod(ModType.STRESS_LEVEL, 0.7)
+                Mod(ModType.FOCUS, -ModFactors.HIGH),
+                Mod(ModType.STRESS_LEVEL, ModFactors.VERY_HIGH),
+                Mod(ModType.MOOD, -ModFactors.MEDIUM),
+                Mod(ModType.PHYSICAL_ENERGY, -ModFactors.LOW)
             ),
             listOf(
                 "Рассеяны и не можете собраться?",
@@ -51,8 +59,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.CREATIVITY, 0.9),
-                Mod(ModType.INTUITION_LEVEL, 0.6)
+                Mod(ModType.CREATIVITY, ModFactors.VERY_HIGH),
+                Mod(ModType.INTUITION_LEVEL, ModFactors.HIGH),
+                Mod(ModType.MOOD, ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.LOW)
             ),
             listOf(
                 "Идеи приходят сами собой?",
@@ -61,8 +71,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.CREATIVITY, -0.5),
-                Mod(ModType.MOOD, -0.4)
+                Mod(ModType.CREATIVITY, -ModFactors.MEDIUM),
+                Mod(ModType.MOOD, -ModFactors.MEDIUM),
+                Mod(ModType.MOTIVATION, -ModFactors.HIGH),
+                Mod(ModType.SOCIAL_ENERGY, -ModFactors.LOW)
             ),
             listOf(
                 "Всё кажется скучным?",
@@ -71,8 +83,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, 0.7),
-                Mod(ModType.MOOD, 0.6)
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.HIGH),
+                Mod(ModType.MOOD, ModFactors.MEDIUM),
+                Mod(ModType.SOCIAL_ENERGY, ModFactors.MEDIUM),
+                Mod(ModType.STRESS_LEVEL, -ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете внутреннее спокойствие?",
@@ -81,8 +95,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, -0.6),
-                Mod(ModType.STRESS_LEVEL, 0.6)
+                Mod(ModType.EMOTIONAL_BALANCE, -ModFactors.HIGH),
+                Mod(ModType.STRESS_LEVEL, ModFactors.HIGH),
+                Mod(ModType.FOCUS, -ModFactors.MEDIUM),
+                Mod(ModType.INTUITION_LEVEL, -ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете напряжение внутри?",
@@ -91,8 +107,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SOCIAL_ENERGY, 0.6),
-                Mod(ModType.MOOD, 0.5)
+                Mod(ModType.SOCIAL_ENERGY, ModFactors.HIGH),
+                Mod(ModType.MOOD, ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.LOW),
+                Mod(ModType.MOTIVATION, ModFactors.LOW)
             ),
             listOf(
                 "Общение даёт энергию?",
@@ -101,8 +119,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SOCIAL_ENERGY, -0.5),
-                Mod(ModType.EMOTIONAL_BALANCE, -0.4)
+                Mod(ModType.SOCIAL_ENERGY, -ModFactors.HIGH),
+                Mod(ModType.EMOTIONAL_BALANCE, -ModFactors.MEDIUM),
+                Mod(ModType.MOOD, -ModFactors.LOW),
+                Mod(ModType.STRESS_LEVEL, ModFactors.LOW)
             ),
             listOf(
                 "Общение истощает?",
@@ -111,8 +131,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.PHYSICAL_ENERGY, 0.7),
-                Mod(ModType.SLEEP_QUALITY, 0.6)
+                Mod(ModType.PHYSICAL_ENERGY, ModFactors.HIGH),
+                Mod(ModType.SLEEP_QUALITY, ModFactors.HIGH),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.MEDIUM),
+                Mod(ModType.MOOD, ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете бодрость в теле?",
@@ -121,8 +143,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.PHYSICAL_ENERGY, -0.5),
-                Mod(ModType.SLEEP_QUALITY, -0.9)
+                Mod(ModType.PHYSICAL_ENERGY, -ModFactors.MEDIUM),
+                Mod(ModType.SLEEP_QUALITY, -ModFactors.VERY_HIGH),
+                Mod(ModType.MOTIVATION, -ModFactors.LOW),
+                Mod(ModType.STRESS_LEVEL, ModFactors.MEDIUM)
             ),
             listOf(
                 "Тело тяжёлое после сна?",
@@ -131,8 +155,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.MOTIVATION, 0.6),
-                Mod(ModType.ENERGY_LEVEL, 0.5)
+                Mod(ModType.MOTIVATION, ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.MEDIUM),
+                Mod(ModType.FOCUS, ModFactors.LOW),
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.LOW)
             ),
             listOf(
                 "Есть желание действовать?",
@@ -141,8 +167,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.MOTIVATION, -0.7),
-                Mod(ModType.MOOD, -0.6)
+                Mod(ModType.MOTIVATION, -ModFactors.HIGH),
+                Mod(ModType.MOOD, -ModFactors.MEDIUM),
+                Mod(ModType.SOCIAL_ENERGY, -ModFactors.LOW),
+                Mod(ModType.ENERGY_LEVEL, -ModFactors.LOW)
             ),
             listOf(
                 "Апатия и безразличие?",
@@ -151,8 +179,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.STRESS_LEVEL, -0.5),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.6)
+                Mod(ModType.STRESS_LEVEL, -ModFactors.MEDIUM),
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.MEDIUM),
+                Mod(ModType.FOCUS, ModFactors.LOW),
+                Mod(ModType.MOOD, ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете контроль над стрессом?",
@@ -161,8 +191,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.STRESS_LEVEL, 0.8),
-                Mod(ModType.FOCUS, -0.5)
+                Mod(ModType.STRESS_LEVEL, ModFactors.VERY_HIGH),
+                Mod(ModType.FOCUS, -ModFactors.MEDIUM),
+                Mod(ModType.MOOD, -ModFactors.LOW),
+                Mod(ModType.EMOTIONAL_BALANCE, -ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете давление времени?",
@@ -171,8 +203,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.INTUITION_LEVEL, 0.7),
-                Mod(ModType.CREATIVITY, 0.4)
+                Mod(ModType.INTUITION_LEVEL, ModFactors.HIGH),
+                Mod(ModType.CREATIVITY, ModFactors.MEDIUM),
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.LOW),
+                Mod(ModType.SLEEP_QUALITY, ModFactors.LOW)
             ),
             listOf(
                 "Доверяете своим ощущениям?",
@@ -181,8 +215,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.INTUITION_LEVEL, -0.5),
-                Mod(ModType.EMOTIONAL_BALANCE, -0.3)
+                Mod(ModType.INTUITION_LEVEL, -ModFactors.MEDIUM),
+                Mod(ModType.EMOTIONAL_BALANCE, -ModFactors.LOW),
+                Mod(ModType.FOCUS, -ModFactors.LOW),
+                Mod(ModType.STRESS_LEVEL, ModFactors.LOW)
             ),
             listOf(
                 "Сомневаетесь во всём?",
@@ -191,8 +227,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SOCIAL_ENERGY, 0.5),
-                Mod(ModType.ENERGY_LEVEL, 0.4)
+                Mod(ModType.SOCIAL_ENERGY, ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.LOW),
+                Mod(ModType.MOOD, ModFactors.LOW),
+                Mod(ModType.MOTIVATION, ModFactors.LOW)
             ),
             listOf(
                 "Общение заряжает?",
@@ -201,8 +239,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SOCIAL_ENERGY, -0.6),
-                Mod(ModType.STRESS_LEVEL, 0.5)
+                Mod(ModType.SOCIAL_ENERGY, -ModFactors.HIGH),
+                Mod(ModType.STRESS_LEVEL, ModFactors.MEDIUM),
+                Mod(ModType.MOOD, -ModFactors.LOW),
+                Mod(ModType.ENERGY_LEVEL, -ModFactors.LOW)
             ),
             listOf(
                 "Общение вызывает напряжение?",
@@ -211,8 +251,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.MOOD, 0.7),
-                Mod(ModType.EMOTIONAL_BALANCE, 0.5)
+                Mod(ModType.MOOD, ModFactors.HIGH),
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.MEDIUM),
+                Mod(ModType.CREATIVITY, ModFactors.LOW),
+                Mod(ModType.INTUITION_LEVEL, ModFactors.LOW)
             ),
             listOf(
                 "Настроение хорошее?",
@@ -221,8 +263,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.MOOD, -0.6),
-                Mod(ModType.STRESS_LEVEL, 0.4)
+                Mod(ModType.MOOD, -ModFactors.HIGH),
+                Mod(ModType.STRESS_LEVEL, ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, -ModFactors.LOW),
+                Mod(ModType.MOTIVATION, -ModFactors.LOW)
             ),
             listOf(
                 "Подавленность и тяжесть?",
@@ -231,8 +275,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.FOCUS, 0.6),
-                Mod(ModType.PHYSICAL_ENERGY, 0.4)
+                Mod(ModType.FOCUS, ModFactors.MEDIUM),
+                Mod(ModType.PHYSICAL_ENERGY, ModFactors.LOW),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.LOW),
+                Mod(ModType.MOTIVATION, ModFactors.LOW)
             ),
             listOf(
                 "Работаете без усталости?",
@@ -241,8 +287,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.FOCUS, -0.7),
-                Mod(ModType.PHYSICAL_ENERGY, -0.5)
+                Mod(ModType.FOCUS, -ModFactors.HIGH),
+                Mod(ModType.PHYSICAL_ENERGY, -ModFactors.MEDIUM),
+                Mod(ModType.STRESS_LEVEL, ModFactors.LOW),
+                Mod(ModType.MOOD, -ModFactors.LOW)
             ),
             listOf(
                 "Устали уже через минуту?",
@@ -251,8 +299,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.CREATIVITY, 0.6),
-                Mod(ModType.MOOD, 0.5)
+                Mod(ModType.CREATIVITY, ModFactors.MEDIUM),
+                Mod(ModType.MOOD, ModFactors.LOW),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.LOW),
+                Mod(ModType.INTUITION_LEVEL, ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете творческий поток?",
@@ -261,8 +311,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.CREATIVITY, -0.6),
-                Mod(ModType.MOTIVATION, -0.5)
+                Mod(ModType.CREATIVITY, -ModFactors.HIGH),
+                Mod(ModType.MOTIVATION, -ModFactors.MEDIUM),
+                Mod(ModType.EMOTIONAL_BALANCE, -ModFactors.LOW),
+                Mod(ModType.MOOD, -ModFactors.LOW)
             ),
             listOf(
                 "Нет вдохновения?",
@@ -271,8 +323,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SLEEP_QUALITY, 0.8),
-                Mod(ModType.ENERGY_LEVEL, 0.6)
+                Mod(ModType.SLEEP_QUALITY, ModFactors.VERY_HIGH),
+                Mod(ModType.ENERGY_LEVEL, ModFactors.HIGH),
+                Mod(ModType.PHYSICAL_ENERGY, ModFactors.MEDIUM),
+                Mod(ModType.MOOD, ModFactors.LOW)
             ),
             listOf(
                 "Проснулись отдохнувшим?",
@@ -281,8 +335,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.SLEEP_QUALITY, -0.7),
-                Mod(ModType.MOOD, -0.5)
+                Mod(ModType.SLEEP_QUALITY, -ModFactors.HIGH),
+                Mod(ModType.MOOD, -ModFactors.MEDIUM),
+                Mod(ModType.ENERGY_LEVEL, -ModFactors.LOW),
+                Mod(ModType.STRESS_LEVEL, ModFactors.LOW)
             ),
             listOf(
                 "Сон был беспокойным?",
@@ -291,8 +347,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.EMOTIONAL_BALANCE, 0.6),
-                Mod(ModType.SOCIAL_ENERGY, 0.4)
+                Mod(ModType.EMOTIONAL_BALANCE, ModFactors.MEDIUM),
+                Mod(ModType.SOCIAL_ENERGY, ModFactors.LOW),
+                Mod(ModType.MOOD, ModFactors.LOW),
+                Mod(ModType.FOCUS, ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете гармонию с собой?",
@@ -301,8 +359,10 @@ class LocalDailyTestService {
         ),
         Pair(
             listOf(
-                Mod(ModType.ENERGY_LEVEL, -0.6),
-                Mod(ModType.MOTIVATION, -0.6)
+                Mod(ModType.ENERGY_LEVEL, -ModFactors.HIGH),
+                Mod(ModType.MOTIVATION, -ModFactors.HIGH),
+                Mod(ModType.PHYSICAL_ENERGY, -ModFactors.LOW),
+                Mod(ModType.MOOD, -ModFactors.LOW)
             ),
             listOf(
                 "Чувствуете внутреннюю пустоту?",
@@ -312,9 +372,9 @@ class LocalDailyTestService {
     )
 
     val firstVarTest = baseQuestions.mapIndexed { idx, base ->
-        Question(id = "${1+idx}", text = base.second[0], mods = base.first)
+        Question(id = "${1 + idx}", text = base.second[0], mods = base.first)
     }
     val secondVarTest = baseQuestions.mapIndexed { idx, base ->
-        Question(id = "${2+idx}", text = base.second[1], mods = base.first)
+        Question(id = "${2 + idx}", text = base.second[1], mods = base.first)
     }
 }

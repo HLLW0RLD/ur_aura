@@ -317,8 +317,6 @@ fun CustomAppBar(
             .height(56.dp),
         color = backgroundColor
     ) {
-
-
         Box {
             Row(
                 modifier = Modifier

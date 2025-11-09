@@ -67,31 +67,31 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = startRoute!!.route()
                     ) {
-                        animatedScreenComposable<Login>(
+                        animatedScreenComposable(
                             navController = navController,
                             screenClass = Login::class,
                             enterFrom = Direction.RIGHT,
                             exitTo = Direction.RIGHT
                         ) { LoginScreen() }
-                        animatedScreenComposable<Main>(
+                        animatedScreenComposable(
                             navController = navController,
                             screenClass = Main::class,
                             enterFrom = Direction.RIGHT,
                             exitTo = Direction.RIGHT
                         ) { MainScreen() }
-                        animatedScreenComposable<AuraDetails>(
+                        animatedScreenComposable(
                             navController = navController,
                             screenClass = AuraDetails::class,
                             enterFrom = Direction.RIGHT,
                             exitTo = Direction.RIGHT
                         ) { AuraDetailsScreen(it) }
-                        animatedScreenComposable<Profile>(
+                        animatedScreenComposable(
                             navController = navController,
                             screenClass = Profile::class,
                             enterFrom = Direction.RIGHT,
                             exitTo = Direction.RIGHT
                         ) { ProfileScreen() }
-                        animatedScreenComposable<QuestionSwipe>(
+                        animatedScreenComposable(
                             navController = navController,
                             screenClass = QuestionSwipe::class,
                             enterFrom = Direction.RIGHT,

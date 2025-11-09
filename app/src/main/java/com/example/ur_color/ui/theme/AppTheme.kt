@@ -34,7 +34,7 @@ fun AppTheme(
     val window = view.context.findActivity().window
     val insetsController = WindowCompat.getInsetsController(window, view)
 
-    val selectedColorPalette = ThemePalette.TURQUOISE
+    val selectedColorPalette = ThemePalette.BURGUNDY
 
     val dayNightColorScheme = remember(SystemDataManager.theme, selectedColorPalette) {
         when (selectedColorPalette) {

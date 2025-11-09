@@ -100,7 +100,7 @@ fun MainScreen(
     val statusBarHeight = WindowInsets.statusBars.getTop(density).toFloat()
     val collapsedHeight = screenHeight / 1.8f
     val collapsedY = with(density) { collapsedHeight.toPx() }               // свернутая подложка
-    val expandedY = statusBarHeight + 186f                                  // полностью раскрытая подложка
+    val expandedY = statusBarHeight + 170f                                  // полностью раскрытая подложка
 
     val offsetY = remember { Animatable(collapsedY) }
 
@@ -118,19 +118,19 @@ fun MainScreen(
             .fillMaxSize()
             .background(AppColors.background)
     ) {
-        aura?.let {
-            Image(
-                bitmap = it.asImageBitmap(),
-                contentDescription = "",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        translationY = -auraShift
-                    }
-                    .blur(80.dp),
-                contentScale = ContentScale.Crop
-            )
-        }
+//        aura?.let {
+//            Image(
+//                bitmap = it.asImageBitmap(),
+//                contentDescription = "",
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .graphicsLayer {
+//                        translationY = -auraShift
+//                    }
+//                    .blur(80.dp),
+//                contentScale = ContentScale.Crop
+//            )
+//        }
 
         CustomAppBar(
             title = "_a u r a_",
@@ -158,7 +158,7 @@ fun MainScreen(
                 bitmap = it.asImageBitmap(),
                 contentDescription = "",
                 modifier = Modifier
-                    .size(250.dp)
+                    .size(300.dp)
                     .align(Alignment.Center)
                     .graphicsLayer {
                         translationY = -auraShiftDp.toPx()
@@ -344,28 +344,6 @@ fun MainScreen(
 
                     Spacer(Modifier.height(32.dp))
                 }
-//
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(8.dp),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-//                    Text(
-//                        text = "Главная",
-//                        color = AuraColors.textPrimary,
-//                        modifier = Modifier
-//                            .padding(vertical = 16.dp)
-//                            .clickable { navController.navigate(Main.route()) }
-//                    )
-//                    Text(
-//                        text = "Профиль",
-//                        color = AuraColors.textPrimary,
-//                        modifier = Modifier
-//                            .padding(vertical = 16.dp)
-//                            .clickable { navController.navigate(Profile().route()) }
-//                    )
-//                }
 
                 repeat(30) { i ->
                     Text(

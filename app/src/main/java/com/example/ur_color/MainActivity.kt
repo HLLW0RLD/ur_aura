@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ur_color.data.local.dataManager.UserDataManager
 import com.example.ur_color.ui.screen.AuraDetails
 import com.example.ur_color.ui.screen.AuraDetailsScreen
+import com.example.ur_color.ui.screen.Direction
 import com.example.ur_color.ui.screen.Login
 import com.example.ur_color.ui.screen.LoginScreen
 import com.example.ur_color.ui.screen.Main
@@ -27,6 +31,7 @@ import com.example.ur_color.ui.screen.ProfileScreen
 import com.example.ur_color.ui.screen.QuestionSwipe
 import com.example.ur_color.ui.screen.QuestionSwipeScreen
 import com.example.ur_color.ui.screen.Screen
+import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.screen.screenComposable
 import com.example.ur_color.ui.theme.AppTheme
@@ -62,11 +67,36 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = startRoute!!.route()
                     ) {
-                        screenComposable<Login> { LoginScreen() }
-                        screenComposable<Main> { MainScreen() }
-                        screenComposable<AuraDetails> { AuraDetailsScreen(it) }
-                        screenComposable<Profile> { ProfileScreen() }
-                        screenComposable<QuestionSwipe> { QuestionSwipeScreen() }
+                        animatedScreenComposable<Login>(
+                            navController = navController,
+                            screenClass = Login::class,
+                            enterFrom = Direction.RIGHT,
+                            exitTo = Direction.RIGHT
+                        ) { LoginScreen() }
+                        animatedScreenComposable<Main>(
+                            navController = navController,
+                            screenClass = Main::class,
+                            enterFrom = Direction.RIGHT,
+                            exitTo = Direction.RIGHT
+                        ) { MainScreen() }
+                        animatedScreenComposable<AuraDetails>(
+                            navController = navController,
+                            screenClass = AuraDetails::class,
+                            enterFrom = Direction.RIGHT,
+                            exitTo = Direction.RIGHT
+                        ) { AuraDetailsScreen(it) }
+                        animatedScreenComposable<Profile>(
+                            navController = navController,
+                            screenClass = Profile::class,
+                            enterFrom = Direction.RIGHT,
+                            exitTo = Direction.RIGHT
+                        ) { ProfileScreen() }
+                        animatedScreenComposable<QuestionSwipe>(
+                            navController = navController,
+                            screenClass = QuestionSwipe::class,
+                            enterFrom = Direction.RIGHT,
+                            exitTo = Direction.RIGHT
+                        ) { QuestionSwipeScreen() }
                     }
                 }
             }

@@ -10,7 +10,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,6 +24,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,12 +46,11 @@ import com.example.ur_color.utils.LocalNavController
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -54,6 +60,8 @@ import androidx.compose.ui.unit.IntOffset
 import com.example.ur_color.R
 import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
+import com.example.ur_color.ui.ExpandableGradientGraphBox
+import com.example.ur_color.ui.DynamicDoubleColumn
 import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
@@ -112,6 +120,8 @@ fun MainScreen(
 
     fun animateToExpanded() = scope.launch { offsetY.animateTo(expandedY, tween(400)) }
     fun animateToCollapsed() = scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
+
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = 20)
 
     Box(
         modifier = Modifier
@@ -207,42 +217,105 @@ fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .then(if (canScroll) Modifier.verticalScroll(scrollState) else Modifier)
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Column {
-                    Text(
-                        color = AppColors.textSecondary,
-                        text = "Какой-то текст на главном экране\n" +
-                                "Возможно воодушевляющая фраза\n" +
-                                "или совет дня",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    )
+                Text(
+                    color = AppColors.textSecondary,
+                    text = "Какой-то текст на главном экране\n" +
+                            "Возможно воодушевляющая фраза\n" +
+                            "или совет дня",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
 
-                    Spacer(modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.size(16.dp))
 
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
-                        thickness = 0.5.dp,
-                        color = AppColors.textPrimary
-                    )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    thickness = 0.5.dp,
+                    color = AppColors.textPrimary
+                )
 
-                    Spacer(modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier.size(24.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        // --- ВСЕ ТВОИ ExpandableFloatingBox остаются как есть ---
+                LazyRow(
+                    modifier = Modifier
+                        .height(150.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    item { Spacer(modifier = Modifier.width(16.dp)) }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.energyCapacity,
+                            collapsedText = "Energy Level",
+
+                            )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.moodVector,
+                            collapsedText = "Mood",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.stressVector,
+                            collapsedText = "Stress Level",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.motivationVector,
+                            collapsedText = "Motivation",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.creativityVector,
+                            collapsedText = "Creativity",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.emotionalBalanceVector,
+                            collapsedText = "Emotional Balance",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.physicalEnergyVector,
+                            collapsedText = "Physical Energy",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.sleepQualityVector,
+                            collapsedText = "Sleep Quality",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.intuitionVector,
+                            collapsedText = "Intuition Level",
+                        )
+                    }
+                    item {
+                        ExpandableGradientGraphBox(
+                            values = user.socialVector,
+                            collapsedText = "Social Energy",
+                        )
+                    }
+                }
+
+                DynamicDoubleColumn(paddingHorizontal = 16.dp) {
+                    item {
                         ExpandableFloatingBox(
-                            width = 0.5f,
+                            width = 1f,
                             height = 100f,
-                            expandWidth = 0.5f,
+                            expandWidth = 1f,
                             closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
                             expandedTitle = card?.advice ?: "oops",
                             windowType = WindowType.Regular,
@@ -289,7 +362,8 @@ fun MainScreen(
                                 }
                             }
                         )
-
+                    }
+                    item {
                         when (val uiState = horoscopeState) {
                             is HoroscopeUiState.Success -> {
                                 val horoscope = uiState.horoscope
@@ -341,19 +415,9 @@ fun MainScreen(
                             }
                         }
                     }
-
-                    Spacer(Modifier.height(32.dp))
                 }
 
-                repeat(30) { i ->
-                    Text(
-                        color = AppColors.textPrimary,
-                        text = "да-да, этот ${i}й элемент просто так",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    )
-                }
+                Spacer(Modifier.height(120.dp))
             }
         }
     }

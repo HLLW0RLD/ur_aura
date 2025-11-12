@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -75,11 +74,13 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -496,12 +497,12 @@ private fun ExpandableBase(
                 shape = RoundedCornerShape(20.dp)
             }
             .background(if (expanded) AppColors.background else AppColors.surface)
-            .padding(2.dp)
+            .padding(3.dp)
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
                     color = if (expanded) AppColors.surface else AppColors.background,
-                    width = 2.dp
+                    width = 3.dp
                 )
             )
             .pointerInput(canShowFull) {
@@ -621,9 +622,7 @@ fun ExpandableGradientGraphBox(
     showStat: Boolean = true,
 ) {
     val safeValues = values.takeLast(10).map { it.coerceIn(0, 10) }
-
     var collapsed by remember { mutableStateOf(true) }
-
     val defaultCollapsedText = remember(safeValues) {
         if (safeValues.isEmpty()) "—"
         else "Avg: ${("%.1f".format(safeValues.average()))}"
@@ -632,8 +631,10 @@ fun ExpandableGradientGraphBox(
 
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .background(AppColors.surface, RoundedCornerShape(10.dp))
+            .padding(3.dp)
+            .border(BorderStroke(3.dp, AppColors.background), RoundedCornerShape(10.dp)),
         shape = RoundedCornerShape(10.dp),
         tonalElevation = 2.dp,
         shadowElevation = 4.dp,
@@ -644,20 +645,30 @@ fun ExpandableGradientGraphBox(
                 .padding(12.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .then(
+                        if (collapsed) {
+                            Modifier.fillMaxWidth()
+                        } else {
+                            Modifier.width( 150.dp)
+                        }
+                    )
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = textToShow,
-                    fontSize = 14.sp,
-                    color = Color(0xFF222222)
-                )
-                Text(
-                    text = if (collapsed) "Показать" else "Свернуть",
-                    fontSize = 12.sp,
-                    color = Color(0xFF666666),
-                    textAlign = TextAlign.End
-                )
+                Text(text = textToShow, fontSize = 14.sp, color = Color(0xFF222222))
+                AnimatedVisibility(
+                    visible = !collapsed,
+                    enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
+                    exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
+                ) {
+                    Icon(
+                        tint = Color.Black,
+                        painter = painterResource(R.drawable.close_filled),
+                        contentDescription = "Закрыть",
+                        modifier = Modifier.clickable { collapsed = !collapsed }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -671,7 +682,7 @@ fun ExpandableGradientGraphBox(
                     values = safeValues,
                     showStat = showStat,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width( 150.dp)
                         .height(60.dp)
                 )
             }
@@ -782,6 +793,68 @@ private fun GradientGraphBox(
         )
     }
 }
+
+@Composable
+fun DynamicDoubleColumn(
+    useScroll: Boolean = false,
+    spacing: Dp = 12.dp,
+    paddingHorizontal: Dp = 0.dp,
+    paddingVertical: Dp = 0.dp,
+    modifier: Modifier = Modifier,
+    content: @Composable TwoColumnScope.() -> Unit
+) {
+    val scope = remember { TwoColumnScopeImpl() }
+    val scrollState = rememberScrollState()
+
+    val mod = if (useScroll) modifier.verticalScroll(scrollState) else modifier
+
+    scope.content()
+    Row(
+        modifier = mod
+            .padding(horizontal = paddingHorizontal, vertical = paddingVertical),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            scope.leftColumn.forEach { it() }
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            scope.rightColumn.forEach { it() }
+        }
+    }
+}
+
+interface TwoColumnScope {
+    fun left(content: @Composable () -> Unit)
+    fun right(content: @Composable () -> Unit)
+    fun item(content: @Composable () -> Unit)
+}
+
+private class TwoColumnScopeImpl : TwoColumnScope {
+    val leftColumn = mutableListOf<@Composable () -> Unit>()
+    val rightColumn = mutableListOf<@Composable () -> Unit>()
+    private var toggle = false
+
+    override fun left(content: @Composable () -> Unit) {
+        leftColumn.add(content)
+    }
+
+    override fun right(content: @Composable () -> Unit) {
+        rightColumn.add(content)
+    }
+
+    override fun item(content: @Composable () -> Unit) {
+        if (toggle) rightColumn.add(content) else leftColumn.add(content)
+        toggle = !toggle
+    }
+}
+
 
 
 private fun lerp(start: Color, stop: Color, fraction: Float): Color {

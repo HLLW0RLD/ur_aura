@@ -11,7 +11,7 @@ import com.example.ur_color.utils.logDebug
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class QuestionSwipeViewModel() : BaseViewModel() {
+class DailyTestViewModel() : BaseViewModel() {
 
     fun consumeAnswer(context: Context, question: Question, answer: Boolean) {
         viewModelScope.launch {

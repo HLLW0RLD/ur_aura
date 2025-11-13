@@ -12,9 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,13 +26,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
-import com.example.ur_color.data.local.LocalDailyTestService
-import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.toColoredText
@@ -42,7 +37,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 @Serializable
 data class AuraDetails(val color: String? = null) : Screen
@@ -147,113 +141,17 @@ fun AuraDetailsScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(bottom = 24.dp)
-                    ) {
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.energyCapacity ?: listOf(),
-                                collapsedText = "Energy Level",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.moodVector ?: listOf(),
-                                collapsedText = "Mood",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.stressVector ?: listOf(),
-                                collapsedText = "Stress Level",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.motivationVector ?: listOf(),
-                                collapsedText = "Motivation",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.creativityVector ?: listOf(),
-                                collapsedText = "Creativity",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.emotionalBalanceVector ?: listOf(),
-                                collapsedText = "Emotional Balance",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.physicalEnergyVector ?: listOf(),
-                                collapsedText = "Physical Energy",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.sleepQualityVector ?: listOf(),
-                                collapsedText = "Sleep Quality",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.intuitionVector ?: listOf(),
-                                collapsedText = "Intuition Level",
-                            )
-                        }
-                        item {
-                            ExpandableGradientGraphBox(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                values = userData?.socialVector ?: listOf(),
-                                collapsedText = "Social Energy",
-                            )
-                        }
-                    }
-
-//                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
-//                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
-//                    Item("Stress Level", userData?.stressLevel ?: "0", userData?.stressVector)
-//                    Item("Focus", userData?.focus ?: "0", userData?.focusVector)
-//                    Item("Motivation", userData?.motivation ?: "0", userData?.motivationVector)
-//                    Item("Creativity", userData?.creativity ?: "0", userData?.creativityVector)
-//                    Item("Emotional Balance", userData?.emotionalBalance ?: "0", userData?.emotionalBalanceVector)
-//                    Item("Physical Energy", userData?.physicalEnergy ?: "0", userData?.physicalEnergyVector)
-//                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
-//                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
-//                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
+                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
+                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
+                    Item("Stress Level", userData?.stressLevel ?: "0", userData?.stressVector)
+                    Item("Focus", userData?.focus ?: "0", userData?.focusVector)
+                    Item("Motivation", userData?.motivation ?: "0", userData?.motivationVector)
+                    Item("Creativity", userData?.creativity ?: "0", userData?.creativityVector)
+                    Item("Emotional Balance", userData?.emotionalBalance ?: "0", userData?.emotionalBalanceVector)
+                    Item("Physical Energy", userData?.physicalEnergy ?: "0", userData?.physicalEnergyVector)
+                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
+                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
+                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
                 }
             }
         }

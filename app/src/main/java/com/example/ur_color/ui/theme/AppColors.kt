@@ -8,6 +8,11 @@ import androidx.compose.ui.graphics.Color
 
 object AppColors {
 
+    val white: Color
+        @Composable get() = Color.White
+    val black: Color
+        @Composable get() = Color.Black
+
     val tertiary: Color
         @Composable get() = MaterialTheme.colorScheme.tertiary
 

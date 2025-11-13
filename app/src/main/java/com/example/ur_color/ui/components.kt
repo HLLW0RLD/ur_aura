@@ -75,12 +75,18 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -374,6 +380,287 @@ fun CustomAppBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun SwipeCard(
+    text: String,
+    modifier: Modifier = Modifier,
+    textColor: Color = AppColors.textPrimary,
+    backgroundColor: Color = AppColors.surface,
+    onSwipeLeft: () -> Unit = {},
+    onSwipeRight: () -> Unit = {},
+    height: Dp = 620.dp,
+    width: Dp = 370.dp,
+    shadowElevation: Dp = 8.dp,
+    fontSize: TextUnit = 20.sp,
+    minLines: Int = 2,
+    maxLines: Int = 2,
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        elevation = CardDefaults.cardElevation(shadowElevation)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = width, height = height)
+                .fillMaxSize()
+                .padding(3.dp)
+                .border(
+                    shape = RoundedCornerShape(24.dp),
+                    width = 6.dp,
+                    color = AppColors.background
+                )
+                .padding(24.dp),
+        ) {
+            Text(
+                text = text,
+                textAlign = TextAlign.Center,
+                color = textColor,
+                fontSize = fontSize,
+                minLines = minLines,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .height(60.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(
+                            shape = CircleShape,
+                            color = AppColors.white
+                        )
+                        .padding(3.dp)
+                        .border(
+                            border = BorderStroke(3.dp, AppColors.success),
+                            shape = RoundedCornerShape(24.dp)
+                        )
+                        .clickable {
+                            onSwipeLeft()
+                        },
+                ) {
+                    Text(
+                        text = "Да",
+                        textAlign = TextAlign.Center,
+                        color = AppColors.black,
+                        fontSize = 16.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                    )
+                }
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(
+                            shape = CircleShape,
+                            color = AppColors.white
+                        )
+                        .padding(3.dp)
+                        .border(
+                            border = BorderStroke(3.dp, AppColors.error),
+                            shape = RoundedCornerShape(24.dp)
+                        )
+                        .clickable {
+                            onSwipeRight()
+                        },
+                ) {
+                    Text(
+                        text = "Нет",
+                        textAlign = TextAlign.Center,
+                        color = AppColors.black,
+                        fontSize = 16.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GradientGraphBox(
+    values: List<Int>,
+    modifier: Modifier = Modifier,
+    barSpacingDp: Int = 6,
+    showStat: Boolean = true
+) {
+    val safeValues = values.map { it.coerceIn(0, 10) }
+    val barCount = safeValues.size
+    val anims = remember(values) {
+        safeValues.map { Animatable(0f) }
+    }
+
+    LaunchedEffect(safeValues) {
+        anims.forEach { it.snapTo(0f) }
+        val scope = this
+        safeValues.forEachIndexed { idx, v ->
+            val target = (v.coerceIn(0, 10) / 10f)
+            scope.launch {
+                delay(idx * 40L)
+                anims[idx].animateTo(
+                    target,
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            }
+        }
+    }
+
+    Canvas(modifier = modifier) {
+        val w = size.width
+        val h = size.height
+
+        if (barCount == 0) return@Canvas
+
+        val labelAreaHeight = if (showStat) 18.dp.toPx() else 0f
+        val graphHeight = h - labelAreaHeight
+
+        val spacing = barSpacingDp.dp.toPx()
+        val totalSpacing = spacing * (barCount - 1).coerceAtLeast(0)
+        val barWidth = (w - totalSpacing) / barCount
+
+        val textPaint = android.graphics.Paint().apply {
+            color = "#444444".toColorInt()
+            textAlign = android.graphics.Paint.Align.CENTER
+            textSize = 13.sp.toPx()
+            isAntiAlias = true
+        }
+
+        fun colorForValue(fraction: Float): Color {
+            return when {
+                fraction <= 0.5f -> {
+                    lerp(Color(0xFFFF4D4D), Color(0xFF45D07B), fraction / 0.5f)
+                }
+                else -> {
+                    lerp(Color(0xFF45D07B), Color(0xFF8F00FF), (fraction - 0.5f) / 0.5f)
+                }
+            }
+        }
+
+        safeValues.forEachIndexed { i, v ->
+            val x = i * (barWidth + spacing)
+            val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0, 10) / 10f)
+            val barHeight = frac * graphHeight
+            val top = graphHeight - barHeight
+
+            val rect = Rect(x, top, x + barWidth, graphHeight)
+            drawRoundRect(
+                color = colorForValue(frac),
+                topLeft = Offset(rect.left, rect.top),
+                size = rect.size,
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+            )
+
+            drawRoundRect(
+                color = Color.Black.copy(alpha = 0.06f),
+                topLeft = Offset(rect.left, rect.top),
+                size = rect.size,
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
+                blendMode = BlendMode.SrcOver
+            )
+
+            if (showStat) {
+                val textY = h - 4.dp.toPx() // нижняя часть Canvas
+                drawContext.canvas.nativeCanvas.drawText(
+                    v.toString(),
+                    x + barWidth / 2,
+                    textY,
+                    textPaint
+                )
+            }
+        }
+
+        drawLine(
+            color = Color(0x22000000),
+            strokeWidth = 1.dp.toPx(),
+            start = Offset(0f, graphHeight),
+            end = Offset(w, graphHeight)
+        )
+    }
+}
+
+@Composable
+fun ExpandableBox(
+    collapsedText: String,
+    modifier: Modifier = Modifier,
+    content: (@Composable () -> Unit)? = null
+) {
+    var collapsed by remember { mutableStateOf(true) }
+
+    Surface(
+        modifier = modifier
+            .wrapContentHeight()
+            .background(AppColors.surface, RoundedCornerShape(10.dp))
+            .padding(3.dp)
+            .border(BorderStroke(3.dp, AppColors.background), RoundedCornerShape(10.dp)),
+        shape = RoundedCornerShape(10.dp),
+        tonalElevation = 2.dp,
+        shadowElevation = 4.dp,
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable { collapsed = !collapsed }
+                .padding(12.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .then(
+                        if (collapsed) {
+                            Modifier.fillMaxWidth()
+                        } else {
+                            Modifier.width(150.dp)
+                        }
+                    )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = collapsedText, fontSize = 14.sp, color = Color(0xFF222222))
+                AnimatedVisibility(
+                    visible = !collapsed,
+                    enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
+                    exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
+                ) {
+                    Icon(
+                        tint = Color.Black,
+                        painter = painterResource(R.drawable.close_filled),
+                        contentDescription = "Закрыть",
+                        modifier = Modifier.clickable { collapsed = !collapsed }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            AnimatedVisibility(
+                visible = !collapsed,
+                enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
+                exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
+            ) {
+                if (content != null) {
+                    content()
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun ExpandableFloatingBox(
     closedTitle: String,
@@ -389,41 +676,6 @@ fun ExpandableFloatingBox(
     onClose: () -> Unit = {},
     onCancel: (() -> Unit)? = null,
     onConfirm: (() -> Unit)? = null,
-    content: @Composable () -> Unit
-) {
-    ExpandableBase(
-        closedTitle = closedTitle,
-        expandedTitle = expandedTitle,
-        modifier = modifier,
-        windowType = windowType,
-        canShowFull = canShowFull,
-        height = height,
-        width = width,
-        expandHeight = expandHeight,
-        expandWidth = expandWidth,
-        onOpen = onOpen,
-        onClose = onClose,
-        onCancel = onCancel,
-        onConfirm = onConfirm,
-        content = content
-    )
-}
-
-@Composable
-private fun ExpandableBase(
-    closedTitle: String,
-    expandedTitle: String,
-    modifier: Modifier = Modifier,
-    windowType: WindowType = WindowType.Regular,
-    canShowFull: Boolean = false,
-    height: Float? = null,
-    width: Float? = null,
-    expandHeight: Float? = null,
-    expandWidth: Float? = null,
-    onOpen: () -> Unit,
-    onClose: () -> Unit,
-    onCancel: (() -> Unit)?,
-    onConfirm: (() -> Unit)?,
     content: @Composable () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -541,7 +793,6 @@ private fun ExpandableBase(
         }
     }
 }
-
 @Composable
 private fun ExpandableContent(
     expandedTitle: String,
@@ -615,186 +866,6 @@ private fun ExpandableContent(
 }
 
 @Composable
-fun ExpandableGradientGraphBox(
-    values: List<Int>,
-    collapsedText: String? = null,
-    modifier: Modifier = Modifier,
-    showStat: Boolean = true,
-) {
-    val safeValues = values.takeLast(10).map { it.coerceIn(0, 10) }
-    var collapsed by remember { mutableStateOf(true) }
-    val defaultCollapsedText = remember(safeValues) {
-        if (safeValues.isEmpty()) "—"
-        else "Avg: ${("%.1f".format(safeValues.average()))}"
-    }
-    val textToShow = collapsedText ?: defaultCollapsedText
-
-    Surface(
-        modifier = modifier
-            .wrapContentHeight()
-            .background(AppColors.surface, RoundedCornerShape(10.dp))
-            .padding(3.dp)
-            .border(BorderStroke(3.dp, AppColors.background), RoundedCornerShape(10.dp)),
-        shape = RoundedCornerShape(10.dp),
-        tonalElevation = 2.dp,
-        shadowElevation = 4.dp,
-    ) {
-        Column(
-            modifier = Modifier
-                .clickable { collapsed = !collapsed }
-                .padding(12.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .then(
-                        if (collapsed) {
-                            Modifier.fillMaxWidth()
-                        } else {
-                            Modifier.width( 150.dp)
-                        }
-                    )
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = textToShow, fontSize = 14.sp, color = Color(0xFF222222))
-                AnimatedVisibility(
-                    visible = !collapsed,
-                    enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
-                    exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
-                ) {
-                    Icon(
-                        tint = Color.Black,
-                        painter = painterResource(R.drawable.close_filled),
-                        contentDescription = "Закрыть",
-                        modifier = Modifier.clickable { collapsed = !collapsed }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            AnimatedVisibility(
-                visible = !collapsed,
-                enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
-                exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
-            ) {
-                GradientGraphBox(
-                    values = safeValues,
-                    showStat = showStat,
-                    modifier = Modifier
-                        .width( 150.dp)
-                        .height(60.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun GradientGraphBox(
-    values: List<Int>,
-    modifier: Modifier = Modifier,
-    barSpacingDp: Int = 6,
-    showStat: Boolean = true
-) {
-    val safeValues = values.map { it.coerceIn(0, 10) }
-    val barCount = safeValues.size
-    val anims = remember(values) {
-        safeValues.map { Animatable(0f) }
-    }
-
-    LaunchedEffect(safeValues) {
-        anims.forEach { it.snapTo(0f) }
-        val scope = this
-        safeValues.forEachIndexed { idx, v ->
-            val target = (v.coerceIn(0, 10) / 10f)
-            scope.launch {
-                delay(idx * 40L)
-                anims[idx].animateTo(
-                    target,
-                    animationSpec = tween(
-                        durationMillis = 400,
-                        easing = FastOutSlowInEasing
-                    )
-                )
-            }
-        }
-    }
-
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-
-        if (barCount == 0) return@Canvas
-
-        val labelAreaHeight = if (showStat) 18.dp.toPx() else 0f
-        val graphHeight = h - labelAreaHeight
-
-        val spacing = barSpacingDp.dp.toPx()
-        val totalSpacing = spacing * (barCount - 1).coerceAtLeast(0)
-        val barWidth = (w - totalSpacing) / barCount
-
-        val textPaint = android.graphics.Paint().apply {
-            color = "#444444".toColorInt()
-            textAlign = android.graphics.Paint.Align.CENTER
-            textSize = 13.sp.toPx()
-            isAntiAlias = true
-        }
-
-        fun colorForValue(fraction: Float): Color {
-            return when {
-                fraction <= 0.5f -> {
-                    lerp(Color(0xFFFF4D4D), Color(0xFF45D07B), fraction / 0.5f)
-                }
-                else -> {
-                    lerp(Color(0xFF45D07B), Color(0xFF8F00FF), (fraction - 0.5f) / 0.5f)
-                }
-            }
-        }
-
-        safeValues.forEachIndexed { i, v ->
-            val x = i * (barWidth + spacing)
-            val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0, 10) / 10f)
-            val barHeight = frac * graphHeight
-            val top = graphHeight - barHeight
-
-            val rect = Rect(x, top, x + barWidth, graphHeight)
-            drawRoundRect(
-                color = colorForValue(frac),
-                topLeft = Offset(rect.left, rect.top),
-                size = rect.size,
-                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-            )
-
-            drawRoundRect(
-                color = Color.Black.copy(alpha = 0.06f),
-                topLeft = Offset(rect.left, rect.top),
-                size = rect.size,
-                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
-                blendMode = BlendMode.SrcOver
-            )
-
-            if (showStat) {
-                val textY = h - 4.dp.toPx() // нижняя часть Canvas
-                drawContext.canvas.nativeCanvas.drawText(
-                    v.toString(),
-                    x + barWidth / 2,
-                    textY,
-                    textPaint
-                )
-            }
-        }
-
-        drawLine(
-            color = Color(0x22000000),
-            strokeWidth = 1.dp.toPx(),
-            start = Offset(0f, graphHeight),
-            end = Offset(w, graphHeight)
-        )
-    }
-}
-
-@Composable
 fun DynamicDoubleColumn(
     useScroll: Boolean = false,
     spacing: Dp = 12.dp,
@@ -830,11 +901,6 @@ fun DynamicDoubleColumn(
     }
 }
 
-interface TwoColumnScope {
-    fun left(content: @Composable () -> Unit)
-    fun right(content: @Composable () -> Unit)
-    fun item(content: @Composable () -> Unit)
-}
 
 private class TwoColumnScopeImpl : TwoColumnScope {
     val leftColumn = mutableListOf<@Composable () -> Unit>()
@@ -854,8 +920,11 @@ private class TwoColumnScopeImpl : TwoColumnScope {
         toggle = !toggle
     }
 }
-
-
+interface TwoColumnScope {
+    fun left(content: @Composable () -> Unit)
+    fun right(content: @Composable () -> Unit)
+    fun item(content: @Composable () -> Unit)
+}
 
 private fun lerp(start: Color, stop: Color, fraction: Float): Color {
     val f = fraction.coerceIn(0f, 1f)

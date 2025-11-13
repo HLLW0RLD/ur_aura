@@ -6,14 +6,12 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,10 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,7 +42,6 @@ import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -60,8 +54,9 @@ import androidx.compose.ui.unit.IntOffset
 import com.example.ur_color.R
 import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
-import com.example.ur_color.ui.ExpandableGradientGraphBox
+import com.example.ur_color.ui.ExpandableBox
 import com.example.ur_color.ui.DynamicDoubleColumn
+import com.example.ur_color.ui.GradientGraphBox
 import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
@@ -120,8 +115,6 @@ fun MainScreen(
 
     fun animateToExpanded() = scope.launch { offsetY.animateTo(expandedY, tween(400)) }
     fun animateToCollapsed() = scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
-
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = 20)
 
     Box(
         modifier = Modifier
@@ -248,66 +241,226 @@ fun MainScreen(
                 ) {
                     item { Spacer(modifier = Modifier.width(16.dp)) }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.energyCapacity,
-                            collapsedText = "Energy Level",
-
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.energyCapacity,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
                             )
+                            Text("Energy Level", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.moodVector,
-                            collapsedText = "Mood",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.moodVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Mood", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.stressVector,
-                            collapsedText = "Stress Level",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.stressVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Stress Level", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.motivationVector,
-                            collapsedText = "Motivation",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.motivationVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Motivation", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.creativityVector,
-                            collapsedText = "Creativity",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.creativityVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Creativity", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.emotionalBalanceVector,
-                            collapsedText = "Emotional Balance",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.emotionalBalanceVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Emotional Balance", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.physicalEnergyVector,
-                            collapsedText = "Physical Energy",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.physicalEnergyVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Physical Energy", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.sleepQualityVector,
-                            collapsedText = "Sleep Quality",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.sleepQualityVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Sleep Quality", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.intuitionVector,
-                            collapsedText = "Intuition Level",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.intuitionVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Intuition Level", color = AppColors.white)
+                        }
                     }
                     item {
-                        ExpandableGradientGraphBox(
-                            values = user.socialVector,
-                            collapsedText = "Social Energy",
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .border(
+                                    shape = RoundedCornerShape(24.dp),
+                                    width = 2.dp,
+                                    color = AppColors.surface
+                                )
+                                .padding(16.dp)
+                        ) {
+                            GradientGraphBox(
+                                values = user.socialVector,
+                                showStat = false,
+                                modifier = Modifier
+                                    .width( 150.dp)
+                                    .height(60.dp)
+                            )
+                            Text("Social Energy", color = AppColors.white)
+                        }
                     }
+                    item { Spacer(modifier = Modifier.width(16.dp)) }
                 }
 
                 DynamicDoubleColumn(paddingHorizontal = 16.dp) {

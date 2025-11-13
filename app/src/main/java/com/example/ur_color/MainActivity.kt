@@ -6,9 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,12 +25,11 @@ import com.example.ur_color.ui.screen.Main
 import com.example.ur_color.ui.screen.MainScreen
 import com.example.ur_color.ui.screen.Profile
 import com.example.ur_color.ui.screen.ProfileScreen
-import com.example.ur_color.ui.screen.QuestionSwipe
-import com.example.ur_color.ui.screen.QuestionSwipeScreen
+import com.example.ur_color.ui.screen.DailyTest
+import com.example.ur_color.ui.screen.DailyTestScreen
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
-import com.example.ur_color.ui.screen.screenComposable
 import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.flow.firstOrNull
@@ -93,10 +89,10 @@ class MainActivity : ComponentActivity() {
                         ) { ProfileScreen() }
                         animatedScreenComposable(
                             navController = navController,
-                            screenClass = QuestionSwipe::class,
+                            screenClass = DailyTest::class,
                             enterFrom = Direction.RIGHT,
                             exitTo = Direction.RIGHT
-                        ) { QuestionSwipeScreen() }
+                        ) { DailyTestScreen() }
                     }
                 }
             }

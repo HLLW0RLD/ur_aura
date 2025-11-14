@@ -309,6 +309,7 @@ fun CustomAppBar(
     showBack: Boolean = false,
     showOptions: Boolean = false,
     isCentered: Boolean = true,
+    showDivider: Boolean = true,
     onBackClick: (() -> Unit)? = null,
     onOptionsClick: (() -> Unit)? = null,
     backIcon: Painter = painterResource(R.drawable.arrow_left),
@@ -320,6 +321,7 @@ fun CustomAppBar(
 ) {
     Surface(
         modifier = modifier
+            .statusBarsPadding()
             .fillMaxWidth()
             .height(56.dp),
         color = backgroundColor
@@ -369,13 +371,15 @@ fun CustomAppBar(
                 }
             }
 
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                thickness = 0.5.dp,
-                color = AppColors.textPrimary
-            )
+            if (showDivider) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    thickness = 0.5.dp,
+                    color = AppColors.textPrimary
+                )
+            }
         }
     }
 }

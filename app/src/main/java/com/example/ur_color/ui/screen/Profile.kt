@@ -2,6 +2,7 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.Image
@@ -17,8 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.ur_color.R
+import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
@@ -43,16 +47,24 @@ fun ProfileScreen() {
 
     Column(
         modifier = Modifier
-            .statusBarsPadding()
-            .imePadding()
             .fillMaxSize()
             .background(AppColors.background)
-            .padding(16.dp)
     ) {
+        CustomAppBar(
+            title = "Your profile",
+            showBack = true,
+            onBackClick = {
+                navController.popBackStack()
+            },
+            isCentered = false,
+            backgroundColor = AppColors.background,
+        )
+
         user?.let { u ->
-            // Верхняя часть с аватаром и данными
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Круглый аватар (по uri или placeholder)
@@ -89,10 +101,11 @@ fun ProfileScreen() {
 
             Spacer(Modifier.height(24.dp))
 
-            // Нижние кнопки-навигация
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
                     color = AppColors.textPrimary,
@@ -119,6 +132,17 @@ fun ProfileScreen() {
                 Text(
                     color = AppColors.textPrimary,
                     text = "Diary",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+//                            navController.navigate("diary")
+                        }
+                        .padding(8.dp)
+                )
+                Text(
+                    color = AppColors.textPrimary,
+                    text = "Settings",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()

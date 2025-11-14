@@ -31,8 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.IntOffset
+import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.SwipeCard
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.utils.LocalNavController
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
@@ -45,27 +47,43 @@ fun DailyTestScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val navController = LocalNavController.current
 
     val questions = remember { LocalDailyTestService().firstVarTest.toMutableStateList() }
     var currentIndex by remember { mutableStateOf(0) }
     val offsetX = remember { Animatable(0f) }
 
-    if (questions.isEmpty()) {
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Все вопросы пройдены!")
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(AppColors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            if (questions.isEmpty() || currentIndex >= questions.size) {
-                Text("Все вопросы пройдены!", style = MaterialTheme.typography.titleLarge)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppColors.background)
+    ) {
+        CustomAppBar(
+            title = "daily test",
+            showBack = true,
+            onBackClick = {
+                navController.popBackStack()
+            },
+            showDivider = true,
+            isCentered = true,
+            backgroundColor = AppColors.background,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+
+        if (questions.isEmpty()) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "Все вопросы пройдены!",
+                color = AppColors.textPrimary,
+            )
+        } else {
+            if (currentIndex >= questions.size) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "Все вопросы пройдены!",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AppColors.textPrimary,
+                )
                 return@Box
             }
 
@@ -89,6 +107,7 @@ fun DailyTestScreen(
                 SwipeCard(
                     text = questions[currentIndex + 1].text,
                     modifier = Modifier
+                        .align(Alignment.Center)
                         .graphicsLayer(
                             scaleX = nextCardScale,
                             scaleY = nextCardScale,
@@ -100,6 +119,7 @@ fun DailyTestScreen(
             }
 
             val question = questions[currentIndex]
+
             val handleSwipeRight = {
                 scope.launch {
                     offsetX.animateTo(1000f, tween(250))
@@ -120,13 +140,10 @@ fun DailyTestScreen(
 
             SwipeCard(
                 text = question.text,
-                onSwipeLeft = {
-                    handleSwipeLeft()
-                },
-                onSwipeRight = {
-                    handleSwipeRight()
-                },
+                onSwipeLeft = { handleSwipeLeft() },
+                onSwipeRight = { handleSwipeRight() },
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                     .graphicsLayer(rotationZ = offsetX.value / 30)
                     .clip(RoundedCornerShape(24.dp))
@@ -139,19 +156,9 @@ fun DailyTestScreen(
                             onDragEnd = {
                                 scope.launch {
                                     when {
-                                        offsetX.value > 250f -> {
-//                                          right
-                                            handleSwipeRight()
-                                        }
-
-                                        offsetX.value < -250f -> {
-//                                          left
-                                            handleSwipeLeft()
-                                        }
-
-                                        else -> {
-                                            offsetX.animateTo(0f, tween(200))
-                                        }
+                                        offsetX.value > 250f -> handleSwipeRight()
+                                        offsetX.value < -250f -> handleSwipeLeft()
+                                        else -> offsetX.animateTo(0f, tween(200))
                                     }
                                 }
                             }
@@ -161,4 +168,5 @@ fun DailyTestScreen(
             )
         }
     }
+
 }

@@ -30,8 +30,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
+import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.toColoredText
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -48,6 +50,7 @@ fun AuraDetailsScreen(
     auraDetailsViewModel: AuraDetailsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
+    val navController = LocalNavController.current
 
     val aura by auraDetailsViewModel.aura.collectAsState()
     val userData by auraDetailsViewModel.user.collectAsState()
@@ -56,16 +59,14 @@ fun AuraDetailsScreen(
     val configuration = LocalConfiguration.current
     val screenHeightPx = with(density) { configuration.screenHeightDp.dp.toPx() }
 
-    val collapsedHeight = 56.dp
+    val collapsedHeight = 130.dp
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
 
-    val topInset = 56.dp // отступ сверху в expanded
+    val topInset = 95.dp
     val topInsetPx = with(density) { topInset.toPx() }
 
     val expandedY = topInsetPx
     val collapsedY = screenHeightPx - collapsedHeightPx
-
-    val i = remember { mutableStateOf(0) }
 
     val offsetY = remember { Animatable(collapsedY) }
     val scope = rememberCoroutineScope()
@@ -87,6 +88,18 @@ fun AuraDetailsScreen(
             .fillMaxSize()
             .background(AppColors.background),
     ) {
+        CustomAppBar(
+            title = "aura details",
+            showBack = true,
+            onBackClick = {
+                navController.popBackStack()
+            },
+            showDivider = true,
+            isCentered = true,
+            backgroundColor = AppColors.background,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+
         aura?.let {
             Image(
                 bitmap = it.asImageBitmap(),

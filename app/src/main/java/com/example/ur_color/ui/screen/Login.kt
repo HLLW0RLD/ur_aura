@@ -61,7 +61,6 @@ fun LoginScreen(
 
     Column(
         modifier = Modifier
-            .statusBarsPadding()
             .imePadding()
             .fillMaxSize()
             .background(AppColors.background),

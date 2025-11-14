@@ -58,8 +58,6 @@ fun String?.parseBirthHour(): Int {
     }
 }
 
-val isDarkTheme: Boolean get() = SystemDataManager.theme.value == ThemeMode.DARK
-
 fun getCurrentDate(): String {
     val dateFormat = SimpleDateFormat("yyyy_MM_dd", Locale.getDefault())
     val date = Date()

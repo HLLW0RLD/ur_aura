@@ -138,6 +138,7 @@ fun MainScreen(
         CustomAppBar(
             title = "_a u r a_",
             showOptions = true,
+            showDivider = true,
             optionsIcon = if (progress >= 0.95f) {
                 painterResource(R.drawable.arrow_left)
             } else {
@@ -151,9 +152,8 @@ fun MainScreen(
                 }
             },
             isCentered = true,
-            backgroundColor = AppColors.background,
-//            backgroundColor = AuraColors.background.copy(alpha = 0.85f * progress),
-            modifier = Modifier.statusBarsPadding()
+//            backgroundColor = AppColors.background,
+            backgroundColor = AppColors.background.copy(alpha = 0.85f * progress),
         )
 
         aura?.let {

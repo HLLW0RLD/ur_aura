@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.ur_color.data.local.dataManager.UserDataManager
+import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.ui.screen.AuraDetails
 import com.example.ur_color.ui.screen.AuraDetailsScreen
 import com.example.ur_color.ui.screen.Direction
@@ -28,6 +28,8 @@ import com.example.ur_color.ui.screen.ProfileScreen
 import com.example.ur_color.ui.screen.DailyTest
 import com.example.ur_color.ui.screen.DailyTestScreen
 import com.example.ur_color.ui.screen.Screen
+import com.example.ur_color.ui.screen.Settings
+import com.example.ur_color.ui.screen.SettingsScreen
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.theme.AppTheme
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 var isInitialized by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
-                    val user = UserDataManager.user.firstOrNull()
+                    val user = PersonalDataManager.user.firstOrNull()
                     startRoute = if (user != null) Main else Login
                     isInitialized = true
                 }
@@ -93,6 +95,12 @@ class MainActivity : ComponentActivity() {
                             enterFrom = Direction.RIGHT,
                             exitTo = Direction.RIGHT
                         ) { DailyTestScreen() }
+                        animatedScreenComposable(
+                            navController = navController,
+                            screenClass = Settings::class,
+                            enterFrom = Direction.RIGHT,
+                            exitTo = Direction.RIGHT
+                        ) { SettingsScreen() }
                     }
                 }
             }

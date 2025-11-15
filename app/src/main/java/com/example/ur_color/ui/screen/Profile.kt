@@ -147,7 +147,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-//                            navController.navigate("diary")
+                            navController.navigate(Settings.route())
                         }
                         .padding(8.dp)
                 )

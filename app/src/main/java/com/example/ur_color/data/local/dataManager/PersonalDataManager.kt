@@ -9,7 +9,7 @@ import com.example.ur_color.data.user.UserData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-object UserDataManager {
+object PersonalDataManager {
     private var initialized = false
 
     private val _user = MutableStateFlow<UserData?>(null)

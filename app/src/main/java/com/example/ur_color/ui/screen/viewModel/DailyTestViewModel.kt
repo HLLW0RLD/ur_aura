@@ -3,7 +3,7 @@ package com.example.ur_color.ui.screen.viewModel
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
-import com.example.ur_color.data.local.dataManager.UserDataManager
+import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
 import com.example.ur_color.data.user.aura.AuraGenerator
@@ -157,10 +157,10 @@ class DailyTestViewModel() : BaseViewModel() {
                 }
             }
 
-            UserDataManager.updateUser(context, userData)
+            PersonalDataManager.updateUser(context, userData)
 
             val aura = AuraGenerator.applyDynamicAura(user = userData) ?: return@launch
-            UserDataManager.updateAura(context, aura)
+            PersonalDataManager.updateAura(context, aura)
         }
     }
 

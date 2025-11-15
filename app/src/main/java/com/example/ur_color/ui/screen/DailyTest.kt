@@ -65,7 +65,7 @@ fun DailyTestScreen(
                 navController.popBackStack()
             },
             showDivider = true,
-            isCentered = true,
+            isCentered = false,
             backgroundColor = AppColors.background,
             modifier = Modifier.align(Alignment.TopCenter)
         )

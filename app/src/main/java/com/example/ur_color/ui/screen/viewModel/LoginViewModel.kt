@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
-import com.example.ur_color.data.local.dataManager.UserDataManager
+import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.user.aura.AuraGenerator
 import com.example.ur_color.data.user.UserData
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ class LoginViewModel() : BaseViewModel() {
         viewModelScope.launch(Dispatchers.Default) {
 
             val bitmap = AuraGenerator.generateBaseAura(user)
-            UserDataManager.save(context, user, bitmap)
+            PersonalDataManager.save(context, user, bitmap)
 
             withContext(Dispatchers.Main) {
                 onSuccess()

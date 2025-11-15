@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.lerp
 import com.example.ur_color.R
 import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
@@ -176,10 +177,16 @@ fun MainScreen(
             )
         }
 
+        val cornerDp = lerp(24.dp, 0.dp, progress)
         Surface(
             modifier = Modifier
                 .offset { IntOffset(0, offsetY.value.roundToInt()) }
                 .fillMaxSize()
+                .border(
+                    color = AppColors.surface,
+                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
+                    width = 2.dp
+                )
                 .pointerInput(canScroll) {
                     detectVerticalDragGestures(
                         onVerticalDrag = { change, dragAmount ->
@@ -259,7 +266,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Energy Level", color = AppColors.white)
+                            Text("Energy Level", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -281,7 +288,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Mood", color = AppColors.white)
+                            Text("Mood", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -303,7 +310,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Stress Level", color = AppColors.white)
+                            Text("Stress Level", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -325,7 +332,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Motivation", color = AppColors.white)
+                            Text("Motivation", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -347,7 +354,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Creativity", color = AppColors.white)
+                            Text("Creativity", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -369,7 +376,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Emotional Balance", color = AppColors.white)
+                            Text("Emotional Balance", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -391,7 +398,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Physical Energy", color = AppColors.white)
+                            Text("Physical Energy", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -413,7 +420,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Sleep Quality", color = AppColors.white)
+                            Text("Sleep Quality", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -435,7 +442,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Intuition Level", color = AppColors.white)
+                            Text("Intuition Level", color = AppColors.textPrimary)
                         }
                     }
                     item {
@@ -457,7 +464,7 @@ fun MainScreen(
                                     .width( 150.dp)
                                     .height(60.dp)
                             )
-                            Text("Social Energy", color = AppColors.white)
+                            Text("Social Energy", color = AppColors.textPrimary)
                         }
                     }
                     item { Spacer(modifier = Modifier.width(16.dp)) }

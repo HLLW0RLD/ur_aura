@@ -1,5 +1,6 @@
 package com.example.ur_color.ui
 
+import android.graphics.Paint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -78,6 +79,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.CornerRadius
@@ -137,6 +139,87 @@ fun AuraPickerField(
             onDismiss = { showDatePicker = false },
             color = color
         )
+    }
+}
+
+enum class IconPosition { START, END }
+
+@Composable
+private fun AuraDropdownItem(
+    text: String? = null,
+    icon: Painter? = null,
+    placeholder: String = "Выберите вариант",
+    iconPosition: IconPosition = IconPosition.START
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (icon != null && iconPosition == IconPosition.START) {
+            Icon(icon, contentDescription = null, tint = AppColors.textPrimary)
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+        Text(
+            text = text ?: placeholder,
+            color = if (text != null) AppColors.textPrimary else AppColors.textSecondary,
+            modifier = Modifier.weight(1f)
+        )
+        if (icon != null && iconPosition == IconPosition.END) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(icon, contentDescription = null, tint = AppColors.textPrimary)
+        }
+    }
+}
+
+@Composable
+fun AuraDropdown(
+    options: List<String>,
+    selectedOption: String? = null,
+    placeholder: String = "Выберите вариант",
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = AppColors.surface,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .clickable { expanded = true }
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+        ) {
+            AuraDropdownItem(
+                text = selectedOption,
+                placeholder = placeholder
+            )
+
+            Icon(
+                painter = if (expanded) painterResource(R.drawable.arrow_up) else painterResource(
+                    R.drawable.arrow_down
+                ),
+                contentDescription = null,
+                tint = AppColors.textSecondary
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AppColors.background)
+        ) {
+            options.forEach { option ->
+                AuraDropdownItem(
+                    text = selectedOption,
+                )
+            }
+        }
     }
 }
 
@@ -540,9 +623,9 @@ fun GradientGraphBox(
         val totalSpacing = spacing * (barCount - 1).coerceAtLeast(0)
         val barWidth = (w - totalSpacing) / barCount
 
-        val textPaint = android.graphics.Paint().apply {
+        val textPaint = Paint().apply {
             color = "#444444".toColorInt()
-            textAlign = android.graphics.Paint.Align.CENTER
+            textAlign = Paint.Align.CENTER
             textSize = 13.sp.toPx()
             isAntiAlias = true
         }

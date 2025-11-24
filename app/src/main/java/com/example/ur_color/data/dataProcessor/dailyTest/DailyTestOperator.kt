@@ -1,11 +1,12 @@
-package com.example.ur_color.data.user.aura
+package com.example.ur_color.data.dataProcessor.dailyTest
 
 import android.content.Context
+import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
-import com.example.ur_color.data.user.UserData
-import com.example.ur_color.utils.logDebug
+import com.example.ur_color.data.model.user.UserData
+import kotlin.collections.iterator
 import kotlin.math.roundToInt
 
 object DailyTestOperator {

@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -55,9 +54,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.lerp
 import com.example.ur_color.R
 import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.user.ZodiacSign
+import com.example.ur_color.data.model.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
-import com.example.ur_color.ui.ExpandableBox
 import com.example.ur_color.ui.DynamicDoubleColumn
 import com.example.ur_color.ui.GradientGraphBox
 import com.example.ur_color.ui.MarketplaceContentCard
@@ -187,8 +185,8 @@ fun MainScreen(
                 .offset { IntOffset(0, offsetY.value.roundToInt()) }
                 .fillMaxSize()
                 .border(
-                    width = 2.dp,
-                    color = AppColors.surfaceLight.copy(alpha = borderAlpha),
+                    width = 0.5.dp,
+                    color = AppColors.surfaceDark.copy(alpha = borderAlpha),
                     shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
                 )
                 .pointerInput(canScroll) {

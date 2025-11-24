@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.model.Question
-import com.example.ur_color.data.user.aura.DailyTestOperator
+import com.example.ur_color.data.dataProcessor.dailyTest.DailyTestOperator
 import kotlinx.coroutines.launch
 
 class DailyTestViewModel() : BaseViewModel() {
@@ -15,17 +15,5 @@ class DailyTestViewModel() : BaseViewModel() {
             DailyTestOperator.consumeAnswer(question = question, answer = answer)
             DailyTestOperator.applyDailyResult(context, data)
         }
-    }
-
-    private fun updateVector(
-        oldVector: List<Int>,
-        value: Int,
-        maxSize: Int = 10
-    ): List<Int> {
-
-        val newList = oldVector + value.coerceIn(1, 10)
-        val result = if (newList.size > maxSize) newList.takeLast(maxSize) else newList
-
-        return result
     }
 }

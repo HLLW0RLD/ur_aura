@@ -53,28 +53,7 @@ fun NavController.nav(route: String) {
     }
 }
 
-inline fun <reified T : Screen> NavGraphBuilder.screenComposable(
-    crossinline content: @Composable (T) -> Unit
-) {
-    val gson = Gson()
-    val typeName = T::class.simpleName ?: error("No class name for ${T::class}")
-
-    if (T::class.objectInstance != null) {
-        composable(typeName) {
-            content(T::class.objectInstance as T)
-        }
-    } else {
-        composable(
-            route = "$typeName/{json}",
-            arguments = listOf(navArgument("json") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("json")
-            val screen = gson.fromJson(json, T::class.java)
-            content(screen)
-        }
-    }
-}
-
+enum class Direction { LEFT, RIGHT, TOP, BOTTOM }
 inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
     navController: NavController,
     screenClass: KClass<T>,
@@ -145,4 +124,25 @@ fun popExitTransition(exitTo: Direction): ExitTransition {
     }
 }
 
-enum class Direction { LEFT, RIGHT, TOP, BOTTOM }
+
+inline fun <reified T : Screen> NavGraphBuilder.screenComposable(
+    crossinline content: @Composable (T) -> Unit
+) {
+    val gson = Gson()
+    val typeName = T::class.simpleName ?: error("No class name for ${T::class}")
+
+    if (T::class.objectInstance != null) {
+        composable(typeName) {
+            content(T::class.objectInstance as T)
+        }
+    } else {
+        composable(
+            route = "$typeName/{json}",
+            arguments = listOf(navArgument("json") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val json = backStackEntry.arguments?.getString("json")
+            val screen = gson.fromJson(json, T::class.java)
+            content(screen)
+        }
+    }
+}

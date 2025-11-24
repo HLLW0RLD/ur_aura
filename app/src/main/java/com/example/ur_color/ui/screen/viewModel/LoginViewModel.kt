@@ -6,8 +6,8 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.user.aura.AuraGenerator
-import com.example.ur_color.data.user.UserData
+import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
+import com.example.ur_color.data.model.user.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

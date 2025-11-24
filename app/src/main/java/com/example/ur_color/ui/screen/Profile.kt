@@ -27,6 +27,7 @@ import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.calculateAge
+import com.example.ur_color.utils.toast
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -44,6 +45,11 @@ fun ProfileScreen() {
 
     val profileViewModel: ProfileViewModel = koinViewModel()
     val user by profileViewModel.user.collectAsState()
+    val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
+
+    LaunchedEffect(Unit) {
+        profileViewModel.checkDailyTestAvailability(context)
+    }
 
     Column(
         modifier = Modifier
@@ -88,18 +94,21 @@ fun ProfileScreen() {
                 Column {
                     Text(
                         color = AppColors.textPrimary,
-                        text = "${u.firstName}, ${calculateAge(u.birthDate)}",
+                        text = "${u.firstName}, ${u.userLevel} уровень",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
                         color = AppColors.textPrimary,
-                        text = "(${u.zodiacSign.lowercase()})",
+                        text = "${u.zodiacSign.lowercase()}",
                         style = MaterialTheme.typography.bodyMedium
                     )
+
+                    // dropdown with full user info
+                    // ${calculateAge(u.birthDate)}
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -125,7 +134,11 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.nav(DailyTest.route())
+                            if (isDailyTestAvailable) {
+                                navController.nav(DailyTest.route())
+                            } else {
+                                context.toast("Тест уже пройден")
+                            }
                         }
                         .padding(8.dp)
                 )

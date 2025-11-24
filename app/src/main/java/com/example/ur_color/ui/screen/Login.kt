@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.ur_color.data.user.UserData
-import com.example.ur_color.data.user.ZodiacSign.Companion.calculateZodiac
+import com.example.ur_color.data.model.user.UserData
+import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.ui.theme.AppColors

@@ -1,4 +1,4 @@
-package com.example.ur_color.data.user.aura
+package com.example.ur_color.data.dataProcessor.aura
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

@@ -1,4 +1,4 @@
-package com.example.ur_color.data.user
+package com.example.ur_color.data.model.user
 
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AuraColors
@@ -17,11 +17,16 @@ data class UserData(
     val avatarUri: String? = null,
     val birthTimestamp: Long = 0L,
 
+    // уровень пользователя
+    // считается от активности пользователя
+    val userLevel: Int = 1,
+
     // дополнительные переменные пользователя
-    // устанавливается 1 раз
+    // устанавливается пользователем 1 раз
     val personalityType: String? = null,
 
     // динамические переменные пользователя
+    // считается от прохождения тестов
     val energyLevel: Int = 5,
     val mood: Int = 5,
     val stressLevel: Int = 5,
@@ -36,7 +41,7 @@ data class UserData(
     val dominantColor: String = AuraColors.WHITE.hex,
 
     // динамический вектор пользователя
-    // 10 последних значения
+    // 10 последних значения динамических переменных
     val energyCapacity: List<Int> = List(10) { 5 },
     val moodVector: List<Int> = List(10) { 5 },
     val stressVector: List<Int> = List(10) { 5 },

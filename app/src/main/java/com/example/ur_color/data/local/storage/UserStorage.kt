@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.ur_color.data.user.UserData
+import com.example.ur_color.data.model.user.UserData
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 
@@ -13,9 +13,11 @@ object UserStorage {
     private val Context.dataStore by preferencesDataStore(name = USER_PREFERENCES)
 
     private val USER_KEY = stringPreferencesKey("user_json")
+    private val DAILY_TEST_KEY = stringPreferencesKey("daily_test_date")
 
     private val gson = Gson()
 
+    //USER
     suspend fun save(context: Context, user: UserData) {
         context.dataStore.edit { prefs ->
             prefs[USER_KEY] = gson.toJson(user)
@@ -31,5 +33,16 @@ object UserStorage {
         context.dataStore.edit { prefs ->
             prefs.remove(USER_KEY)
         }
+    }
+
+    // DAILY TEST
+    suspend fun saveDailyTestDate(context: Context, date: String) {
+        context.dataStore.edit { prefs ->
+            prefs[DAILY_TEST_KEY] = date
+        }
+    }
+
+    suspend fun loadDailyTestDate(context: Context): String? {
+        return context.dataStore.data.first()[DAILY_TEST_KEY]
     }
 }

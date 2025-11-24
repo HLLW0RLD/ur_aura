@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import com.example.ur_color.data.local.storage.AuraStorage
 //import com.example.ur_color.data.local.HistoryStorage
 import com.example.ur_color.data.local.storage.UserStorage
-import com.example.ur_color.data.user.UserData
+import com.example.ur_color.data.model.user.UserData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -36,6 +36,11 @@ object PersonalDataManager {
             _aura.value = it
         }
 //        HistoryStorage.save(context, user)
+    }
+
+    suspend fun dailyTestAvailable(context: Context, newDate: String? = null): String? {
+        newDate?.let { UserStorage.saveDailyTestDate(context, it) }
+        return UserStorage.loadDailyTestDate(context)
     }
 
     suspend fun updateUser(context: Context, user: UserData) {

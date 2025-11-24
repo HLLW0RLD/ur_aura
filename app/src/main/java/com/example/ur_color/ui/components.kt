@@ -74,6 +74,7 @@ import java.util.Locale
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
@@ -102,6 +103,13 @@ import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.ui.theme.ThemeMode
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
+import kotlin.Int.Companion.MAX_VALUE
+import kotlin.math.roundToInt
 
 enum class WindowType { Slim, Regular, Full }
 
@@ -962,43 +970,6 @@ private fun ExpandableContent(
 }
 
 @Composable
-fun DynamicDoubleColumn(
-    useScroll: Boolean = false,
-    spacing: Dp = 12.dp,
-    paddingHorizontal: Dp = 0.dp,
-    paddingVertical: Dp = 0.dp,
-//    isCenteredHor: Boolean,
-    modifier: Modifier = Modifier,
-    content: @Composable TwoColumnScope.() -> Unit
-) {
-    val scope = remember { TwoColumnScopeImpl() }
-    val scrollState = rememberScrollState()
-
-    val mod = if (useScroll) modifier.verticalScroll(scrollState) else modifier
-
-    scope.content()
-    Row(
-        modifier = mod
-            .padding(horizontal = paddingHorizontal, vertical = paddingVertical),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(spacing)
-        ) {
-            scope.leftColumn.forEach { it() }
-        }
-
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(spacing)
-        ) {
-            scope.rightColumn.forEach { it() }
-        }
-    }
-}
-
-@Composable
 fun MarketplaceContentCard(
     content: SocialContent,
     modifier: Modifier = Modifier,
@@ -1027,7 +998,7 @@ fun MarketplaceContentCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(4.dp)
+                .padding(6.dp)
         ) {
             when (content) {
                 is SocialContent.Product -> {
@@ -1050,7 +1021,7 @@ fun MarketplaceContentCard(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .clip(RoundedCornerShape(topEnd = 12.dp))
+                                .fillMaxWidth()
                                 .background(
                                     Brush.verticalGradient(
                                         colors = listOf(
@@ -1060,6 +1031,9 @@ fun MarketplaceContentCard(
                                     )
                                 )
                                 .padding(horizontal = 4.dp, vertical = 4.dp)
+                                .basicMarquee(
+                                    iterations = MAX_VALUE
+                                )
                         )
                     }
                 }
@@ -1094,6 +1068,7 @@ fun MarketplaceContentCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .align(Alignment.BottomStart)
                                 .background(
                                     Brush.verticalGradient(
@@ -1104,6 +1079,9 @@ fun MarketplaceContentCard(
                                     )
                                 )
                                 .padding(horizontal = 4.dp, vertical = 4.dp)
+                                .basicMarquee(
+                                    iterations = MAX_VALUE
+                                )
                         )
                     }
                 }
@@ -1119,6 +1097,9 @@ fun MarketplaceContentCard(
                         fontSize = 14.sp,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(
+                            iterations = MAX_VALUE
+                        ),
                         color = AppColors.textPrimary
                     )
 
@@ -1128,6 +1109,9 @@ fun MarketplaceContentCard(
                         text = content.price,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
+                        modifier = Modifier.basicMarquee(
+                            iterations = MAX_VALUE
+                        ),
                         color = AppColors.textPrimary
                     )
                 }
@@ -1138,6 +1122,9 @@ fun MarketplaceContentCard(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
+                        modifier = Modifier.basicMarquee(
+                            iterations = MAX_VALUE
+                        ),
                         color = AppColors.textPrimary
                     )
                 }
@@ -1148,6 +1135,9 @@ fun MarketplaceContentCard(
                         fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(
+                            iterations = MAX_VALUE
+                        ),
                         color = AppColors.textPrimary
                     )
 
@@ -1161,6 +1151,43 @@ fun MarketplaceContentCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DynamicDoubleColumn(
+    useScroll: Boolean = false,
+    spacing: Dp = 4.dp,
+    paddingHorizontal: Dp = 0.dp,
+    paddingVertical: Dp = 0.dp,
+//    isCenteredHor: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable TwoColumnScope.() -> Unit
+) {
+    val scope = remember { TwoColumnScopeImpl() }
+    val scrollState = rememberScrollState()
+
+    val mod = if (useScroll) modifier.verticalScroll(scrollState) else modifier
+
+    scope.content()
+    Row(
+        modifier = mod
+            .padding(horizontal = paddingHorizontal, vertical = paddingVertical),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            scope.leftColumn.forEach { it() }
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            scope.rightColumn.forEach { it() }
         }
     }
 }

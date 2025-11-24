@@ -1,8 +1,8 @@
-package com.example.ur_color.data.user.aura
+package com.example.ur_color.data.dataProcessor.aura
 
 import android.graphics.Bitmap
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.user.UserData
+import com.example.ur_color.data.model.user.UserData
 
 object AuraGenerator {
 

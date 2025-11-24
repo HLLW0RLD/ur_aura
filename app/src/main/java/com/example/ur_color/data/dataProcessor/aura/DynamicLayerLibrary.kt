@@ -1,15 +1,14 @@
-package com.example.ur_color.data.user.aura
+package com.example.ur_color.data.dataProcessor.aura
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import com.example.ur_color.data.user.UserData
+import com.example.ur_color.data.model.user.UserData
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
-import kotlin.random.Random
 
 object DynamicLayerLibrary {
 

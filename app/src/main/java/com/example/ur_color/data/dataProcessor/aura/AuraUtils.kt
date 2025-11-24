@@ -1,9 +1,7 @@
-package com.example.ur_color.data.user.aura
+package com.example.ur_color.data.dataProcessor.aura
 
 import android.graphics.Color
-import com.example.ur_color.ui.theme.AuraColors
 import kotlin.random.Random
-import androidx.core.graphics.toColorInt
 
 object AuraUtils {
 

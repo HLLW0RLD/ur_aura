@@ -3,6 +3,7 @@ package com.example.ur_color.utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -47,6 +48,9 @@ val LocalNavController =
 //  UI / UX
 /*==============================================================================================*/
 
+fun Context.toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, message, duration).show()
+}
 
 fun String?.parseBirthHour(): Int {
     return try {

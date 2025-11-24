@@ -114,7 +114,18 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.navigate(AuraDetails().route())
+                            navController.nav(AuraDetails().route())
+                        }
+                        .padding(8.dp)
+                )
+                Text(
+                    color = AppColors.textPrimary,
+                    text = "Daily Tests",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.nav(DailyTest.route())
                         }
                         .padding(8.dp)
                 )
@@ -125,7 +136,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.navigate(DailyTest.route())
+
                         }
                         .padding(8.dp)
                 )
@@ -136,7 +147,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-//                            navController.navigate("diary")
+
                         }
                         .padding(8.dp)
                 )
@@ -147,14 +158,14 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.navigate(Settings.route())
+                            navController.nav(Settings.route())
                         }
                         .padding(8.dp)
                 )
                 Text(
-                    "Удалить профиль",
+                    "Выйти из профиля",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Red,
+                    color = AppColors.textPrimary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -165,6 +176,17 @@ fun ProfileScreen() {
                                     popUpTo(0) // очистить стек
                                 }
                             }
+                        }
+                        .padding(8.dp)
+                )
+                Text(
+                    "Удалить профиль",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = AppColors.error,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+
                         }
                         .padding(8.dp)
                 )

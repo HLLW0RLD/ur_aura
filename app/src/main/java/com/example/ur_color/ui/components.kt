@@ -82,10 +82,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -93,6 +97,11 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.core.graphics.toColorInt
+import coil.compose.AsyncImage
+import com.example.ur_color.data.local.dataManager.SystemDataManager
+import com.example.ur_color.data.model.SocialContent
+import com.example.ur_color.ui.theme.ThemeMode
+import androidx.compose.runtime.collectAsState
 
 enum class WindowType { Slim, Regular, Full }
 
@@ -958,6 +967,7 @@ fun DynamicDoubleColumn(
     spacing: Dp = 12.dp,
     paddingHorizontal: Dp = 0.dp,
     paddingVertical: Dp = 0.dp,
+//    isCenteredHor: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable TwoColumnScope.() -> Unit
 ) {
@@ -984,6 +994,173 @@ fun DynamicDoubleColumn(
             verticalArrangement = Arrangement.spacedBy(spacing)
         ) {
             scope.rightColumn.forEach { it() }
+        }
+    }
+}
+
+@Composable
+fun MarketplaceContentCard(
+    content: SocialContent,
+    modifier: Modifier = Modifier,
+    onClick: (SocialContent) -> Unit = {}
+) {
+
+    val color = SystemDataManager.theme.collectAsState()
+
+    val cardBackground = if (color.value == ThemeMode.LIGHT)
+        Color.White.copy(alpha = 0.6f)
+    else
+        Color.Black.copy(alpha = 0.4f)
+
+    Box(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(RoundedCornerShape(12.dp))
+                .background(cardBackground)
+                .blur(16.dp)
+                .clickable { onClick(content) }
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp)
+        ) {
+            when (content) {
+                is SocialContent.Product -> {
+                    Box {
+                        AsyncImage(
+                            model = content.image,
+                            contentDescription = content.title,
+                            modifier = Modifier
+                                .height(160.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Text(
+                            text = content.title,
+                            color = AppColors.autoText(Color.Black.copy(alpha = 0.3f)),
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clip(RoundedCornerShape(topEnd = 12.dp))
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            cardBackground.copy(alpha = 0.85f)
+                                        )
+                                    )
+                                )
+                                .padding(horizontal = 4.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                is SocialContent.User -> {
+                    AsyncImage(
+                        model = content.avatar,
+                        contentDescription = content.username,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clip(CircleShape)
+                    )
+                }
+
+                is SocialContent.Ad -> {
+                    Box {
+                        AsyncImage(
+                            model = content.image,
+                            contentDescription = content.title,
+                            modifier = Modifier
+                                .height(160.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Text(
+                            text = content.title,
+                            color = AppColors.autoText(Color.Black.copy(alpha = 0.3f)),
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            cardBackground.copy(alpha = 0.85f)
+                                        )
+                                    )
+                                )
+                                .padding(horizontal = 4.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            when (content) {
+
+                is SocialContent.Product -> {
+                    Text(
+                        text = content.title,
+                        fontSize = 14.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        color = AppColors.textPrimary
+                    )
+
+                    Spacer(Modifier.height(2.dp))
+
+                    Text(
+                        text = content.price,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = AppColors.textPrimary
+                    )
+                }
+
+                is SocialContent.User -> {
+                    Text(
+                        text = content.username,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        color = AppColors.textPrimary
+                    )
+                }
+
+                is SocialContent.Ad -> {
+                    Text(
+                        text = content.title,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = AppColors.textPrimary
+                    )
+
+                    Spacer(Modifier.height(2.dp))
+
+                    Text(
+                        text = content.cta,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF007AFF)
+                    )
+                }
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 
 object AppColors {
 
@@ -15,6 +16,11 @@ object AppColors {
 
     val tertiary: Color
         @Composable get() = MaterialTheme.colorScheme.tertiary
+
+    val autoText: (Color) -> Color
+        @Composable get() = { bg ->
+            if (bg.luminance() > 0.5f) Color.Black else Color.White
+        }
 
     val textPrimary: Color
         @Composable get() = MaterialTheme.colorScheme.onBackground
@@ -28,8 +34,17 @@ object AppColors {
 
     val background: Color
         @Composable get() = MaterialTheme.colorScheme.background
+    val backgroundLight: Color
+        @Composable get() = background.lighten(0.1f)
+    val backgroundDark: Color
+        @Composable get() = background.darken(0.1f)
+
     val surface: Color
         @Composable get() = MaterialTheme.colorScheme.surface
+    val surfaceLight: Color
+        @Composable get() = surface.lighten(0.1f)
+    val surfaceDark: Color
+        @Composable get() = surface.darken(0.1f)
 
     val error: Color
         @Composable get() = MaterialTheme.colorScheme.error
@@ -38,6 +53,24 @@ object AppColors {
 
     val divider: Color
         @Composable get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+
+    fun Color.lighten(fraction: Float): Color {
+        return Color(
+            red = red + (1f - red) * fraction,
+            green = green + (1f - green) * fraction,
+            blue = blue + (1f - blue) * fraction,
+            alpha = alpha
+        )
+    }
+
+    fun Color.darken(fraction: Float): Color {
+        return Color(
+            red = red * (1f - fraction),
+            green = green * (1f - fraction),
+            blue = blue * (1f - fraction),
+            alpha = alpha
+        )
+    }
 }
 
 // Основные акцентные цвета — пастельно-розовая гамма

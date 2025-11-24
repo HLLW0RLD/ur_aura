@@ -32,6 +32,7 @@ import com.example.ur_color.ui.screen.Settings
 import com.example.ur_color.ui.screen.SettingsScreen
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
+import com.example.ur_color.ui.screen.screenComposable
 import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.flow.firstOrNull

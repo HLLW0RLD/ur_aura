@@ -12,6 +12,7 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,11 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.lerp
 import com.example.ur_color.R
+import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.user.ZodiacSign
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.ExpandableBox
 import com.example.ur_color.ui.DynamicDoubleColumn
 import com.example.ur_color.ui.GradientGraphBox
+import com.example.ur_color.ui.MarketplaceContentCard
 import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
@@ -149,7 +152,7 @@ fun MainScreen(
                 if (offsetY.value != collapsedY) {
                     scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
                 } else {
-                    navController.navigate(Profile().route())
+                    navController.nav(Profile().route())
                 }
             },
             isCentered = true,
@@ -172,20 +175,21 @@ fun MainScreen(
                         indication = null,
                         interactionSource = null
                     ) {
-                        navController.navigate(AuraDetails().route())
+                        navController.nav(AuraDetails().route())
                     }
             )
         }
 
-        val cornerDp = lerp(24.dp, 0.dp, progress)
+        val cornerDp = lerp(24.dp, 12.dp, progress)
+        val borderAlpha = 1f - progress
         Surface(
             modifier = Modifier
                 .offset { IntOffset(0, offsetY.value.roundToInt()) }
                 .fillMaxSize()
                 .border(
-                    color = AppColors.surface,
-                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp),
-                    width = 2.dp
+                    width = 2.dp,
+                    color = AppColors.surfaceLight.copy(alpha = borderAlpha),
+                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
                 )
                 .pointerInput(canScroll) {
                     detectVerticalDragGestures(
@@ -241,241 +245,254 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.size(24.dp))
 
-                LazyRow(
+                Column(
                     modifier = Modifier
-                        .height(150.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(AppColors.surfaceDark
+                            .copy(alpha = 0.2f)
+                        )
+                        .padding(vertical = 16.dp)
                 ) {
-                    item { Spacer(modifier = Modifier.width(16.dp)) }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
-                                )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.energyCapacity,
-                                showStat = false,
+                    LazyRow(
+                        modifier = Modifier
+                            .height(130.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        item { Spacer(modifier = Modifier.width(0.dp)) }
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Energy Level", color = AppColors.textPrimary)
-                        }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.energyCapacity,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.moodVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Mood", color = AppColors.textPrimary)
+                                Text("Energy Level", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.moodVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.stressVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Stress Level", color = AppColors.textPrimary)
+                                Text("Mood", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.stressVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.motivationVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Motivation", color = AppColors.textPrimary)
+                                Text("Stress Level", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.motivationVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.creativityVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Creativity", color = AppColors.textPrimary)
+                                Text("Motivation", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.creativityVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.emotionalBalanceVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Emotional Balance", color = AppColors.textPrimary)
+                                Text("Creativity", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.emotionalBalanceVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.physicalEnergyVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Physical Energy", color = AppColors.textPrimary)
+                                Text("Emotional Balance", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.physicalEnergyVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.sleepQualityVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Sleep Quality", color = AppColors.textPrimary)
+                                Text("Physical Energy", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.sleepQualityVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.intuitionVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Intuition Level", color = AppColors.textPrimary)
+                                Text("Sleep Quality", color = AppColors.textPrimary)
+                            }
                         }
-                    }
-                    item {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .border(
-                                    shape = RoundedCornerShape(24.dp),
-                                    width = 2.dp,
-                                    color = AppColors.surface
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.intuitionVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
                                 )
-                                .padding(16.dp)
-                        ) {
-                            GradientGraphBox(
-                                values = user.socialVector,
-                                showStat = false,
-                                modifier = Modifier
-                                    .width( 150.dp)
-                                    .height(60.dp)
-                            )
-                            Text("Social Energy", color = AppColors.textPrimary)
+                                Text("Intuition Level", color = AppColors.textPrimary)
+                            }
                         }
+                        item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .border(
+                                        shape = RoundedCornerShape(24.dp),
+                                        width = 2.dp,
+                                        color = AppColors.surface
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                GradientGraphBox(
+                                    values = user.socialVector,
+                                    showStat = false,
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(60.dp)
+                                )
+                                Text("Social Energy", color = AppColors.textPrimary)
+                            }
+                        }
+                        item { Spacer(modifier = Modifier.width(8.dp)) }
                     }
-                    item { Spacer(modifier = Modifier.width(16.dp)) }
-                }
 
-                DynamicDoubleColumn(paddingHorizontal = 16.dp) {
-                    item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                        .padding(horizontal = 4.dp)
+                    ) {
                         ExpandableFloatingBox(
-                            width = 1f,
+                            width = 0.5f,
                             height = 100f,
-                            expandWidth = 1f,
+                            expandWidth = 0.5f,
                             closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
                             expandedTitle = card?.advice ?: "oops",
                             windowType = WindowType.Regular,
@@ -483,8 +500,7 @@ fun MainScreen(
                             content = {
                                 Column(
                                     Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
+                                        .fillMaxWidth(),
                                     horizontalAlignment = Alignment.Start
                                 ) {
                                     Text(
@@ -517,13 +533,16 @@ fun MainScreen(
                                     Spacer(Modifier.height(8.dp))
                                     Text(
                                         color = AppColors.textPrimary,
-                                        text = "Совместимые карты: ${card?.compatibleWith?.joinToString(", ")}"
+                                        text = "Совместимые карты: ${
+                                            card?.compatibleWith?.joinToString(
+                                                ", "
+                                            )
+                                        }"
                                     )
                                 }
                             }
                         )
-                    }
-                    item {
+
                         when (val uiState = horoscopeState) {
                             is HoroscopeUiState.Success -> {
                                 val horoscope = uiState.horoscope
@@ -538,7 +557,6 @@ fun MainScreen(
                                     Column(
                                         Modifier
                                             .fillMaxWidth()
-                                            .padding(16.dp)
                                     ) {
                                         Text(
                                             color = AppColors.textPrimary,
@@ -577,8 +595,177 @@ fun MainScreen(
                     }
                 }
 
+                Spacer(Modifier.height(16.dp))
+
+                DynamicDoubleColumn(
+                    paddingHorizontal = 16.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(AppColors.surfaceDark
+                            .copy(alpha = 0.2f)
+                        )
+                        .padding(vertical = 16.dp)
+                ) {
+
+                    demoCards.forEach {
+                        item {
+                            MarketplaceContentCard(
+                                modifier = Modifier
+                                    .padding(4.dp),
+                                content = it,
+                                onClick = {  }
+                            )
+                        }
+                    }
+                }
+
                 Spacer(Modifier.height(120.dp))
             }
         }
     }
 }
+
+val demoCards = listOf(
+    SocialContent.Product(
+        id = "1",
+        title = "Apple AirPods Pro",
+        price = "19 990 ₽",
+        image = "https://picsum.photos/seed/airpods/600/600"
+    ),
+    SocialContent.Product(
+        id = "2",
+        title = "Xiaomi Robot Vacuum",
+        price = "23 499 ₽",
+        image = "https://picsum.photos/seed/vacuum/600/600"
+    ),
+    SocialContent.Product(
+        id = "3",
+        title = "Sony WH-1000XM5",
+        price = "34 990 ₽",
+        image = "https://picsum.photos/seed/headphones/600/600"
+    ),
+    SocialContent.Ad(
+        id = "4",
+        title = "🔥 Скидки до 70% на технику!",
+        image = "https://picsum.photos/seed/sale/600/600",
+        cta = "Открыть"
+    ),
+    SocialContent.Product(
+        id = "5",
+        title = "Nike Air Max 270",
+        price = "12 499 ₽",
+        image = "https://picsum.photos/seed/nike/600/600"
+    ),
+    SocialContent.User(
+        id = "6",
+        username = "Мария",
+        avatar = "https://picsum.photos/seed/user1/300/300"
+    ),
+    SocialContent.Product(
+        id = "7",
+        title = "Logitech MX Master 3S",
+        price = "8 490 ₽",
+        image = "https://picsum.photos/seed/mouse/600/600"
+    ),
+    SocialContent.Product(
+        id = "8",
+        title = "Sony PlayStation 5",
+        price = "69 999 ₽",
+        image = "https://picsum.photos/seed/ps5/600/600"
+    ),
+    SocialContent.Ad(
+        id = "9",
+        title = "🎁 Бесплатная доставка от 999 ₽",
+        image = "https://picsum.photos/seed/delivery/600/600",
+        cta = "Подробнее"
+    ),
+    SocialContent.User(
+        id = "10",
+        username = "Алексей",
+        avatar = "https://picsum.photos/seed/user2/300/300"
+    ),
+    SocialContent.Product(
+        id = "11",
+        title = "Canon EOS R50 Kit",
+        price = "89 900 ₽",
+        image = "https://picsum.photos/seed/camera/600/600"
+    ),
+    SocialContent.Product(
+        id = "12",
+        title = "MacBook Air M3",
+        price = "124 990 ₽",
+        image = "https://picsum.photos/seed/macbook/600/600"
+    ),
+    SocialContent.Product(
+        id = "1",
+        title = "Apple AirPods Pro",
+        price = "19 990 ₽",
+        image = "https://picsum.photos/seed/airpods/600/600"
+    ),
+    SocialContent.Product(
+        id = "2",
+        title = "Xiaomi Robot Vacuum",
+        price = "23 499 ₽",
+        image = "https://picsum.photos/seed/vacuum/600/600"
+    ),
+    SocialContent.Product(
+        id = "3",
+        title = "Sony WH-1000XM5",
+        price = "34 990 ₽",
+        image = "https://picsum.photos/seed/headphones/600/600"
+    ),
+    SocialContent.Ad(
+        id = "4",
+        title = "🔥 Скидки до 70% на технику!",
+        image = "https://picsum.photos/seed/sale/600/600",
+        cta = "Открыть"
+    ),
+    SocialContent.Product(
+        id = "5",
+        title = "Nike Air Max 270",
+        price = "12 499 ₽",
+        image = "https://picsum.photos/seed/nike/600/600"
+    ),
+    SocialContent.User(
+        id = "6",
+        username = "Мария",
+        avatar = "https://picsum.photos/seed/user1/300/300"
+    ),
+    SocialContent.Product(
+        id = "7",
+        title = "Logitech MX Master 3S",
+        price = "8 490 ₽",
+        image = "https://picsum.photos/seed/mouse/600/600"
+    ),
+    SocialContent.Product(
+        id = "8",
+        title = "Sony PlayStation 5",
+        price = "69 999 ₽",
+        image = "https://picsum.photos/seed/ps5/600/600"
+    ),
+    SocialContent.Ad(
+        id = "9",
+        title = "🎁 Бесплатная доставка от 999 ₽",
+        image = "https://picsum.photos/seed/delivery/600/600",
+        cta = "Подробнее"
+    ),
+    SocialContent.User(
+        id = "10",
+        username = "Алексей",
+        avatar = "https://picsum.photos/seed/user2/300/300"
+    ),
+    SocialContent.Product(
+        id = "11",
+        title = "Canon EOS R50 Kit",
+        price = "89 900 ₽",
+        image = "https://picsum.photos/seed/camera/600/600"
+    ),
+    SocialContent.Product(
+        id = "12",
+        title = "MacBook Air M3",
+        price = "124 990 ₽",
+        image = "https://picsum.photos/seed/macbook/600/600"
+    )
+)

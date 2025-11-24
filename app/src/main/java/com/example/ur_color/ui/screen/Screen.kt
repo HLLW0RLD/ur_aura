@@ -39,6 +39,19 @@ fun Screen.route(): String {
     }
 }
 
+fun NavController.nav(route: String) {
+    val routeBase = route.substringBefore("/")
+    val currentRouteBase =
+        currentBackStackEntry?.destination?.route?.substringBefore("/") ?: ""
+
+    if (routeBase == currentRouteBase) {
+        return
+    }
+
+    navigate(route) {
+        launchSingleTop = true
+    }
+}
 
 inline fun <reified T : Screen> NavGraphBuilder.screenComposable(
     crossinline content: @Composable (T) -> Unit
@@ -62,49 +75,28 @@ inline fun <reified T : Screen> NavGraphBuilder.screenComposable(
     }
 }
 
-fun <T : Screen> NavGraphBuilder.animatedScreenComposable(
+inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
     navController: NavController,
     screenClass: KClass<T>,
     enterFrom: Direction = Direction.RIGHT,
     exitTo: Direction = Direction.RIGHT,
-    content: @Composable (T) -> Unit
+    crossinline content: @Composable (T) -> Unit
 ) {
     val gson = Gson()
     val typeName = screenClass.simpleName ?: error("No class name for $screenClass")
 
-    fun enterTransition(): EnterTransition {
-        return when (enterFrom) {
-            Direction.LEFT -> slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300))
-            Direction.RIGHT -> slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300))
-            Direction.TOP -> slideInVertically(initialOffsetY = { -it }, animationSpec = tween(300))
-            Direction.BOTTOM -> slideInVertically(initialOffsetY = { it }, animationSpec = tween(300))
-        }
-    }
-
-    fun exitTransition(): ExitTransition {
-        return ExitTransition.None
-    }
-
-    fun popEnterTransition(): EnterTransition {
-        return EnterTransition.None
-    }
-
-    fun popExitTransition(): ExitTransition {
-        return when (exitTo) {
-            Direction.LEFT -> slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300))
-            Direction.RIGHT -> slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300))
-            Direction.TOP -> slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(300))
-            Direction.BOTTOM -> slideOutVertically(targetOffsetY = { it }, animationSpec = tween(300))
-        }
+    val nav = navController
+    if (nav.currentBackStackEntry?.destination?.route?.startsWith(typeName) == true) {
+        return
     }
 
     if (screenClass.objectInstance != null) {
         composable(
             route = typeName,
-            enterTransition = { enterTransition() },
+            enterTransition = { enterTransition(enterFrom) },
             exitTransition = { exitTransition() },
             popEnterTransition = { popEnterTransition() },
-            popExitTransition = { popExitTransition() }
+            popExitTransition = { popExitTransition(exitTo) }
         ) {
             BackHandler { navController.popBackStack() }
             content(screenClass.objectInstance as T)
@@ -113,16 +105,43 @@ fun <T : Screen> NavGraphBuilder.animatedScreenComposable(
         composable(
             route = "$typeName/{json}",
             arguments = listOf(navArgument("json") { type = NavType.StringType }),
-            enterTransition = { enterTransition() },
+            enterTransition = { enterTransition(enterFrom) },
             exitTransition = { exitTransition() },
             popEnterTransition = { popEnterTransition() },
-            popExitTransition = { popExitTransition() }
+            popExitTransition = { popExitTransition(exitTo) }
         ) { backStackEntry ->
             val json = backStackEntry.arguments?.getString("json")
             val screen = gson.fromJson(json, screenClass.java)
             BackHandler { navController.popBackStack() }
             content(screen)
         }
+    }
+}
+
+
+fun enterTransition(enterFrom: Direction): EnterTransition {
+    return when (enterFrom) {
+        Direction.LEFT -> slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300))
+        Direction.RIGHT -> slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300))
+        Direction.TOP -> slideInVertically(initialOffsetY = { -it }, animationSpec = tween(300))
+        Direction.BOTTOM -> slideInVertically(initialOffsetY = { it }, animationSpec = tween(300))
+    }
+}
+
+fun exitTransition(): ExitTransition {
+    return ExitTransition.None
+}
+
+fun popEnterTransition(): EnterTransition {
+    return EnterTransition.None
+}
+
+fun popExitTransition(exitTo: Direction): ExitTransition {
+    return when (exitTo) {
+        Direction.LEFT -> slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300))
+        Direction.RIGHT -> slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300))
+        Direction.TOP -> slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(300))
+        Direction.BOTTOM -> slideOutVertically(targetOffsetY = { it }, animationSpec = tween(300))
     }
 }
 

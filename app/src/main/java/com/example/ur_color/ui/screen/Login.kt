@@ -197,7 +197,7 @@ fun LoginScreen(
                         )
 
                         loginViewModel.saveUser(context, user) {
-                            navController.nav(Main.route())
+                            navController.nav(Main)
                         }
                     }
                 }

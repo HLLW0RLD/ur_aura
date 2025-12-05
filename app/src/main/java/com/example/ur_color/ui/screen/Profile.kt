@@ -2,7 +2,6 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.Image
@@ -15,18 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
-import com.example.ur_color.utils.calculateAge
 import com.example.ur_color.utils.toast
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -60,7 +55,7 @@ fun ProfileScreen() {
             title = "Your profile",
             showBack = true,
             onBackClick = {
-                navController.popBackStack()
+                navController.popBack()
             },
             isCentered = false,
             backgroundColor = AppColors.background,
@@ -123,7 +118,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.nav(AuraDetails().route())
+                            navController.nav(AuraDetails())
                         }
                         .padding(8.dp)
                 )
@@ -135,7 +130,7 @@ fun ProfileScreen() {
                         .fillMaxWidth()
                         .clickable {
                             if (isDailyTestAvailable) {
-                                navController.nav(DailyTest.route())
+                                navController.nav(DailyTest)
                             } else {
                                 context.toast("Тест уже пройден")
                             }
@@ -171,7 +166,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.nav(Settings.route())
+                            navController.nav(Settings)
                         }
                         .padding(8.dp)
                 )

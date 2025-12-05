@@ -12,13 +12,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.ui.screen.AuraDetails
 import com.example.ur_color.ui.screen.AuraDetailsScreen
-import com.example.ur_color.ui.screen.Direction
 import com.example.ur_color.ui.screen.Login
 import com.example.ur_color.ui.screen.LoginScreen
 import com.example.ur_color.ui.screen.Main
@@ -32,7 +30,6 @@ import com.example.ur_color.ui.screen.Settings
 import com.example.ur_color.ui.screen.SettingsScreen
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
-import com.example.ur_color.ui.screen.screenComposable
 import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.flow.firstOrNull
@@ -47,7 +44,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val navController = rememberNavController()
-                val context = LocalContext.current
 
                 var startRoute by remember { mutableStateOf<Screen?>(null) } // или тип Any для data class
                 var isInitialized by remember { mutableStateOf(false) }
@@ -60,47 +56,28 @@ class MainActivity : ComponentActivity() {
 
                 if (!isInitialized) return@AppTheme
 
-
                 CompositionLocalProvider(LocalNavController provides navController) {
                     NavHost(
                         navController = navController,
                         startDestination = startRoute!!.route()
                     ) {
-                        animatedScreenComposable(
+                        animatedScreenComposable<Login>(
                             navController = navController,
-                            screenClass = Login::class,
-                            enterFrom = Direction.RIGHT,
-                            exitTo = Direction.RIGHT
                         ) { LoginScreen() }
-                        animatedScreenComposable(
+                        animatedScreenComposable<Main>(
                             navController = navController,
-                            screenClass = Main::class,
-                            enterFrom = Direction.RIGHT,
-                            exitTo = Direction.RIGHT
                         ) { MainScreen() }
-                        animatedScreenComposable(
+                        animatedScreenComposable<AuraDetails>(
                             navController = navController,
-                            screenClass = AuraDetails::class,
-                            enterFrom = Direction.RIGHT,
-                            exitTo = Direction.RIGHT
                         ) { AuraDetailsScreen(it) }
-                        animatedScreenComposable(
+                        animatedScreenComposable<Profile>(
                             navController = navController,
-                            screenClass = Profile::class,
-                            enterFrom = Direction.RIGHT,
-                            exitTo = Direction.RIGHT
                         ) { ProfileScreen() }
-                        animatedScreenComposable(
+                        animatedScreenComposable<DailyTest>(
                             navController = navController,
-                            screenClass = DailyTest::class,
-                            enterFrom = Direction.RIGHT,
-                            exitTo = Direction.RIGHT
                         ) { DailyTestScreen() }
-                        animatedScreenComposable(
+                        animatedScreenComposable<Settings>(
                             navController = navController,
-                            screenClass = Settings::class,
-                            enterFrom = Direction.RIGHT,
-                            exitTo = Direction.RIGHT
                         ) { SettingsScreen() }
                     }
                 }

@@ -150,7 +150,7 @@ fun MainScreen(
                 if (offsetY.value != collapsedY) {
                     scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
                 } else {
-                    navController.nav(Profile().route())
+                    navController.nav(Profile())
                 }
             },
             isCentered = true,
@@ -173,7 +173,7 @@ fun MainScreen(
                         indication = null,
                         interactionSource = null
                     ) {
-                        navController.nav(AuraDetails().route())
+                        navController.nav(AuraDetails())
                     }
             )
         }
@@ -246,7 +246,7 @@ fun MainScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 14.dp)
+                        .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(AppColors.surfaceDark
                             .copy(alpha = 0.2f)
@@ -599,7 +599,7 @@ fun MainScreen(
                     paddingHorizontal = 16.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 14.dp)
+                        .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(AppColors.surfaceDark
                             .copy(alpha = 0.2f)

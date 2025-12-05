@@ -1,50 +1,34 @@
 package com.example.ur_color.ui.screen
 
+import android.util.Base64
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.google.gson.Gson
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlin.reflect.KClass
+import kotlinx.serialization.json.Json
 
-@Serializable
-sealed interface Screen
 
-fun Screen.route(): String {
-    val gson = Gson()
-    val type = this::class.simpleName ?: error("No class name for $this")
 
-    return if (this::class.objectInstance != null) {
-        type
-    } else {
-        val json = gson.toJson(this)
-        "$type/$json"
-    }
-}
-
-fun NavController.nav(route: String) {
-    val routeBase = route.substringBefore("/")
-    val currentRouteBase =
+fun NavController.nav(
+    screen : Screen,
+) {
+    val route = screen.route()
+    val page = route.substringBefore("/")
+    val current =
         currentBackStackEntry?.destination?.route?.substringBefore("/") ?: ""
 
-    if (routeBase == currentRouteBase) {
+    if (page == current) {
         return
     }
 
@@ -53,23 +37,29 @@ fun NavController.nav(route: String) {
     }
 }
 
-enum class Direction { LEFT, RIGHT, TOP, BOTTOM }
+fun NavController.popBack(to: Screen? = null, inclusive: Boolean = false) {
+    val route = to?.route()?.substringBefore("/")
+    if (route == null) {
+        popBackStack()
+        return
+    }
+    popBackStack(route, inclusive)
+}
+
+
+
+
+
 inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
     navController: NavController,
-    screenClass: KClass<T>,
     enterFrom: Direction = Direction.RIGHT,
     exitTo: Direction = Direction.RIGHT,
     crossinline content: @Composable (T) -> Unit
 ) {
-    val gson = Gson()
-    val typeName = screenClass.simpleName ?: error("No class name for $screenClass")
+    val typeName = T::class.simpleName ?: error("No class name for ${T::class}")
+    val objectInstance = T::class.objectInstance
 
-    val nav = navController
-    if (nav.currentBackStackEntry?.destination?.route?.startsWith(typeName) == true) {
-        return
-    }
-
-    if (screenClass.objectInstance != null) {
+    if (objectInstance != null) {
         composable(
             route = typeName,
             enterTransition = { enterTransition(enterFrom) },
@@ -78,22 +68,26 @@ inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
             popExitTransition = { popExitTransition(exitTo) }
         ) {
             BackHandler { navController.popBackStack() }
-            content(screenClass.objectInstance as T)
+            content(objectInstance)
         }
-    } else {
-        composable(
-            route = "$typeName/{json}",
-            arguments = listOf(navArgument("json") { type = NavType.StringType }),
-            enterTransition = { enterTransition(enterFrom) },
-            exitTransition = { exitTransition() },
-            popEnterTransition = { popEnterTransition() },
-            popExitTransition = { popExitTransition(exitTo) }
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("json")
-            val screen = gson.fromJson(json, screenClass.java)
-            BackHandler { navController.popBackStack() }
-            content(screen)
-        }
+        return
+    }
+
+    composable(
+        route = "$typeName/{encoded}",
+        arguments = listOf(navArgument("encoded") { type = NavType.StringType }),
+        enterTransition = { enterTransition(enterFrom) },
+        exitTransition = { exitTransition() },
+        popEnterTransition = { popEnterTransition() },
+        popExitTransition = { popExitTransition(exitTo) }
+    ) { backStackEntry ->
+        val encoded = backStackEntry.arguments?.getString("encoded")
+            ?: error("Missing encoded argument for $typeName")
+
+        val screen = decodeFromBase64<T>(encoded)
+
+        BackHandler { navController.popBackStack() }
+        content(screen)
     }
 }
 
@@ -125,24 +119,37 @@ fun popExitTransition(exitTo: Direction): ExitTransition {
 }
 
 
-inline fun <reified T : Screen> NavGraphBuilder.screenComposable(
-    crossinline content: @Composable (T) -> Unit
-) {
-    val gson = Gson()
-    val typeName = T::class.simpleName ?: error("No class name for ${T::class}")
 
-    if (T::class.objectInstance != null) {
-        composable(typeName) {
-            content(T::class.objectInstance as T)
-        }
+
+
+val jsonFormat = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+}
+
+inline fun <reified T> encodeToBase64(obj: T): String {
+    val json = jsonFormat.encodeToString(obj)
+    return Base64.encodeToString(json.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+}
+
+inline fun <reified T> decodeFromBase64(encoded: String): T {
+    val json = String(Base64.decode(encoded, Base64.URL_SAFE or Base64.NO_WRAP))
+    return jsonFormat.decodeFromString(json)
+}
+
+fun Screen.route(): String {
+    val type = this::class.simpleName ?: error("No class name for $this")
+
+    val isObject = this::class.objectInstance != null
+    return if (isObject) {
+        type
     } else {
-        composable(
-            route = "$typeName/{json}",
-            arguments = listOf(navArgument("json") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("json")
-            val screen = gson.fromJson(json, T::class.java)
-            content(screen)
-        }
+        val encoded = encodeToBase64(this)
+        "$type/$encoded"
     }
 }
+
+enum class Direction { LEFT, RIGHT, TOP, BOTTOM }
+
+@Serializable
+sealed interface Screen

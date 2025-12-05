@@ -47,7 +47,7 @@ fun SettingsScreen() {
         CustomAppBar(
             title = "Settings",
             showBack = true,
-            onBackClick = { navController.popBackStack() },
+            onBackClick = { navController.popBack() },
             showDivider = true,
             isCentered = false,
             backgroundColor = AppColors.background,

@@ -62,7 +62,7 @@ fun DailyTestScreen(
             title = "daily test",
             showBack = true,
             onBackClick = {
-                navController.popBackStack()
+                navController.popBack()
             },
             showDivider = true,
             isCentered = false,

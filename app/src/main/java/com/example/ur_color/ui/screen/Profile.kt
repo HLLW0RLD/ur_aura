@@ -23,6 +23,8 @@ import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.toast
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -180,9 +182,7 @@ fun ProfileScreen() {
                             scope.launch {
                                 profileViewModel.deleteUser(context)
                                 // например, вернуться на экран логина
-                                navController.navigate(Login.route()) {
-                                    popUpTo(0) // очистить стек
-                                }
+                                navController.nav(Login, true)
                             }
                         }
                         .padding(8.dp)

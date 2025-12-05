@@ -19,9 +19,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 
-
 fun NavController.nav(
     screen : Screen,
+    noHistory: Boolean = false
 ) {
     val route = screen.route()
     val page = route.substringBefore("/")
@@ -34,16 +34,32 @@ fun NavController.nav(
 
     navigate(route) {
         launchSingleTop = true
+        if (noHistory) popUpTo(graph.startDestinationId) { inclusive = true }
     }
 }
 
-fun NavController.popBack(to: Screen? = null, inclusive: Boolean = false) {
+private var lastPopTimestamp = 0L
+fun NavController.popBack(
+    to: Screen? = null,
+    inclusive: Boolean = false,
+    minIntervalMs: Long = 300,
+    onComplete: (() -> Unit)? = null
+) {
+    val now = System.currentTimeMillis()
+    if (now - lastPopTimestamp < minIntervalMs) return
+    lastPopTimestamp = now
+
     val route = to?.route()?.substringBefore("/")
-    if (route == null) {
+
+    val popped = if (route == null) {
         popBackStack()
-        return
+    } else {
+        popBackStack(route, inclusive)
     }
-    popBackStack(route, inclusive)
+
+    if (popped) {
+        onComplete?.invoke()
+    }
 }
 
 
@@ -67,7 +83,7 @@ inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
             popEnterTransition = { popEnterTransition() },
             popExitTransition = { popExitTransition(exitTo) }
         ) {
-            BackHandler { navController.popBackStack() }
+            BackHandler { navController.popBack() }
             content(objectInstance)
         }
         return
@@ -86,7 +102,7 @@ inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
 
         val screen = decodeFromBase64<T>(encoded)
 
-        BackHandler { navController.popBackStack() }
+        BackHandler { navController.popBack() }
         content(screen)
     }
 }

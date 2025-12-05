@@ -92,7 +92,7 @@ fun AuraDetailsScreen(
             title = "aura details",
             showBack = true,
             onBackClick = {
-                navController.popBackStack()
+                navController.popBack()
             },
             showDivider = true,
             isCentered = false,

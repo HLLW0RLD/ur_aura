@@ -23,7 +23,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -87,6 +92,7 @@ fun MainScreen(
 
     val user = profileViewModel.user.collectAsState().value
     val aura by profileViewModel.aura.collectAsState()
+    val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
     val zodiacSign = ZodiacSign.fromName(user!!.zodiacSign) ?: ZodiacSign.GEMINI
 
     var card by remember { mutableStateOf<Card?>(null) }
@@ -96,6 +102,10 @@ fun MainScreen(
         mainViewModel.loadDailyHoroscope(sign = zodiacSign.value)
         val result = dailyCardService.generateDailyCard(userName =  user.firstName)
         result.onSuccess { card = it }
+    }
+
+    LaunchedEffect(Unit) {
+        profileViewModel.checkDailyTestAvailability(context)
     }
 
     val density = LocalDensity.current
@@ -112,37 +122,25 @@ fun MainScreen(
     val progress = ((collapsedY - offsetY.value) / (collapsedY - expandedY)).coerceIn(0f, 1f)
     val canScroll = progress >= 0.999f
 
-    val auraShift = with(density) { (screenHeight * 0.2f).toPx() }
     val auraShiftDp = screenHeight * 0.2f
 
     fun animateToExpanded() = scope.launch { offsetY.animateTo(expandedY, tween(400)) }
     fun animateToCollapsed() = scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
+
+    val pagerState = rememberPagerState(pageCount = { 6 })
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(AppColors.background)
     ) {
-//        aura?.let {
-//            Image(
-//                bitmap = it.asImageBitmap(),
-//                contentDescription = "",
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .graphicsLayer {
-//                        translationY = -auraShift
-//                    }
-//                    .blur(80.dp),
-//                contentScale = ContentScale.Crop
-//            )
-//        }
 
         CustomAppBar(
             title = "_a u r a_",
             showOptions = true,
             showDivider = true,
             optionsIcon = if (progress >= 0.95f) {
-                painterResource(R.drawable.arrow_left)
+                painterResource(R.drawable.arrow_down)
             } else {
                 painterResource(R.drawable.switcher_options)
             },
@@ -159,23 +157,58 @@ fun MainScreen(
         )
 
         aura?.let {
-            Image(
-                bitmap = it.asImageBitmap(),
-                contentDescription = "",
+            Box(
                 modifier = Modifier
-                    .size(300.dp)
                     .align(Alignment.Center)
-                    .graphicsLayer {
-                        translationY = -auraShiftDp.toPx()
-                    }
-                    .clip(CircleShape)
-                    .clickable(
-                        indication = null,
-                        interactionSource = null
-                    ) {
-                        navController.nav(AuraDetails())
-                    }
-            )
+                    .fillMaxWidth()
+                    .height(280.dp)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
+                        .graphicsLayer {
+                            translationY = -auraShiftDp.toPx()
+                        }
+                        .clip(RoundedCornerShape(24.dp))
+                        .border(
+                            shape = RoundedCornerShape(24.dp),
+                            color = AppColors.backgroundDark,
+                            width = 2.dp
+                        )
+                        .clickable(
+                            indication = null,
+                            interactionSource = null
+                        ) {
+                            if (isDailyTestAvailable) {
+                                navController.nav(DailyTest)
+                            } else {
+                                navController.nav(AuraDetails())
+                            }
+                        }
+                )
+
+                if (isDailyTestAvailable) {
+                    Text(
+                        text = "новый тест!",
+                        color = AppColors.white,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.BottomEnd)
+                            .graphicsLayer {
+                                translationY = -auraShiftDp.toPx()
+                            }
+                            .clip(RoundedCornerShape(50.dp))
+                            .background(AppColors.black)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
         }
 
         val cornerDp = lerp(24.dp, 12.dp, progress)
@@ -243,15 +276,29 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.size(24.dp))
 
+                val metrics = listOf(
+                    user.energyCapacity to "Energy Level",
+                    user.moodVector to "Mood",
+                    user.stressVector to "Stress Level",
+                    user.motivationVector to "Motivation",
+                    user.creativityVector to "Creativity",
+                    user.emotionalBalanceVector to "Emotional Balance",
+                    user.physicalEnergyVector to "Physical Energy",
+                    user.sleepQualityVector to "Sleep Quality",
+                    user.intuitionVector to "Intuition Level",
+                    user.socialVector to "Social Energy"
+                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(AppColors.surfaceDark
-                            .copy(alpha = 0.2f)
+                        .background(
+                            AppColors.surfaceDark
+                                .copy(alpha = 0.2f)
                         )
-                        .padding(vertical = 16.dp)
+                        .padding(top = 16.dp, bottom = 8.dp)
                 ) {
                     LazyRow(
                         modifier = Modifier
@@ -259,243 +306,54 @@ fun MainScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         item { Spacer(modifier = Modifier.width(0.dp)) }
-                        item {
+
+                        items(metrics.size) { vector ->
+                            val metric = metrics[vector]
+                            val value = metric.first
+                            val label = metric.second
+
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
+                                    .background(
                                         shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
+                                        color = AppColors.icon
                                     )
                                     .padding(16.dp)
                             ) {
                                 GradientGraphBox(
-                                    values = user.energyCapacity,
+                                    values = value,
                                     showStat = false,
                                     modifier = Modifier
                                         .width(150.dp)
                                         .height(60.dp)
                                 )
-                                Text("Energy Level", color = AppColors.textPrimary)
+                                Text(label, color = AppColors.textPrimary)
                             }
                         }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.moodVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Mood", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.stressVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Stress Level", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.motivationVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Motivation", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.creativityVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Creativity", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.emotionalBalanceVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Emotional Balance", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.physicalEnergyVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Physical Energy", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.sleepQualityVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Sleep Quality", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.intuitionVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Intuition Level", color = AppColors.textPrimary)
-                            }
-                        }
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(3.dp)
-                                    .border(
-                                        shape = RoundedCornerShape(24.dp),
-                                        width = 2.dp,
-                                        color = AppColors.surface
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                GradientGraphBox(
-                                    values = user.socialVector,
-                                    showStat = false,
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text("Social Energy", color = AppColors.textPrimary)
-                            }
-                        }
+
                         item { Spacer(modifier = Modifier.width(8.dp)) }
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                        .padding(horizontal = 4.dp)
-                    ) {
-                        ExpandableFloatingBox(
-                            width = 0.5f,
-                            height = 100f,
-                            expandWidth = 0.5f,
-                            closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
-                            expandedTitle = card?.advice ?: "oops",
-                            windowType = WindowType.Regular,
-                            canShowFull = true,
-                            content = {
+                    Box {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(bottom = 8.dp)
+                            ,
+                            overscrollEffect = rememberOverscrollEffect(),
+                            pageSpacing = 16.dp
+                        ) {
+                            ExpandableFloatingBox(
+                                width = 0.5f,
+                                height = 150f,
+                                expandWidth = 0.5f,
+                                closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
+                                expandedTitle = card?.advice ?: "oops",
+                                windowType = WindowType.Regular,
+                                canShowFull = true,
+                            ) {
                                 Column(
                                     Modifier
                                         .fillMaxWidth(),
@@ -539,55 +397,82 @@ fun MainScreen(
                                     )
                                 }
                             }
-                        )
 
-                        when (val uiState = horoscopeState) {
-                            is HoroscopeUiState.Success -> {
-                                val horoscope = uiState.horoscope
-                                ExpandableFloatingBox(
-                                    width = 1f,
-                                    height = 100f,
-                                    closedTitle = "Ваш гороскоп\nна ${horoscope.day}",
-                                    expandedTitle = "Для ${user.zodiacSign}",
-                                    windowType = WindowType.Regular,
-                                    canShowFull = true,
-                                ) {
-                                    Column(
-                                        Modifier
-                                            .fillMaxWidth()
-                                    ) {
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = horoscope.horoscope,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
+                            ExpandableFloatingBox(
+                                width = 0.5f,
+                                height = 150f,
+                                expandWidth = 0.5f,
+                                closedTitle = "Ваш гороскоп",
+                                expandedTitle = "Гороскоп для ${user.zodiacSign}",
+                                windowType = WindowType.Regular,
+                                canShowFull = true,
+                            ) {
+                                when (val uiState = horoscopeState) {
+                                    is HoroscopeUiState.Success -> {
+                                        val horoscope = uiState.horoscope
+                                        Column(
+                                            Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = horoscope.horoscope,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
+                                    }
+
+                                    is HoroscopeUiState.Loading -> {
+                                        Column(
+                                            Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = "Загружается гороскоп...",
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                            CircularProgressIndicator()
+                                        }
+                                    }
+
+                                    is HoroscopeUiState.Error -> {
+                                        Column(
+                                            Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = "Попробуйте позже",
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = uiState.message
+                                            )
+                                        }
                                     }
                                 }
                             }
+                        }
 
-                            is HoroscopeUiState.Loading -> {
-                                ExpandableFloatingBox(
-                                    closedTitle = "Загружается гороскоп...",
-                                    expandedTitle = "Пожалуйста, подождите",
-                                    expandHeight = 100f,
-                                    canShowFull = false
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-
-                            is HoroscopeUiState.Error -> {
-                                ExpandableFloatingBox(
-                                    closedTitle = "Ошибка загрузки",
-                                    expandedTitle = "Попробуйте позже",
-                                    windowType = WindowType.Slim,
-                                    canShowFull = false
-                                ) {
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = uiState.message
-                                    )
-                                }
+                        Row(
+                            Modifier
+                                .wrapContentHeight()
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            repeat(pagerState.pageCount) { iteration ->
+                                val color =
+                                    if (pagerState.currentPage == iteration) AppColors.icon else AppColors.divider
+                                Box(
+                                    modifier = Modifier
+                                        .padding(2.dp)
+                                        .clip(CircleShape)
+                                        .background(color)
+                                        .size(6.dp)
+                                )
                             }
                         }
                     }
@@ -601,8 +486,9 @@ fun MainScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(AppColors.surfaceDark
-                            .copy(alpha = 0.2f)
+                        .background(
+                            AppColors.surfaceDark
+                                .copy(alpha = 0.2f)
                         )
                         .padding(vertical = 16.dp)
                 ) {

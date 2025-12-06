@@ -53,7 +53,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -103,6 +102,7 @@ import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.ui.theme.ThemeMode
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
@@ -183,7 +183,7 @@ private fun AuraDropdownItem(
         )
         if (icon != null && iconPosition == IconPosition.END) {
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(icon, contentDescription = null, tint = AppColors.textPrimary)
+            Icon(icon, contentDescription = null, tint = AppColors.icon)
         }
     }
 }
@@ -220,7 +220,7 @@ fun AuraDropdown(
                     R.drawable.arrow_down
                 ),
                 contentDescription = null,
-                tint = AppColors.textSecondary
+                tint = AppColors.icon
             )
         }
 
@@ -414,9 +414,9 @@ fun CustomAppBar(
     onOptionsClick: (() -> Unit)? = null,
     backIcon: Painter = painterResource(R.drawable.arrow_left),
     optionsIcon: Painter = painterResource(R.drawable.switcher_options),
-    backIconTint: Color = AppColors.surface,
-    optionsIconTint: Color = AppColors.surface,
-    backgroundColor: Color = AppColors.background,
+    backIconTint: Color = AppColors.icon,
+    optionsIconTint: Color = AppColors.icon,
+    backgroundColor: Color = AppColors.icon,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -490,7 +490,7 @@ fun SwipeCard(
     text: String,
     modifier: Modifier = Modifier,
     textColor: Color = AppColors.textPrimary,
-    backgroundColor: Color = AppColors.surface,
+    backgroundColor: Color = AppColors.backgroundDark,
     onSwipeLeft: () -> Unit = {},
     onSwipeRight: () -> Unit = {},
     height: Dp = 620.dp,
@@ -516,7 +516,8 @@ fun SwipeCard(
                     width = 6.dp,
                     color = AppColors.background
                 )
-                .padding(24.dp),
+                .padding(top = 24.dp)
+            ,
         ) {
             Text(
                 text = text,
@@ -527,29 +528,30 @@ fun SwipeCard(
                 maxLines = maxLines,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.TopCenter)
                     .height(60.dp)
             )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
                     .align(Alignment.BottomCenter),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(56.dp)
-                        .background(
-                            shape = CircleShape,
-                            color = AppColors.white
+                        .size(84.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 0.dp,
+                                topEnd = 50.dp,
+                                bottomStart = 24.dp,
+                                bottomEnd = 0.dp,
+                            )
                         )
-                        .padding(3.dp)
-                        .border(
-                            border = BorderStroke(3.dp, AppColors.success),
-                            shape = RoundedCornerShape(24.dp)
+                        .background(
+                            color = AppColors.success
                         )
                         .clickable {
                             onSwipeLeft()
@@ -558,7 +560,7 @@ fun SwipeCard(
                     Text(
                         text = "Да",
                         textAlign = TextAlign.Center,
-                        color = AppColors.black,
+                        color = AppColors.textPrimary,
                         fontSize = 16.sp,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
@@ -568,15 +570,17 @@ fun SwipeCard(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(56.dp)
-                        .background(
-                            shape = CircleShape,
-                            color = AppColors.white
+                        .size(84.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 50.dp,
+                                topEnd = 0.dp,
+                                bottomStart = 0.dp,
+                                bottomEnd = 24.dp,
+                            )
                         )
-                        .padding(3.dp)
-                        .border(
-                            border = BorderStroke(3.dp, AppColors.error),
-                            shape = RoundedCornerShape(24.dp)
+                        .background(
+                            color = AppColors.error
                         )
                         .clickable {
                             onSwipeRight()
@@ -585,7 +589,7 @@ fun SwipeCard(
                     Text(
                         text = "Нет",
                         textAlign = TextAlign.Center,
-                        color = AppColors.black,
+                        color = AppColors.textPrimary,
                         fontSize = 16.sp,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
@@ -852,13 +856,12 @@ fun ExpandableFloatingBox(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .background(if (expanded) AppColors.background else AppColors.surface)
-            .padding(3.dp)
+            .background(if (expanded) AppColors.surfaceDark else AppColors.backgroundDark)
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
-                    color = if (expanded) AppColors.surface else AppColors.background,
-                    width = 3.dp
+                    color = if (expanded) AppColors.backgroundLight else AppColors.accentPrimary,
+                    width = 1.dp
                 )
             )
             .pointerInput(canShowFull) {

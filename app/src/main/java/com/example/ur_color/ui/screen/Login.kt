@@ -166,7 +166,9 @@ fun LoginScreen(
                 listOf("Мужской", "Женский").forEach { option ->
                     Button(
                         onClick = { gender = option },
-                        colors = ButtonDefaults.buttonColors(if (gender == option) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary)
+                        colors = ButtonDefaults.buttonColors(
+                            if (gender == option) MaterialTheme.colorScheme.secondary
+                            else MaterialTheme.colorScheme.primary)
                     ) {
                         Text(option)
                     }

@@ -38,8 +38,11 @@ object PersonalDataManager {
 //        HistoryStorage.save(context, user)
     }
 
-    suspend fun dailyTestAvailable(context: Context, newDate: String? = null): String? {
-        newDate?.let { UserStorage.saveDailyTestDate(context, it) }
+    suspend fun saveDailyTestDate(context: Context, date: String) {
+        date.let { UserStorage.saveDailyTestDate(context, it) }
+    }
+
+    suspend fun loadDailyTestDate(context: Context): String? {
         return UserStorage.loadDailyTestDate(context)
     }
 

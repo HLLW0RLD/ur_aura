@@ -32,6 +32,7 @@ object UserStorage {
     suspend fun delete(context: Context) {
         context.dataStore.edit { prefs ->
             prefs.remove(USER_KEY)
+            prefs.remove(DAILY_TEST_KEY)
         }
     }
 

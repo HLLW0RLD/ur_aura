@@ -14,8 +14,6 @@ object AppColors {
     val black: Color
         @Composable get() = Color.Black
 
-    val tertiary: Color
-        @Composable get() = MaterialTheme.colorScheme.tertiary
 
     val autoText: (Color) -> Color
         @Composable get() = { bg ->
@@ -27,10 +25,12 @@ object AppColors {
     val textSecondary: Color
         @Composable get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
 
+
     val accentPrimary: Color
         @Composable get() = MaterialTheme.colorScheme.primary
     val accentSecondary: Color
         @Composable get() = MaterialTheme.colorScheme.secondary
+
 
     val background: Color
         @Composable get() = MaterialTheme.colorScheme.background
@@ -39,6 +39,7 @@ object AppColors {
     val backgroundDark: Color
         @Composable get() = background.darken(0.1f)
 
+
     val surface: Color
         @Composable get() = MaterialTheme.colorScheme.surface
     val surfaceLight: Color
@@ -46,13 +47,16 @@ object AppColors {
     val surfaceDark: Color
         @Composable get() = surface.darken(0.1f)
 
+
     val error: Color
         @Composable get() = MaterialTheme.colorScheme.error
     val success: Color
         @Composable get() = Color(0xFF4CAF50) // Зеленый для успеха
 
-    val divider: Color
-        @Composable get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+
+    val icon: Color @Composable get() = MaterialTheme.colorScheme.primary
+    val divider: Color @Composable get() = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
+    val shadow: Color @Composable get() = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f)
 
     fun Color.lighten(fraction: Float): Color {
         return Color(
@@ -87,12 +91,13 @@ val LightColorSchemePink = lightColorScheme(
     secondary = AccentLightSecondaryPink,
     primaryContainer = AccentLightTertiaryPink,
     secondaryContainer = AccentLightTertiaryPink,
-    surface = Color(0xFFFFD6DC),
+    background = Color(0xFFFFFFFF),
+    surface = Color(0xFFFFFFFF),
     tertiary = Color(0xFFBDBDBD),
-    background = Color(0xFFFFF9FA),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
+    onTertiary = Color(0xFF000000),
     onBackground = Color(0xFF000000),
     onSurface = Color(0xFF000000),
     onError = Color(0xFFFFFFFF)
@@ -103,9 +108,9 @@ val DarkColorSchemePink = darkColorScheme(
     secondary = AccentDarkSecondaryPink,
     primaryContainer = AccentDarkTertiaryPink,
     secondaryContainer = AccentDarkTertiaryPink,
-    surface = Color(0xFFCF6679),
+    background = Color(0xFF1E1E1E), // однотонно
+    surface = Color(0xFF1E1E1E), // однотонно
     tertiary = Color(0xFF5A4A4A),
-    background = Color(0xFF1E1A1A),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -128,9 +133,9 @@ val LightYellowColorScheme = lightColorScheme(
     secondary = AccentYellowLightSecondary,
     primaryContainer = AccentYellowLightTertiary,
     secondaryContainer = AccentYellowLightTertiary,
-    surface = Color(0xFFFFEFC2),
+    background = Color(0xFFFFFFFF),
+    surface = Color(0xFFFFFFFF),
     tertiary = Color(0xFFBDBDBD),
-    background = Color(0xFFFFFCF6),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -144,9 +149,9 @@ val DarkYellowColorScheme = darkColorScheme(
     secondary = AccentYellowDarkSecondary,
     primaryContainer = AccentYellowDarkTertiary,
     secondaryContainer = AccentYellowDarkTertiary,
-    surface = Color(0xFFC4A54D),
     tertiary = Color(0xFF5A4A4A),
-    background = Color(0xFF1E1C14),
+    background = Color(0xFF1E1E1E),
+    surface = Color(0xFF1E1E1E),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -169,9 +174,9 @@ val LightBlueColorScheme = lightColorScheme(
     secondary = AccentBlueLightSecondary,
     primaryContainer = AccentBlueLightTertiary,
     secondaryContainer = AccentBlueLightTertiary,
-    surface = Color(0xFFD6E9FF),
+    surface = Color(0xFFFFFFFF),
     tertiary = Color(0xFFBDBDBD),
-    background = Color(0xFFF8FBFF),
+    background = Color(0xFFFFFFFF),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -185,9 +190,9 @@ val DarkBlueColorScheme = darkColorScheme(
     secondary = AccentBlueDarkSecondary,
     primaryContainer = AccentBlueDarkTertiary,
     secondaryContainer = AccentBlueDarkTertiary,
-    surface = Color(0xFF3A6FA8),
+    surface = Color(0xFF1E1E1E),
     tertiary = Color(0xFF364050),
-    background = Color(0xFF141A1E),
+    background = Color(0xFF1E1E1E),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -210,9 +215,9 @@ val LightTurquoiseColorScheme = lightColorScheme(
     secondary = AccentTurquoiseLightSecondary,
     primaryContainer = AccentTurquoiseLightTertiary,
     secondaryContainer = AccentTurquoiseLightTertiary,
-    surface = Color(0xFFCCF5ED),
+    background = Color(0xFFFFFFFF),
+    surface = Color(0xFFFFFFFF),
     tertiary = Color(0xFFBDBDBD),
-    background = Color(0xFFF6FFFD),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -226,9 +231,9 @@ val DarkTurquoiseColorScheme = darkColorScheme(
     secondary = AccentTurquoiseDarkSecondary,
     primaryContainer = AccentTurquoiseDarkTertiary,
     secondaryContainer = AccentTurquoiseDarkTertiary,
-    surface = Color(0xFF2FB7A6),
+    background = Color(0xFF1E1E1E),
+    surface = Color(0xFF1E1E1E),
     tertiary = Color(0xFF40504A),
-    background = Color(0xFF14201E),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -251,9 +256,9 @@ val LightGreenColorScheme = lightColorScheme(
     secondary = AccentGreenLightSecondary,
     primaryContainer = AccentGreenLightTertiary,
     secondaryContainer = AccentGreenLightTertiary,
-    surface = Color(0xFFD6F5C2),
+    surface = Color(0xFFFFFFFF),
     tertiary = Color(0xFFBDBDBD),
-    background = Color(0xFFF9FFF6),
+    background = Color(0xFFFFFFFF),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -267,9 +272,9 @@ val DarkGreenColorScheme = darkColorScheme(
     secondary = AccentGreenDarkSecondary,
     primaryContainer = AccentGreenDarkTertiary,
     secondaryContainer = AccentGreenDarkTertiary,
-    surface = Color(0xFF548C45),
+    background = Color(0xFF1E1E1E),
+    surface = Color(0xFF1E1E1E),
     tertiary = Color(0xFF40483C),
-    background = Color(0xFF1A1E14),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -292,9 +297,9 @@ val LightBurgundyColorScheme = lightColorScheme(
     secondary = AccentBurgundyLightSecondary,
     primaryContainer = AccentBurgundyLightTertiary,
     secondaryContainer = AccentBurgundyLightTertiary,
-    surface = Color(0xFFDB7986),
+    background = Color(0xFFFFFFFF),
+    surface = Color(0xFFFFFFFF),
     tertiary = Color(0xFFBDBDBD),
-    background = Color(0xFFFFF5F6),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),
@@ -308,9 +313,9 @@ val DarkBurgundyColorScheme = darkColorScheme(
     secondary = AccentBurgundyDarkSecondary,
     primaryContainer = AccentBurgundyDarkTertiary,
     secondaryContainer = AccentBurgundyDarkTertiary,
-    surface = Color(0xFF7A1C2F),
+    background = Color(0xFF1E1E1E),
+    surface = Color(0xFF1E1E1E),
     tertiary = Color(0xFF4A3C3C),
-    background = Color(0xFF1E1414),
     error = Color(0xFFB00020),
     onPrimary = Color(0xFF000000),
     onSecondary = Color(0xFF000000),

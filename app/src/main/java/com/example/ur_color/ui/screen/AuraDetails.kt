@@ -7,12 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,11 +29,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
+import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.theme.AppColors
@@ -51,6 +57,7 @@ fun AuraDetailsScreen(
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
+    val scrollState = rememberScrollState()
 
     val aura by auraDetailsViewModel.aura.collectAsState()
     val userData by auraDetailsViewModel.user.collectAsState()
@@ -62,7 +69,7 @@ fun AuraDetailsScreen(
     val collapsedHeight = 130.dp
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
 
-    val topInset = 95.dp
+    val topInset = 108.5.dp
     val topInsetPx = with(density) { topInset.toPx() }
 
     val expandedY = topInsetPx
@@ -70,6 +77,9 @@ fun AuraDetailsScreen(
 
     val offsetY = remember { Animatable(collapsedY) }
     val scope = rememberCoroutineScope()
+
+    val progress = ((collapsedY - offsetY.value) / (collapsedY - expandedY)).coerceIn(0f, 1f)
+    val canScroll = progress >= 0.999f
 
     fun animateToExpanded() {
         scope.launch {
@@ -91,9 +101,14 @@ fun AuraDetailsScreen(
         CustomAppBar(
             title = "aura details",
             showBack = true,
+            showOptions = canScroll,
             onBackClick = {
                 navController.popBack()
             },
+            onOptionsClick = {
+                scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
+            },
+            optionsIcon = painterResource(R.drawable.arrow_down),
             showDivider = true,
             isCentered = false,
             backgroundColor = AppColors.background,
@@ -152,19 +167,27 @@ fun AuraDetailsScreen(
                 contentAlignment = Alignment.TopStart
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .then(if (canScroll) Modifier.verticalScroll(scrollState) else Modifier)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Item("Energy Level", userData?.energyLevel ?: "0", userData?.energyCapacity)
-                    Item("Mood", userData?.mood ?: "0", userData?.moodVector)
-                    Item("Stress Level", userData?.stressLevel ?: "0", userData?.stressVector)
-                    Item("Focus", userData?.focus ?: "0", userData?.focusVector)
-                    Item("Motivation", userData?.motivation ?: "0", userData?.motivationVector)
-                    Item("Creativity", userData?.creativity ?: "0", userData?.creativityVector)
-                    Item("Emotional Balance", userData?.emotionalBalance ?: "0", userData?.emotionalBalanceVector)
-                    Item("Physical Energy", userData?.physicalEnergy ?: "0", userData?.physicalEnergyVector)
-                    Item("Sleep Quality", userData?.sleepQuality ?: "0", userData?.sleepQualityVector)
-                    Item("Intuition Level", userData?.intuitionLevel ?: "0", userData?.intuitionVector)
-                    Item("Social Energy", userData?.socialEnergy ?: "0", userData?.socialVector)
+                    Text(
+                        text = "✦ Базовый цвет — тёплый, насыщенный оранжевый, но он собран внутрь, как огонь, которому не дают разгореться. Это не отсутствие чувств, а их дисциплинированное удерживание.",
+                        color = AppColors.textPrimary
+                    )
+                    Text(
+                        text = "✦ Ближе к поверхности оранжевый постепенно гаснет, переходя в дымчатые графитовые узоры. Они движутся медленно, будто человек постоянно перерабатывает свои переживания, но никому не показывает этот процесс",
+                        color = AppColors.textPrimary
+                    )
+                    Text(
+                        text = "✦ Края ауры очерчены тонкой голубой линией — это спокойствие, которое человек выставляет наружу. Оно немного искусственное, но не фальшивое: больше как навык держать себя в руках, чем попытка обмануть.",
+                        color = AppColors.textPrimary
+                    )
+                    Text(
+                        text = "✦ Вся аура кажется аккуратно собранной, как будто человек всю жизнь тренируется удерживать свои реакции внутри, чтобы не нагружать других. Внутренняя энергия яркая, живая, но запечатанная в удобную форму",
+                        color = AppColors.textPrimary
+                    )
                 }
             }
         }

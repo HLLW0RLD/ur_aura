@@ -22,10 +22,9 @@ class ProfileViewModel() : BaseViewModel() {
         viewModelScope.launch {
 
             val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-            val lastDate = PersonalDataManager.dailyTestAvailable(context)
+            val lastDate = PersonalDataManager.loadDailyTestDate(context)
 
             if (lastDate != today) {
-                PersonalDataManager.dailyTestAvailable(context, today)
                 _isDailyTestAvailable.value = true
             } else {
                 _isDailyTestAvailable.value = false

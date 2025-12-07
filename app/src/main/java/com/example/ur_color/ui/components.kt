@@ -73,6 +73,7 @@ import java.util.Locale
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -514,7 +515,7 @@ fun SwipeCard(
                 .border(
                     shape = RoundedCornerShape(24.dp),
                     width = 6.dp,
-                    color = AppColors.background
+                    color = AppColors.divider
                 )
                 .padding(top = 24.dp)
             ,
@@ -541,12 +542,13 @@ fun SwipeCard(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(84.dp)
+                        .padding(6.5.dp)
+                        .size(108.dp)
                         .clip(
                             RoundedCornerShape(
                                 topStart = 0.dp,
-                                topEnd = 50.dp,
-                                bottomStart = 24.dp,
+                                topEnd = 100.dp,
+                                bottomStart = 18.dp,
                                 bottomEnd = 0.dp,
                             )
                         )
@@ -570,13 +572,14 @@ fun SwipeCard(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(84.dp)
+                        .padding(6.5.dp)
+                        .size(108.dp)
                         .clip(
                             RoundedCornerShape(
-                                topStart = 50.dp,
+                                topStart = 100.dp,
                                 topEnd = 0.dp,
                                 bottomStart = 0.dp,
-                                bottomEnd = 24.dp,
+                                bottomEnd = 18.dp,
                             )
                         )
                         .background(

@@ -185,11 +185,7 @@ fun MainScreen(
                             indication = null,
                             interactionSource = null
                         ) {
-                            if (isDailyTestAvailable) {
-                                navController.nav(DailyTest)
-                            } else {
-                                navController.nav(AuraDetails())
-                            }
+                            navController.nav(AuraDetails())
                         }
                 )
 
@@ -198,7 +194,7 @@ fun MainScreen(
                         text = "новый тест!",
                         color = AppColors.white,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(12.dp)
                             .align(Alignment.BottomEnd)
                             .graphicsLayer {
                                 translationY = -auraShiftDp.toPx()
@@ -206,6 +202,9 @@ fun MainScreen(
                             .clip(RoundedCornerShape(50.dp))
                             .background(AppColors.black)
                             .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .clickable {
+                                navController.nav(DailyTest)
+                            }
                     )
                 }
             }

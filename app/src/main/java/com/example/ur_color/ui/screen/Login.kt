@@ -167,8 +167,8 @@ fun LoginScreen(
                     Button(
                         onClick = { gender = option },
                         colors = ButtonDefaults.buttonColors(
-                            if (gender == option) MaterialTheme.colorScheme.secondary
-                            else MaterialTheme.colorScheme.primary)
+                            if (gender == option) AppColors.accentPrimary
+                            else AppColors.backgroundLight)
                     ) {
                         Text(option)
                     }

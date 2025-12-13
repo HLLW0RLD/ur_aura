@@ -54,9 +54,9 @@ object AppColors {
         @Composable get() = Color(0xFF4CAF50) // Зеленый для успеха
 
 
-    val icon: Color @Composable get() = MaterialTheme.colorScheme.primary
-    val divider: Color @Composable get() = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
-    val shadow: Color @Composable get() = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f)
+    val icon: Color @Composable get() = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+    val divider: Color @Composable get() = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+    val shadow: Color @Composable get() = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f)
 
     fun Color.lighten(fraction: Float): Color {
         return Color(

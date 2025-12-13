@@ -1,6 +1,5 @@
 package com.example.ur_color.ui
 
-import android.graphics.Paint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -77,6 +76,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -87,7 +89,6 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -97,20 +98,16 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.core.graphics.toColorInt
 import coil.compose.AsyncImage
 import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.ui.theme.ThemeMode
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlin.Int.Companion.MAX_VALUE
-import kotlin.math.roundToInt
 
 enum class WindowType { Slim, Regular, Full }
 
@@ -405,6 +402,173 @@ fun AuraOutlinedTextField(
 }
 
 @Composable
+fun AutoScrollHorizontalPager(
+    pageCount: Int,
+    autoScroll: Boolean = true,
+    isInfinite: Boolean = true,
+    showIndicator: Boolean = true,
+    intervalMs: Long = 3_000L,
+    pageSpacing: Dp = 16.dp,
+    modifier: Modifier = Modifier,
+    content: @Composable (page: Int) -> Unit
+) {
+
+    val virtualCount = if (isInfinite) Int.MAX_VALUE else pageCount
+    val startPage = if (isInfinite) virtualCount / 2 else 0
+
+    val pagerState = rememberPagerState(
+        initialPage = startPage,
+        pageCount = { virtualCount }
+    )
+
+    val pagerAnimationSpec = tween<Float>(
+        durationMillis = 750,
+        easing = FastOutSlowInEasing
+    )
+
+    if (autoScroll) {
+        LaunchedEffect(Unit) {
+            delay(intervalMs)
+            pagerState.animateScrollToPage(
+                page = pagerState.currentPage + 1,
+                animationSpec = pagerAnimationSpec
+            )
+        }
+
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.isScrollInProgress }
+                .filter { !it }
+                .drop(1)
+                .collectLatest {
+                    delay(intervalMs)
+                    pagerState.animateScrollToPage(
+                        page = pagerState.currentPage + 1,
+                        animationSpec = pagerAnimationSpec
+                    )
+                }
+        }
+    }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+    ) {
+
+        HorizontalPager(
+            state = pagerState,
+            pageSpacing = pageSpacing,
+            overscrollEffect = rememberOverscrollEffect()
+        ) { page ->
+            val realPage =
+                if (isInfinite) page % pageCount
+                else page
+
+            content(realPage)
+        }
+
+        if (showIndicator) {
+            PagerDotsIndicator(
+                activeImages = animPic,
+                pageCount = pageCount,
+                currentPage = pagerState.currentPage % pageCount,
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .align(Alignment.BottomCenter)
+//                    .padding(bottom = 12.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun PagerDotsIndicator(
+    pageCount: Int,
+    currentPage: Int,
+    modifier: Modifier = Modifier,
+    dotSize: Dp = 8.dp,
+    activeImages: List<Int>,
+    activeColor: Color = AppColors.divider,
+    inactiveColor: Color = AppColors.divider
+) {
+
+    val recentImages = remember { mutableListOf<Int>() }
+    val activeImage = remember(currentPage) {
+        val availableImages = activeImages.filter { it !in recentImages }
+        val chosen = if (availableImages.isNotEmpty()) availableImages.random() else activeImages.random()
+        recentImages.add(chosen)
+        if (recentImages.size > 3) recentImages.removeAt(0)
+        chosen
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .height(dotSize * 2),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        val rowWidth = maxWidth * 0.66f
+        val totalDotsWidth = dotSize * pageCount
+        val spacing = if (pageCount > 1) (rowWidth - totalDotsWidth) / (pageCount - 1) else 0.dp
+
+        val startOffset = (maxWidth - rowWidth) / 2
+
+        val targetOffset = startOffset + (dotSize + spacing) * currentPage
+        val animatedOffset by animateDpAsState(
+            targetValue = targetOffset,
+            animationSpec = tween(durationMillis = 300)
+        )
+
+        Row(
+            modifier = Modifier
+                .width(rowWidth)
+                .align(Alignment.Center),
+            horizontalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            repeat(pageCount) { i ->
+                val targetColor = if (currentPage == i) Color.Transparent else inactiveColor
+                val animatedColor by animateColorAsState(
+                    targetValue = targetColor,
+                    animationSpec = tween(durationMillis = 300)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(dotSize)
+                        .clip(CircleShape)
+                        .background(animatedColor)
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .offset(x = animatedOffset)
+                .size(dotSize + 2.dp)
+        ) {
+            Image(
+                painter = painterResource(activeImage),
+                contentDescription = "Active dot",
+                colorFilter = ColorFilter.tint(activeColor),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+val animPic = listOf(
+    R.drawable.illusion,
+    R.drawable.magic_sparkles,
+    R.drawable.magic_potion,
+    R.drawable.card_trick,
+    R.drawable.cauldron_potion,
+    R.drawable.magic_stick_sparckles,
+    R.drawable.ball_crystal,
+    R.drawable.candle,
+    R.drawable.witch_hat,
+    R.drawable.magic_hat,
+)
+
+@Composable
 fun CustomAppBar(
     title: String,
     showBack: Boolean = false,
@@ -489,6 +653,8 @@ fun CustomAppBar(
 @Composable
 fun SwipeCard(
     text: String,
+    centerText: String ?= null,
+    centerImg: Painter ?= null,
     modifier: Modifier = Modifier,
     textColor: Color = AppColors.textPrimary,
     backgroundColor: Color = AppColors.backgroundDark,
@@ -533,6 +699,25 @@ fun SwipeCard(
                     .height(60.dp)
             )
 
+            if (centerText != null) {
+                Text(
+                    text = centerText,
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                    fontSize = fontSize * 5,
+                    minLines = 1,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
+            } else if (centerImg != null) {
+                Image(
+                    painter = centerImg,
+                    contentDescription = null
+                )
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -540,9 +725,9 @@ fun SwipeCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(
-                    contentAlignment = Alignment.Center,
+                    contentAlignment = Alignment.BottomStart,
                     modifier = Modifier
-                        .padding(6.5.dp)
+                        .padding(6.dp)
                         .size(108.dp)
                         .clip(
                             RoundedCornerShape(
@@ -553,7 +738,7 @@ fun SwipeCard(
                             )
                         )
                         .background(
-                            color = AppColors.success
+                            color = AppColors.divider
                         )
                         .clickable {
                             onSwipeLeft()
@@ -563,16 +748,16 @@ fun SwipeCard(
                         text = "Да",
                         textAlign = TextAlign.Center,
                         color = AppColors.textPrimary,
-                        fontSize = 16.sp,
+                        fontSize = 24.sp,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
 
                 Box(
-                    contentAlignment = Alignment.Center,
+                    contentAlignment = Alignment.BottomEnd,
                     modifier = Modifier
-                        .padding(6.5.dp)
+                        .padding(6.dp)
                         .size(108.dp)
                         .clip(
                             RoundedCornerShape(
@@ -583,7 +768,7 @@ fun SwipeCard(
                             )
                         )
                         .background(
-                            color = AppColors.error
+                            color = AppColors.divider
                         )
                         .clickable {
                             onSwipeRight()
@@ -593,9 +778,9 @@ fun SwipeCard(
                         text = "Нет",
                         textAlign = TextAlign.Center,
                         color = AppColors.textPrimary,
-                        fontSize = 16.sp,
+                        fontSize = 24.sp,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }
@@ -608,20 +793,17 @@ fun GradientGraphBox(
     values: List<Int>,
     modifier: Modifier = Modifier,
     barSpacingDp: Int = 6,
-    showStat: Boolean = true
+    startColor: Color = AppColors.accentPrimary
 ) {
     val safeValues = values.map { it.coerceIn(0, 10) }
     val barCount = safeValues.size
-    val anims = remember(values) {
-        safeValues.map { Animatable(0f) }
-    }
+    val anims = remember(values) { safeValues.map { Animatable(0f) } }
 
     LaunchedEffect(safeValues) {
         anims.forEach { it.snapTo(0f) }
-        val scope = this
         safeValues.forEachIndexed { idx, v ->
             val target = (v.coerceIn(0, 10) / 10f)
-            scope.launch {
+            launch {
                 delay(idx * 40L)
                 anims[idx].animateTo(
                     target,
@@ -640,28 +822,26 @@ fun GradientGraphBox(
 
         if (barCount == 0) return@Canvas
 
-        val labelAreaHeight = if (showStat) 18.dp.toPx() else 0f
-        val graphHeight = h - labelAreaHeight
-
         val spacing = barSpacingDp.dp.toPx()
         val totalSpacing = spacing * (barCount - 1).coerceAtLeast(0)
         val barWidth = (w - totalSpacing) / barCount
 
-        val textPaint = Paint().apply {
-            color = "#444444".toColorInt()
-            textAlign = Paint.Align.CENTER
-            textSize = 13.sp.toPx()
-            isAntiAlias = true
-        }
+        val topPadding = 4.dp.toPx()
+        val bottomPadding = 4.dp.toPx()
+        val graphHeight = h - topPadding - bottomPadding
 
         fun colorForValue(fraction: Float): Color {
             return when {
-                fraction <= 0.5f -> {
-                    lerp(Color(0xFFFF4D4D), Color(0xFF45D07B), fraction / 0.5f)
-                }
-                else -> {
-                    lerp(Color(0xFF45D07B), Color(0xFF8F00FF), (fraction - 0.5f) / 0.5f)
-                }
+                fraction <= 0.5f -> lerp(
+                    start = Color(0xFFFF4D4D),
+                    stop = startColor,
+                    fraction = fraction / 0.5f
+                )
+                else -> lerp(
+                    start = Color(0xFF45D07B),
+                    stop = startColor,
+                    fraction = (fraction - 0.5f) / 0.5f
+                )
             }
         }
 
@@ -669,41 +849,23 @@ fun GradientGraphBox(
             val x = i * (barWidth + spacing)
             val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0, 10) / 10f)
             val barHeight = frac * graphHeight
-            val top = graphHeight - barHeight
+            val top = topPadding + (graphHeight - barHeight)
 
-            val rect = Rect(x, top, x + barWidth, graphHeight)
             drawRoundRect(
                 color = colorForValue(frac),
-                topLeft = Offset(rect.left, rect.top),
-                size = rect.size,
+                topLeft = Offset(x, top),
+                size = androidx.compose.ui.geometry.Size(barWidth, barHeight),
                 cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
             )
 
             drawRoundRect(
                 color = Color.Black.copy(alpha = 0.06f),
-                topLeft = Offset(rect.left, rect.top),
-                size = rect.size,
+                topLeft = Offset(x, top),
+                size = androidx.compose.ui.geometry.Size(barWidth, barHeight),
                 cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
                 blendMode = BlendMode.SrcOver
             )
-
-            if (showStat) {
-                val textY = h - 4.dp.toPx() // нижняя часть Canvas
-                drawContext.canvas.nativeCanvas.drawText(
-                    v.toString(),
-                    x + barWidth / 2,
-                    textY,
-                    textPaint
-                )
-            }
         }
-
-        drawLine(
-            color = Color(0x22000000),
-            strokeWidth = 1.dp.toPx(),
-            start = Offset(0f, graphHeight),
-            end = Offset(w, graphHeight)
-        )
     }
 }
 
@@ -859,11 +1021,11 @@ fun ExpandableFloatingBox(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .background(if (expanded) AppColors.surfaceDark else AppColors.backgroundDark)
+            .background(AppColors.backgroundLight)
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
-                    color = if (expanded) AppColors.backgroundLight else AppColors.accentPrimary,
+                    color = AppColors.backgroundLight,
                     width = 1.dp
                 )
             )

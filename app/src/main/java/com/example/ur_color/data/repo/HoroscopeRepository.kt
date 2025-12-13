@@ -3,8 +3,7 @@ package com.example.ur_color.data.repo
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ur_color.data.model.Horoscope
-import com.example.ur_color.data.model.HoroscopeResponse
-import com.example.ur_color.data.model.toHoroscope
+import com.example.ur_color.data.model.respoonse.toHoroscope
 import com.example.ur_color.data.remote.HoroscopeApi
 import java.util.*
 

@@ -1,4 +1,4 @@
-package com.example.ur_color.data.dataProcessor.dailyTest
+package com.example.ur_color.data.dataProcessor.testOperator
 
 import android.content.Context
 import com.example.ur_color.data.dataProcessor.aura.AuraGenerator

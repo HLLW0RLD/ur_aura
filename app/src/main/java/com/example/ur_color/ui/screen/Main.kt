@@ -2,8 +2,14 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,24 +18,19 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -38,12 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
-import com.example.ur_color.data.local.LocalDailyCardService
+import com.example.ur_color.data.local.mocServece.LocalDailyCardService
 import com.example.ur_color.data.model.Card
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -58,8 +60,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.lerp
 import com.example.ur_color.R
+import com.example.ur_color.data.local.mocServece.LocalMotivationService
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.model.user.ZodiacSign
+import com.example.ur_color.ui.AutoScrollHorizontalPager
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.DynamicDoubleColumn
 import com.example.ur_color.ui.GradientGraphBox
@@ -89,12 +93,14 @@ fun MainScreen(
     val scrollState = rememberScrollState()
 
     val dailyCardService = remember { LocalDailyCardService() }
+    val localMotivationService = remember { LocalMotivationService() }
 
     val user = profileViewModel.user.collectAsState().value
     val aura by profileViewModel.aura.collectAsState()
     val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
     val zodiacSign = ZodiacSign.fromName(user!!.zodiacSign) ?: ZodiacSign.GEMINI
 
+    var motivated by remember { mutableStateOf<String?>(null) }
     var card by remember { mutableStateOf<Card?>(null) }
     val horoscopeState by mainViewModel.horoscopeState.collectAsState()
 
@@ -102,6 +108,7 @@ fun MainScreen(
         mainViewModel.loadDailyHoroscope(sign = zodiacSign.value)
         val result = dailyCardService.generateDailyCard(userName =  user.firstName)
         result.onSuccess { card = it }
+        motivated = localMotivationService.getPhraseForToday()
     }
 
     LaunchedEffect(Unit) {
@@ -127,8 +134,6 @@ fun MainScreen(
     fun animateToExpanded() = scope.launch { offsetY.animateTo(expandedY, tween(400)) }
     fun animateToCollapsed() = scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
 
-    val pagerState = rememberPagerState(pageCount = { 6 })
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -136,7 +141,7 @@ fun MainScreen(
     ) {
 
         CustomAppBar(
-            title = "_a u r a_",
+            title = "a u r a",
             showOptions = true,
             showDivider = true,
             optionsIcon = if (progress >= 0.95f) {
@@ -178,7 +183,7 @@ fun MainScreen(
                         .clip(RoundedCornerShape(24.dp))
                         .border(
                             shape = RoundedCornerShape(24.dp),
-                            color = AppColors.backgroundDark,
+                            color = AppColors.accentPrimary,
                             width = 2.dp
                         )
                         .clickable(
@@ -217,8 +222,8 @@ fun MainScreen(
                 .offset { IntOffset(0, offsetY.value.roundToInt()) }
                 .fillMaxSize()
                 .border(
-                    width = 0.5.dp,
-                    color = AppColors.surfaceDark.copy(alpha = borderAlpha),
+                    width = 1.dp,
+                    color = AppColors.divider.copy(alpha = borderAlpha),
                     shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
                 )
                 .pointerInput(canScroll) {
@@ -250,20 +255,20 @@ fun MainScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .then(if (canScroll) Modifier.verticalScroll(scrollState) else Modifier)
+                    .then(if (canScroll) Modifier.verticalScroll(scrollState) else Modifier),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.size(16.dp))
                 Text(
                     color = AppColors.textSecondary,
-                    text = "Какой-то текст на главном экране\n" +
-                            "Возможно воодушевляющая фраза\n" +
-                            "или совет дня",
+                    text = motivated ?: "упс, мотивацию надо поднять!",
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.75f)
                         .padding(vertical = 8.dp)
                 )
 
-                Spacer(modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.size(8.dp))
 
                 HorizontalDivider(
                     modifier = Modifier
@@ -273,7 +278,7 @@ fun MainScreen(
                     color = AppColors.textPrimary
                 )
 
-                Spacer(modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier.size(16.dp))
 
                 val metrics = listOf(
                     user.energyCapacity to "Energy Level",
@@ -291,187 +296,232 @@ fun MainScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(
-                            AppColors.surfaceDark
+                            AppColors.backgroundDark
                                 .copy(alpha = 0.2f)
                         )
                         .padding(top = 16.dp, bottom = 8.dp)
                 ) {
                     LazyRow(
                         modifier = Modifier
-                            .height(130.dp),
+                            .padding(horizontal = 8.dp)
+                            .heightIn(max = 130.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         item { Spacer(modifier = Modifier.width(0.dp)) }
 
-                        items(metrics.size) { vector ->
+                        items(
+                            count = metrics.size,
+                            key = { index -> "metric_$index" }
+                        ) { vector ->
                             val metric = metrics[vector]
                             val value = metric.first
                             val label = metric.second
 
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                            var exp by rememberSaveable { mutableStateOf(false) }
+
+                            Box(
                                 modifier = Modifier
                                     .background(
                                         shape = RoundedCornerShape(24.dp),
-                                        color = AppColors.icon
+                                        color = AppColors.backgroundLight
                                     )
                                     .padding(16.dp)
+                                    .clickable(
+                                        interactionSource = null,
+                                        indication = null
+                                    ) {
+                                        exp = !exp
+                                    }
                             ) {
-                                GradientGraphBox(
-                                    values = value,
-                                    showStat = false,
+                                if (!exp) {
+                                    Icon(
+                                        painter = when (vector) {
+                                            0 -> painterResource(R.drawable.illusion)
+                                            1 -> painterResource(R.drawable.magic_sparkles)
+                                            2 -> painterResource(R.drawable.magic_potion)
+                                            3 -> painterResource(R.drawable.card_trick)
+                                            4 -> painterResource(R.drawable.cauldron_potion)
+                                            5 -> painterResource(R.drawable.magic_stick_sparckles)
+                                            6 -> painterResource(R.drawable.ball_crystal)
+                                            7 -> painterResource(R.drawable.candle)
+                                            8 -> painterResource(R.drawable.witch_hat)
+                                            9 -> painterResource(R.drawable.illusion_eye)
+                                            else -> painterResource(R.drawable.magic_hat)
+                                        },
+                                        contentDescription = "Active dot",
+                                        tint = AppColors.accentPrimary,
+                                        modifier = Modifier
+                                            .align(Alignment.TopCenter)
+                                            .size(24.dp)
+//                                        .padding(bottom = 36.dp)
+                                    )
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.SpaceAround,
                                     modifier = Modifier
-                                        .width(150.dp)
-                                        .height(60.dp)
-                                )
-                                Text(label, color = AppColors.textPrimary)
+                                        .align(Alignment.BottomCenter)
+                                ) {
+                                    AnimatedVisibility(
+                                        visible = exp,
+                                        enter = expandVertically(
+                                            animationSpec = tween(
+                                                durationMillis = 300,
+                                                easing = FastOutSlowInEasing
+                                            )
+                                        ) + fadeIn(
+                                            animationSpec = tween(300)
+                                        ),
+                                        exit = shrinkVertically(
+                                            animationSpec = tween(
+                                                durationMillis = 300,
+                                                easing = FastOutSlowInEasing
+                                            )
+                                        ) + fadeOut(
+                                            animationSpec = tween(300)
+                                        )
+                                    ) {
+                                        Column {
+                                            Text(
+                                                label,
+                                                color = AppColors.textPrimary,
+                                            )
+                                            GradientGraphBox(
+                                                values = value,
+                                                modifier = Modifier
+                                                    .width(150.dp)
+                                                    .height(60.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
 
                         item { Spacer(modifier = Modifier.width(8.dp)) }
                     }
 
+                    Spacer(modifier = Modifier.size(16.dp))
+
                     Box {
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(bottom = 8.dp)
-                            ,
-                            overscrollEffect = rememberOverscrollEffect(),
-                            pageSpacing = 16.dp
-                        ) {
-                            ExpandableFloatingBox(
-                                width = 0.5f,
-                                height = 150f,
-                                expandWidth = 0.5f,
-                                closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
-                                expandedTitle = card?.advice ?: "oops",
-                                windowType = WindowType.Regular,
-                                canShowFull = true,
-                            ) {
-                                Column(
-                                    Modifier
-                                        .fillMaxWidth(),
-                                    horizontalAlignment = Alignment.Start
+                        AutoScrollHorizontalPager(
+                            pageCount = 8,
+                            isInfinite = true,
+                            modifier = Modifier.fillMaxWidth()
+                        ) { page ->
+
+                            if (page % 2 == 0) {
+                                ExpandableFloatingBox(
+                                    width = 1f,
+                                    height = 150f,
+                                    expandWidth = 1f,
+                                    closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
+                                    expandedTitle = card?.advice ?: "oops",
+                                    windowType = WindowType.Regular,
+                                    canShowFull = true,
                                 ) {
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = card?.name ?: "oops",
-                                        style = MaterialTheme.typography.titleLarge
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = "Стихия: ${card?.element}, Номер: ${card?.number}"
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = card?.fullMeaning ?: "oops",
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = "Совет: ${card?.advice}",
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = "Ключевые слова: ${card?.keywords?.joinToString(", ")}"
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = "Совместимые карты: ${
-                                            card?.compatibleWith?.joinToString(
-                                                ", "
-                                            )
-                                        }"
-                                    )
-                                }
-                            }
-
-                            ExpandableFloatingBox(
-                                width = 0.5f,
-                                height = 150f,
-                                expandWidth = 0.5f,
-                                closedTitle = "Ваш гороскоп",
-                                expandedTitle = "Гороскоп для ${user.zodiacSign}",
-                                windowType = WindowType.Regular,
-                                canShowFull = true,
-                            ) {
-                                when (val uiState = horoscopeState) {
-                                    is HoroscopeUiState.Success -> {
-                                        val horoscope = uiState.horoscope
-                                        Column(
-                                            Modifier
-                                                .fillMaxWidth()
-                                        ) {
-                                            Text(
-                                                color = AppColors.textPrimary,
-                                                text = horoscope.horoscope,
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-                                    }
-
-                                    is HoroscopeUiState.Loading -> {
-                                        Column(
-                                            Modifier
-                                                .fillMaxWidth()
-                                        ) {
-                                            Text(
-                                                color = AppColors.textPrimary,
-                                                text = "Загружается гороскоп...",
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                            CircularProgressIndicator()
-                                        }
-                                    }
-
-                                    is HoroscopeUiState.Error -> {
-                                        Column(
-                                            Modifier
-                                                .fillMaxWidth()
-                                        ) {
-                                            Text(
-                                                color = AppColors.textPrimary,
-                                                text = "Попробуйте позже",
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                            Text(
-                                                color = AppColors.textPrimary,
-                                                text = uiState.message
-                                            )
-                                        }
+                                    Column(
+                                        Modifier
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.Start
+                                    ) {
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = card?.name ?: "oops",
+                                            style = MaterialTheme.typography.titleLarge
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = "Стихия: ${card?.element}, Номер: ${card?.number}"
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = card?.fullMeaning ?: "oops",
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = "Совет: ${card?.advice}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = "Ключевые слова: ${card?.keywords?.joinToString(", ")}"
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = "Совместимые карты: ${
+                                                card?.compatibleWith?.joinToString(
+                                                    ", "
+                                                )
+                                            }"
+                                        )
                                     }
                                 }
-                            }
-                        }
+                            } else {
+                                ExpandableFloatingBox(
+                                    width = 1f,
+                                    height = 150f,
+                                    expandWidth = 1f,
+                                    closedTitle = "Ваш гороскоп!",
+                                    expandedTitle = "Гороскоп для ${user.zodiacSign}",
+                                    windowType = WindowType.Regular,
+                                    canShowFull = true,
+                                ) {
+                                    when (val uiState = horoscopeState) {
+                                        is HoroscopeUiState.Success -> {
+                                            val horoscope = uiState.horoscope
+                                            Column(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    color = AppColors.textPrimary,
+                                                    text = horoscope.horoscope,
+                                                    style = MaterialTheme.typography.bodyLarge
+                                                )
+                                            }
+                                        }
 
-                        Row(
-                            Modifier
-                                .wrapContentHeight()
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            repeat(pagerState.pageCount) { iteration ->
-                                val color =
-                                    if (pagerState.currentPage == iteration) AppColors.icon else AppColors.divider
-                                Box(
-                                    modifier = Modifier
-                                        .padding(2.dp)
-                                        .clip(CircleShape)
-                                        .background(color)
-                                        .size(6.dp)
-                                )
+                                        is HoroscopeUiState.Loading -> {
+                                            Column(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    color = AppColors.textPrimary,
+                                                    text = "Загружается гороскоп...",
+                                                    style = MaterialTheme.typography.bodyLarge
+                                                )
+                                                CircularProgressIndicator()
+                                            }
+                                        }
+
+                                        is HoroscopeUiState.Error -> {
+                                            Column(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    color = AppColors.textPrimary,
+                                                    text = "Попробуйте позже",
+                                                    style = MaterialTheme.typography.bodyLarge
+                                                )
+                                                Text(
+                                                    color = AppColors.textPrimary,
+                                                    text = uiState.message
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -486,7 +536,7 @@ fun MainScreen(
                         .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(
-                            AppColors.surfaceDark
+                            AppColors.backgroundDark
                                 .copy(alpha = 0.2f)
                         )
                         .padding(vertical = 16.dp)

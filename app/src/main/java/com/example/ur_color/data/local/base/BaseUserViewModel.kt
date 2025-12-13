@@ -22,4 +22,11 @@ abstract class BaseViewModel : ViewModel() {
             started = SharingStarted.Eagerly,
             initialValue = null
         )
+
+    val level: StateFlow<Float?> = PersonalDataManager.level
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
 }

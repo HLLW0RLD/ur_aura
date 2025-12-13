@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.ur_color.data.local.LocalDailyTestService
+import com.example.ur_color.data.local.mocServece.LocalDailyTestService
 import com.example.ur_color.ui.screen.viewModel.DailyTestViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -35,6 +35,7 @@ import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.SwipeCard
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
+import com.example.ur_color.utils.logDebug
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
@@ -52,6 +53,13 @@ fun DailyTestScreen(
     val questions = remember { LocalDailyTestService().firstVarTest.toMutableStateList() }
     var currentIndex by remember { mutableStateOf(0) }
     val offsetX = remember { Animatable(0f) }
+
+    LaunchedEffect(currentIndex) {
+        if (currentIndex >= questions.size) {
+            dailyTestViewModel.updateAfterTest(context)
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -139,6 +147,7 @@ fun DailyTestScreen(
             }
 
             SwipeCard(
+                centerText = "${questions.size - currentIndex}",
                 text = question.text,
                 onSwipeLeft = { handleSwipeLeft() },
                 onSwipeRight = { handleSwipeRight() },

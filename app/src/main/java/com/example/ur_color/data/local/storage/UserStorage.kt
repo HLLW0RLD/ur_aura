@@ -14,6 +14,7 @@ object UserStorage {
 
     private val USER_KEY = stringPreferencesKey("user_json")
     private val DAILY_TEST_KEY = stringPreferencesKey("daily_test_date")
+    private val USER_LVL_KEY = stringPreferencesKey("user_lvl")
 
     private val gson = Gson()
 
@@ -33,6 +34,7 @@ object UserStorage {
         context.dataStore.edit { prefs ->
             prefs.remove(USER_KEY)
             prefs.remove(DAILY_TEST_KEY)
+            prefs.remove(USER_LVL_KEY)
         }
     }
 
@@ -45,5 +47,16 @@ object UserStorage {
 
     suspend fun loadDailyTestDate(context: Context): String? {
         return context.dataStore.data.first()[DAILY_TEST_KEY]
+    }
+
+    // USER LVL
+    suspend fun saveLvl(context: Context, lvl: Float) {
+        context.dataStore.edit { prefs ->
+            prefs[USER_LVL_KEY] = gson.toJson(lvl)
+        }
+    }
+
+    suspend fun loadLvl(context: Context): String? {
+        return context.dataStore.data.first()[USER_LVL_KEY]
     }
 }

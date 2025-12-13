@@ -42,6 +42,7 @@ fun ProfileScreen() {
 
     val profileViewModel: ProfileViewModel = koinViewModel()
     val user by profileViewModel.user.collectAsState()
+    val level by profileViewModel.level.collectAsState()
     val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -91,7 +92,7 @@ fun ProfileScreen() {
                 Column {
                     Text(
                         color = AppColors.textPrimary,
-                        text = "${u.firstName}, ${u.userLevel} уровень",
+                        text = "${u.firstName}, ${level?.toInt() ?: 1} уровень",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(

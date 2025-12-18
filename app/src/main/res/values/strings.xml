@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">Aura</string>
+
+    <string name="app_name_stylized">a u r a</string>
+
+    <!-- Errors / placeholders -->
+    <string name="error_oops">oops</string>
+    <string name="error_try_later">Попробуйте позже</string>
+    <string name="loading_horoscope">Загружается гороскоп...</string>
+    <string name="motivation_fallback">упс, мотивацию надо поднять!</string>
+
+    <!-- Daily test -->
+    <string name="daily_test_new">новый тест!</string>
+
+    <!-- Cards -->
+    <string name="card_today_title">%1$s сегодня %2$s</string>
+    <string name="card_element_number">Стихия: %1$s, Номер: %2$d</string>
+    <string name="card_advice">Совет: %1$s</string>
+    <string name="card_keywords">Ключевые слова: %1$s</string>
+    <string name="card_compatible">Совместимые карты: %1$s</string>
+
+    <!-- Horoscope -->
+    <string name="horoscope_for_user">гороскоп для %1$s</string>
+
+    <!-- Metrics -->
+    <string name="metric_energy">Energy Level</string>
+    <string name="metric_mood">Mood</string>
+    <string name="metric_stress">Stress Level</string>
+    <string name="metric_motivation">Motivation</string>
+    <string name="metric_creativity">Creativity</string>
+    <string name="metric_emotional_balance">Emotional Balance</string>
+    <string name="metric_physical_energy">Physical Energy</string>
+    <string name="metric_sleep_quality">Sleep Quality</string>
+    <string name="metric_intuition">Intuition Level</string>
+    <string name="metric_social">Social Energy</string>
+
+
 </resources>

@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,6 +57,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.lerp
@@ -66,9 +68,11 @@ import com.example.ur_color.data.model.user.ZodiacSign
 import com.example.ur_color.ui.AutoScrollHorizontalPager
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.DynamicDoubleColumn
+import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.GradientGraphBox
 import com.example.ur_color.ui.MarketplaceContentCard
 import com.example.ur_color.ui.WindowType
+import com.example.ur_color.ui.demoCards
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
@@ -141,7 +145,7 @@ fun MainScreen(
     ) {
 
         CustomAppBar(
-            title = "a u r a",
+            title = stringResource(R.string.app_name_stylized),
             showOptions = true,
             showDivider = true,
             optionsIcon = if (progress >= 0.95f) {
@@ -166,7 +170,7 @@ fun MainScreen(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth()
-                    .height(280.dp)
+                    .height(350.dp)
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -175,7 +179,7 @@ fun MainScreen(
                     contentDescription = "",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .align(Alignment.Center)
                         .graphicsLayer {
                             translationY = -auraShiftDp.toPx()
@@ -183,8 +187,8 @@ fun MainScreen(
                         .clip(RoundedCornerShape(24.dp))
                         .border(
                             shape = RoundedCornerShape(24.dp),
-                            color = AppColors.accentPrimary,
-                            width = 2.dp
+                            color = AppColors.divider,
+                            width = 0.5.dp
                         )
                         .clickable(
                             indication = null,
@@ -196,7 +200,7 @@ fun MainScreen(
 
                 if (isDailyTestAvailable) {
                     Text(
-                        text = "новый тест!",
+                        text = stringResource(R.string.daily_test_new),
                         color = AppColors.white,
                         modifier = Modifier
                             .padding(12.dp)
@@ -222,7 +226,7 @@ fun MainScreen(
                 .offset { IntOffset(0, offsetY.value.roundToInt()) }
                 .fillMaxSize()
                 .border(
-                    width = 1.dp,
+                    width = 0.5.dp,
                     color = AppColors.divider.copy(alpha = borderAlpha),
                     shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
                 )
@@ -261,7 +265,7 @@ fun MainScreen(
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(
                     color = AppColors.textSecondary,
-                    text = motivated ?: "упс, мотивацию надо поднять!",
+                    text = motivated ?: stringResource(R.string.motivation_fallback),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth(0.75f)
@@ -281,16 +285,16 @@ fun MainScreen(
                 Spacer(modifier = Modifier.size(16.dp))
 
                 val metrics = listOf(
-                    user.energyCapacity to "Energy Level",
-                    user.moodVector to "Mood",
-                    user.stressVector to "Stress Level",
-                    user.motivationVector to "Motivation",
-                    user.creativityVector to "Creativity",
-                    user.emotionalBalanceVector to "Emotional Balance",
-                    user.physicalEnergyVector to "Physical Energy",
-                    user.sleepQualityVector to "Sleep Quality",
-                    user.intuitionVector to "Intuition Level",
-                    user.socialVector to "Social Energy"
+                    user.energyCapacity to stringResource(R.string.metric_energy),
+                    user.moodVector to stringResource(R.string.metric_mood),
+                    user.stressVector to stringResource(R.string.metric_stress),
+                    user.motivationVector to stringResource(R.string.metric_motivation),
+                    user.creativityVector to stringResource(R.string.metric_creativity),
+                    user.emotionalBalanceVector to stringResource(R.string.metric_emotional_balance),
+                    user.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
+                    user.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
+                    user.intuitionVector to stringResource(R.string.metric_intuition),
+                    user.socialVector to stringResource(R.string.metric_social)
                 )
 
                 Column(
@@ -321,83 +325,13 @@ fun MainScreen(
 
                             var exp by rememberSaveable { mutableStateOf(false) }
 
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        shape = RoundedCornerShape(24.dp),
-                                        color = AppColors.backgroundLight
-                                    )
-                                    .padding(16.dp)
-                                    .clickable(
-                                        interactionSource = null,
-                                        indication = null
-                                    ) {
-                                        exp = !exp
-                                    }
-                            ) {
-                                if (!exp) {
-                                    Icon(
-                                        painter = when (vector) {
-                                            0 -> painterResource(R.drawable.illusion)
-                                            1 -> painterResource(R.drawable.magic_sparkles)
-                                            2 -> painterResource(R.drawable.magic_potion)
-                                            3 -> painterResource(R.drawable.card_trick)
-                                            4 -> painterResource(R.drawable.cauldron_potion)
-                                            5 -> painterResource(R.drawable.magic_stick_sparckles)
-                                            6 -> painterResource(R.drawable.ball_crystal)
-                                            7 -> painterResource(R.drawable.candle)
-                                            8 -> painterResource(R.drawable.witch_hat)
-                                            9 -> painterResource(R.drawable.illusion_eye)
-                                            else -> painterResource(R.drawable.magic_hat)
-                                        },
-                                        contentDescription = "Active dot",
-                                        tint = AppColors.accentPrimary,
-                                        modifier = Modifier
-                                            .align(Alignment.TopCenter)
-                                            .size(24.dp)
-//                                        .padding(bottom = 36.dp)
-                                    )
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.SpaceAround,
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                ) {
-                                    AnimatedVisibility(
-                                        visible = exp,
-                                        enter = expandVertically(
-                                            animationSpec = tween(
-                                                durationMillis = 300,
-                                                easing = FastOutSlowInEasing
-                                            )
-                                        ) + fadeIn(
-                                            animationSpec = tween(300)
-                                        ),
-                                        exit = shrinkVertically(
-                                            animationSpec = tween(
-                                                durationMillis = 300,
-                                                easing = FastOutSlowInEasing
-                                            )
-                                        ) + fadeOut(
-                                            animationSpec = tween(300)
-                                        )
-                                    ) {
-                                        Column {
-                                            Text(
-                                                label,
-                                                color = AppColors.textPrimary,
-                                            )
-                                            GradientGraphBox(
-                                                values = value,
-                                                modifier = Modifier
-                                                    .width(150.dp)
-                                                    .height(60.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
+                            ExpandableGradientGraphBox(
+                                label = label,
+                                values = value,
+                                vector = vector,
+                                expanded = exp,
+                                onToggleExpanded = { exp = !exp },
+                            )
                         }
 
                         item { Spacer(modifier = Modifier.width(8.dp)) }
@@ -406,118 +340,137 @@ fun MainScreen(
                     Spacer(modifier = Modifier.size(16.dp))
 
                     Box {
+                        var autoScroll by rememberSaveable { mutableStateOf(true) }
                         AutoScrollHorizontalPager(
                             pageCount = 8,
+                            autoScroll = autoScroll,
                             isInfinite = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                         ) { page ->
 
-                            if (page % 2 == 0) {
-                                ExpandableFloatingBox(
-                                    width = 1f,
-                                    height = 150f,
-                                    expandWidth = 1f,
-                                    closedTitle = ("Ваша карта дня\n" + card?.name + "!"),
-                                    expandedTitle = card?.advice ?: "oops",
-                                    windowType = WindowType.Regular,
-                                    canShowFull = true,
-                                ) {
-                                    Column(
-                                        Modifier
-                                            .fillMaxWidth(),
-                                        horizontalAlignment = Alignment.Start
-                                    ) {
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = card?.name ?: "oops",
-                                            style = MaterialTheme.typography.titleLarge
+                            ExpandableFloatingBox(
+                                height = 200f,
+                                width = 1f,
+                                expandWidth = 1f,
+                                closedTitle =
+                                    if (page % 2 == 0) {
+                                        stringResource(
+                                            R.string.card_today_title,
+                                            user.firstName,
+                                            card?.name ?: stringResource(R.string.error_oops)
                                         )
-                                        Spacer(Modifier.height(8.dp))
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = "Стихия: ${card?.element}, Номер: ${card?.number}"
-                                        )
-                                        Spacer(Modifier.height(8.dp))
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = card?.fullMeaning ?: "oops",
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                        Spacer(Modifier.height(8.dp))
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = "Совет: ${card?.advice}",
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                        Spacer(Modifier.height(8.dp))
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = "Ключевые слова: ${card?.keywords?.joinToString(", ")}"
-                                        )
-                                        Spacer(Modifier.height(8.dp))
-                                        Text(
-                                            color = AppColors.textPrimary,
-                                            text = "Совместимые карты: ${
-                                                card?.compatibleWith?.joinToString(
-                                                    ", "
-                                                )
-                                            }"
-                                        )
-                                    }
+                                    } else {
+                                        stringResource(R.string.horoscope_for_user, user.firstName)
+                                    },
+                                expandedTitle =
+                                    if (page % 2 == 0) card?.advice ?: "oops"
+                                    else user.zodiacSign,
+                                windowType = WindowType.Regular,
+                                canShowFull = true,
+                                onOpen = {
+                                    autoScroll = false
+                                },
+                                onClose = {
+                                    autoScroll = true
                                 }
-                            } else {
-                                ExpandableFloatingBox(
-                                    width = 1f,
-                                    height = 150f,
-                                    expandWidth = 1f,
-                                    closedTitle = "Ваш гороскоп!",
-                                    expandedTitle = "Гороскоп для ${user.zodiacSign}",
-                                    windowType = WindowType.Regular,
-                                    canShowFull = true,
-                                ) {
-                                    when (val uiState = horoscopeState) {
-                                        is HoroscopeUiState.Success -> {
-                                            val horoscope = uiState.horoscope
-                                            Column(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                            ) {
-                                                Text(
-                                                    color = AppColors.textPrimary,
-                                                    text = horoscope.horoscope,
-                                                    style = MaterialTheme.typography.bodyLarge
+                            ) {
+                                when {
+                                    page % 2 == 0 -> {
+                                        Column(
+                                            Modifier
+                                                .fillMaxWidth(),
+                                            horizontalAlignment = Alignment.Start
+                                        ) {
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = card?.name ?: stringResource(R.string.error_oops),
+                                                style = MaterialTheme.typography.titleLarge
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = "Стихия: ${card?.element}, Номер: ${card?.number}"
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = card?.fullMeaning ?: stringResource(R.string.error_oops),
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = stringResource(
+                                                    R.string.card_advice,
+                                                    card?.advice ?: stringResource(R.string.error_oops)
+                                                ),
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = stringResource(
+                                                    R.string.card_keywords,
+                                                    card?.keywords?.joinToString(", ") ?: ""
                                                 )
-                                            }
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Text(
+                                                color = AppColors.textPrimary,
+                                                text = stringResource(
+                                                    R.string.card_compatible,
+                                                    card?.compatibleWith?.joinToString(", ") ?: ""
+                                                )
+                                            )
                                         }
+                                    }
 
-                                        is HoroscopeUiState.Loading -> {
-                                            Column(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                            ) {
-                                                Text(
-                                                    color = AppColors.textPrimary,
-                                                    text = "Загружается гороскоп...",
-                                                    style = MaterialTheme.typography.bodyLarge
-                                                )
-                                                CircularProgressIndicator()
+                                    page % 2 != 0 -> {
+                                        when (val uiState = horoscopeState) {
+                                            is HoroscopeUiState.Success -> {
+                                                val horoscope = uiState.horoscope
+                                                Column(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        color = AppColors.textPrimary,
+                                                        text = horoscope.horoscope,
+                                                        style = MaterialTheme.typography.bodyLarge
+                                                    )
+                                                }
                                             }
-                                        }
 
-                                        is HoroscopeUiState.Error -> {
-                                            Column(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                            ) {
-                                                Text(
-                                                    color = AppColors.textPrimary,
-                                                    text = "Попробуйте позже",
-                                                    style = MaterialTheme.typography.bodyLarge
-                                                )
-                                                Text(
-                                                    color = AppColors.textPrimary,
-                                                    text = uiState.message
-                                                )
+                                            is HoroscopeUiState.Loading -> {
+                                                Column(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        color = AppColors.textPrimary,
+                                                        text = stringResource(R.string.loading_horoscope),
+                                                        style = MaterialTheme.typography.bodyLarge
+                                                    )
+                                                    CircularProgressIndicator()
+                                                }
+                                            }
+
+                                            is HoroscopeUiState.Error -> {
+                                                Column(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        color = AppColors.textPrimary,
+                                                        text = stringResource(R.string.error_try_later),
+                                                        style = MaterialTheme.typography.bodyLarge
+                                                    )
+                                                    Text(
+                                                        color = AppColors.textPrimary,
+                                                        text = uiState.message
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -529,8 +482,7 @@ fun MainScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                DynamicDoubleColumn(
-                    paddingHorizontal = 16.dp,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
@@ -541,16 +493,14 @@ fun MainScreen(
                         )
                         .padding(vertical = 16.dp)
                 ) {
-
                     demoCards.forEach {
-                        item {
-                            MarketplaceContentCard(
-                                modifier = Modifier
-                                    .padding(4.dp),
-                                content = it,
-                                onClick = {  }
-                            )
-                        }
+                        MarketplaceContentCard(
+                            modifier = Modifier
+                                .height(400.dp)
+                                .padding(4.dp),
+                            content = it,
+                            onClick = {  }
+                        )
                     }
                 }
 
@@ -559,146 +509,3 @@ fun MainScreen(
         }
     }
 }
-
-val demoCards = listOf(
-    SocialContent.Product(
-        id = "1",
-        title = "Apple AirPods Pro",
-        price = "19 990 ₽",
-        image = "https://picsum.photos/seed/airpods/600/600"
-    ),
-    SocialContent.Product(
-        id = "2",
-        title = "Xiaomi Robot Vacuum",
-        price = "23 499 ₽",
-        image = "https://picsum.photos/seed/vacuum/600/600"
-    ),
-    SocialContent.Product(
-        id = "3",
-        title = "Sony WH-1000XM5",
-        price = "34 990 ₽",
-        image = "https://picsum.photos/seed/headphones/600/600"
-    ),
-    SocialContent.Ad(
-        id = "4",
-        title = "🔥 Скидки до 70% на технику!",
-        image = "https://picsum.photos/seed/sale/600/600",
-        cta = "Открыть"
-    ),
-    SocialContent.Product(
-        id = "5",
-        title = "Nike Air Max 270",
-        price = "12 499 ₽",
-        image = "https://picsum.photos/seed/nike/600/600"
-    ),
-    SocialContent.User(
-        id = "6",
-        username = "Мария",
-        avatar = "https://picsum.photos/seed/user1/300/300"
-    ),
-    SocialContent.Product(
-        id = "7",
-        title = "Logitech MX Master 3S",
-        price = "8 490 ₽",
-        image = "https://picsum.photos/seed/mouse/600/600"
-    ),
-    SocialContent.Product(
-        id = "8",
-        title = "Sony PlayStation 5",
-        price = "69 999 ₽",
-        image = "https://picsum.photos/seed/ps5/600/600"
-    ),
-    SocialContent.Ad(
-        id = "9",
-        title = "🎁 Бесплатная доставка от 999 ₽",
-        image = "https://picsum.photos/seed/delivery/600/600",
-        cta = "Подробнее"
-    ),
-    SocialContent.User(
-        id = "10",
-        username = "Алексей",
-        avatar = "https://picsum.photos/seed/user2/300/300"
-    ),
-    SocialContent.Product(
-        id = "11",
-        title = "Canon EOS R50 Kit",
-        price = "89 900 ₽",
-        image = "https://picsum.photos/seed/camera/600/600"
-    ),
-    SocialContent.Product(
-        id = "12",
-        title = "MacBook Air M3",
-        price = "124 990 ₽",
-        image = "https://picsum.photos/seed/macbook/600/600"
-    ),
-    SocialContent.Product(
-        id = "1",
-        title = "Apple AirPods Pro",
-        price = "19 990 ₽",
-        image = "https://picsum.photos/seed/airpods/600/600"
-    ),
-    SocialContent.Product(
-        id = "2",
-        title = "Xiaomi Robot Vacuum",
-        price = "23 499 ₽",
-        image = "https://picsum.photos/seed/vacuum/600/600"
-    ),
-    SocialContent.Product(
-        id = "3",
-        title = "Sony WH-1000XM5",
-        price = "34 990 ₽",
-        image = "https://picsum.photos/seed/headphones/600/600"
-    ),
-    SocialContent.Ad(
-        id = "4",
-        title = "🔥 Скидки до 70% на технику!",
-        image = "https://picsum.photos/seed/sale/600/600",
-        cta = "Открыть"
-    ),
-    SocialContent.Product(
-        id = "5",
-        title = "Nike Air Max 270",
-        price = "12 499 ₽",
-        image = "https://picsum.photos/seed/nike/600/600"
-    ),
-    SocialContent.User(
-        id = "6",
-        username = "Мария",
-        avatar = "https://picsum.photos/seed/user1/300/300"
-    ),
-    SocialContent.Product(
-        id = "7",
-        title = "Logitech MX Master 3S",
-        price = "8 490 ₽",
-        image = "https://picsum.photos/seed/mouse/600/600"
-    ),
-    SocialContent.Product(
-        id = "8",
-        title = "Sony PlayStation 5",
-        price = "69 999 ₽",
-        image = "https://picsum.photos/seed/ps5/600/600"
-    ),
-    SocialContent.Ad(
-        id = "9",
-        title = "🎁 Бесплатная доставка от 999 ₽",
-        image = "https://picsum.photos/seed/delivery/600/600",
-        cta = "Подробнее"
-    ),
-    SocialContent.User(
-        id = "10",
-        username = "Алексей",
-        avatar = "https://picsum.photos/seed/user2/300/300"
-    ),
-    SocialContent.Product(
-        id = "11",
-        title = "Canon EOS R50 Kit",
-        price = "89 900 ₽",
-        image = "https://picsum.photos/seed/camera/600/600"
-    ),
-    SocialContent.Product(
-        id = "12",
-        title = "MacBook Air M3",
-        price = "124 990 ₽",
-        image = "https://picsum.photos/seed/macbook/600/600"
-    )
-)

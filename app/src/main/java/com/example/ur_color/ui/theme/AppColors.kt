@@ -78,9 +78,9 @@ object AppColors {
 }
 
 // Основные акцентные цвета — пастельно-розовая гамма
-val AccentLightPrimaryPink = Color(0xFFFFE0E5)
-val AccentLightSecondaryPink = Color(0xFFFFB6C1)
-val AccentLightTertiaryPink = Color(0xFFD46A8C)
+val AccentLightPrimaryPink = Color(0xFFB49898)
+val AccentLightSecondaryPink = Color(0xFFCC9AA2)
+val AccentLightTertiaryPink = Color(0xFF995566)
 
 val AccentDarkPrimaryPink = Color(0xFFB49898)
 val AccentDarkSecondaryPink = Color(0xFFCC9AA2)
@@ -120,9 +120,9 @@ val DarkColorSchemePink = darkColorScheme(
 )
 
 
-val AccentYellowLightPrimary = Color(0xFFFFF4D6)
-val AccentYellowLightSecondary = Color(0xFFFFE69A)
-val AccentYellowLightTertiary = Color(0xFFD4B860)
+val AccentYellowLightPrimary = Color(0xFFB8A46A)
+val AccentYellowLightSecondary = Color(0xFFD4C080)
+val AccentYellowLightTertiary = Color(0xFF8C7840)
 
 val AccentYellowDarkPrimary = Color(0xFFB8A46A)
 val AccentYellowDarkSecondary = Color(0xFFD4C080)
@@ -161,9 +161,9 @@ val DarkYellowColorScheme = darkColorScheme(
 )
 
 
-val AccentBlueLightPrimary = Color(0xFFE0F0FF)
-val AccentBlueLightSecondary = Color(0xFF9ACDFF)
-val AccentBlueLightTertiary = Color(0xFF4A90E2)
+val AccentBlueLightPrimary = Color(0xFF8AA8CC)
+val AccentBlueLightSecondary = Color(0xFF6B8FBF)
+val AccentBlueLightTertiary = Color(0xFF365A8C)
 
 val AccentBlueDarkPrimary = Color(0xFF8AA8CC)
 val AccentBlueDarkSecondary = Color(0xFF6B8FBF)
@@ -202,9 +202,9 @@ val DarkBlueColorScheme = darkColorScheme(
 )
 
 
-val AccentTurquoiseLightPrimary = Color(0xFFD6FFF8)
-val AccentTurquoiseLightSecondary = Color(0xFF9AF2E4)
-val AccentTurquoiseLightTertiary = Color(0xFF2FB7A6)
+val AccentTurquoiseLightPrimary = Color(0xFF80C1B7)
+val AccentTurquoiseLightSecondary = Color(0xFF66B2A6)
+val AccentTurquoiseLightTertiary = Color(0xFF2A7A6F)
 
 val AccentTurquoiseDarkPrimary = Color(0xFF80C1B7)
 val AccentTurquoiseDarkSecondary = Color(0xFF66B2A6)
@@ -243,9 +243,9 @@ val DarkTurquoiseColorScheme = darkColorScheme(
 )
 
 
-val AccentGreenLightPrimary = Color(0xFFE3FCD6)
-val AccentGreenLightSecondary = Color(0xFFC1EFA0)
-val AccentGreenLightTertiary = Color(0xFF6BBF4E)
+val AccentGreenLightPrimary = Color(0xFF99B98A)
+val AccentGreenLightSecondary = Color(0xFF88A977)
+val AccentGreenLightTertiary = Color(0xFF4E7340)
 
 val AccentGreenDarkPrimary = Color(0xFF99B98A)
 val AccentGreenDarkSecondary = Color(0xFF88A977)
@@ -284,9 +284,9 @@ val DarkGreenColorScheme = darkColorScheme(
 )
 
 
-val AccentBurgundyLightPrimary = Color(0xFFFFD6DA)
-val AccentBurgundyLightSecondary = Color(0xFFFF9CA9)
-val AccentBurgundyLightTertiary = Color(0xFF7A1C2F)
+val AccentBurgundyLightPrimary = Color(0xFFB4777F)
+val AccentBurgundyLightSecondary = Color(0xFF995A62)
+val AccentBurgundyLightTertiary = Color(0xFF5A1C25)
 
 val AccentBurgundyDarkPrimary = Color(0xFFB4777F)
 val AccentBurgundyDarkSecondary = Color(0xFF995A62)

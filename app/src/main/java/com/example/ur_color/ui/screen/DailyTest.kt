@@ -30,7 +30,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
+import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.SwipeCard
 import com.example.ur_color.ui.theme.AppColors
@@ -148,6 +150,7 @@ fun DailyTestScreen(
 
             SwipeCard(
                 centerText = "${questions.size - currentIndex}",
+                centerImg = painterResource(R.drawable.magic_sparkles),
                 text = question.text,
                 onSwipeLeft = { handleSwipeLeft() },
                 onSwipeRight = { handleSwipeRight() },

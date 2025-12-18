@@ -1,6 +1,7 @@
 package com.example.ur_color.ui
 
 import android.os.Build
+import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDp
@@ -104,12 +105,12 @@ import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.ui.theme.ThemeMode
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import coil.request.ImageRequest
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlin.Int.Companion.MAX_VALUE
-
-enum class WindowType { Slim, Regular, Full }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -156,8 +157,6 @@ fun AuraPickerField(
         )
     }
 }
-
-enum class IconPosition { START, END }
 
 @Composable
 private fun AuraDropdownItem(
@@ -555,19 +554,6 @@ private fun PagerDotsIndicator(
     }
 }
 
-val animPic = listOf(
-    R.drawable.illusion,
-    R.drawable.magic_sparkles,
-    R.drawable.magic_potion,
-    R.drawable.card_trick,
-    R.drawable.cauldron_potion,
-    R.drawable.magic_stick_sparckles,
-    R.drawable.ball_crystal,
-    R.drawable.candle,
-    R.drawable.witch_hat,
-    R.drawable.magic_hat,
-)
-
 @Composable
 fun CustomAppBar(
     title: String,
@@ -699,7 +685,31 @@ fun SwipeCard(
                     .height(60.dp)
             )
 
-            if (centerText != null) {
+            if (centerText != null && centerImg != null) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = centerText,
+                        textAlign = TextAlign.Center,
+                        color = textColor,
+                        fontSize = fontSize * 3,
+                        minLines = 1,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(Modifier.size(16.dp))
+                    Image(
+                        modifier = Modifier
+                            .size(100.dp),
+                        painter = centerImg,
+                        contentDescription = null
+                    )
+                }
+            } else if (centerText != null) {
                 Text(
                     text = centerText,
                     textAlign = TextAlign.Center,
@@ -713,6 +723,9 @@ fun SwipeCard(
                 )
             } else if (centerImg != null) {
                 Image(
+                    modifier = Modifier
+                        .size(170.dp)
+                        .align(Alignment.Center),
                     painter = centerImg,
                     contentDescription = null
                 )
@@ -781,6 +794,110 @@ fun SwipeCard(
                         fontSize = 24.sp,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpandableGradientGraphBox(
+    label: String,
+    values: List<Int>,
+    vector: Int? = null,
+    icon: Painter? = null,
+    expanded: Boolean,
+    onToggleExpanded: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = AppColors.backgroundLight,
+    iconTint: Color = AppColors.accentPrimary,
+    textColor: Color = AppColors.textPrimary
+) {
+
+    Box(
+        modifier = modifier
+            .background(
+                shape = RoundedCornerShape(24.dp),
+                color = backgroundColor
+            )
+            .padding(16.dp)
+            .clickable(
+                interactionSource = null,
+                indication = null
+            ) {
+                onToggleExpanded(false)
+            }
+    ) {
+        if (!expanded) {
+            when {
+                vector != null -> {
+                    Icon(
+                        painter = when (vector) {
+                            0 -> painterResource(R.drawable.illusion)
+                            1 -> painterResource(R.drawable.magic_sparkles)
+                            2 -> painterResource(R.drawable.magic_potion)
+                            3 -> painterResource(R.drawable.card_trick)
+                            4 -> painterResource(R.drawable.cauldron_potion)
+                            5 -> painterResource(R.drawable.magic_stick_sparckles)
+                            6 -> painterResource(R.drawable.ball_crystal)
+                            7 -> painterResource(R.drawable.candle)
+                            8 -> painterResource(R.drawable.witch_hat)
+                            9 -> painterResource(R.drawable.illusion_eye)
+                            else -> painterResource(R.drawable.magic_hat)
+                        },
+                        contentDescription = "Active dot",
+                        tint = iconTint,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .size(24.dp)
+//                                        .padding(bottom = 36.dp)
+                    )
+                }
+                icon != null -> icon
+                icon == null && vector == null-> {
+                    Text(
+                        text = label,
+                        color = textColor,
+                    )
+                }
+            }
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        ) {
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(300)
+                ),
+                exit = shrinkVertically(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(300)
+                )
+            ) {
+                Column {
+                    Text(
+                        text = label,
+                        color = textColor,
+                    )
+                    GradientGraphBox(
+                        values = values,
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp)
                     )
                 }
             }
@@ -1050,9 +1167,7 @@ fun ExpandableFloatingBox(
         } else {
             Box(
                 Modifier
-                    .fillMaxSize()
-//                    .background(AuraColors.accentSecondary.copy(revAlpha))
-                ,
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -1144,13 +1259,6 @@ fun MarketplaceContentCard(
     onClick: (SocialContent) -> Unit = {}
 ) {
 
-    val color = SystemDataManager.theme.collectAsState()
-
-    val cardBackground = if (color.value == ThemeMode.LIGHT)
-        Color.White.copy(alpha = 0.6f)
-    else
-        Color.Black.copy(alpha = 0.4f)
-
     Box(
         modifier = modifier
     ) {
@@ -1158,7 +1266,7 @@ fun MarketplaceContentCard(
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(12.dp))
-                .background(cardBackground)
+                .background(AppColors.backgroundDark)
                 .blur(16.dp)
                 .clickable { onClick(content) }
         )
@@ -1175,7 +1283,7 @@ fun MarketplaceContentCard(
                             model = content.image,
                             contentDescription = content.title,
                             modifier = Modifier
-                                .height(160.dp)
+                                .height(300.dp)
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp)),
                             contentScale = ContentScale.Crop
@@ -1194,7 +1302,7 @@ fun MarketplaceContentCard(
                                     Brush.verticalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            cardBackground.copy(alpha = 0.85f)
+                                            AppColors.backgroundDark.copy(alpha = 0.85f)
                                         )
                                     )
                                 )
@@ -1211,7 +1319,7 @@ fun MarketplaceContentCard(
                         model = content.avatar,
                         contentDescription = content.username,
                         modifier = Modifier
-                            .size(120.dp)
+                            .size(300.dp)
                             .align(Alignment.CenterHorizontally)
                             .clip(CircleShape)
                     )
@@ -1223,7 +1331,7 @@ fun MarketplaceContentCard(
                             model = content.image,
                             contentDescription = content.title,
                             modifier = Modifier
-                                .height(160.dp)
+                                .height(300.dp)
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp)),
                             contentScale = ContentScale.Crop
@@ -1242,7 +1350,7 @@ fun MarketplaceContentCard(
                                     Brush.verticalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            cardBackground.copy(alpha = 0.85f)
+                                            AppColors.backgroundDark.copy(alpha = 0.85f)
                                         )
                                     )
                                 )
@@ -1360,37 +1468,3 @@ fun DynamicDoubleColumn(
     }
 }
 
-
-private class TwoColumnScopeImpl : TwoColumnScope {
-    val leftColumn = mutableListOf<@Composable () -> Unit>()
-    val rightColumn = mutableListOf<@Composable () -> Unit>()
-    private var toggle = false
-
-    override fun left(content: @Composable () -> Unit) {
-        leftColumn.add(content)
-    }
-
-    override fun right(content: @Composable () -> Unit) {
-        rightColumn.add(content)
-    }
-
-    override fun item(content: @Composable () -> Unit) {
-        if (toggle) rightColumn.add(content) else leftColumn.add(content)
-        toggle = !toggle
-    }
-}
-interface TwoColumnScope {
-    fun left(content: @Composable () -> Unit)
-    fun right(content: @Composable () -> Unit)
-    fun item(content: @Composable () -> Unit)
-}
-
-private fun lerp(start: Color, stop: Color, fraction: Float): Color {
-    val f = fraction.coerceIn(0f, 1f)
-    return Color(
-        red = start.red + (stop.red - start.red) * f,
-        green = start.green + (stop.green - start.green) * f,
-        blue = start.blue + (stop.blue - start.blue) * f,
-        alpha = start.alpha + (stop.alpha - start.alpha) * f
-    )
-}

@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -99,7 +100,7 @@ fun AuraDetailsScreen(
             .background(AppColors.background),
     ) {
         CustomAppBar(
-            title = "aura details",
+            title = stringResource(R.string.app_name_stylized),
             showBack = true,
             showOptions = canScroll,
             onBackClick = {
@@ -118,7 +119,7 @@ fun AuraDetailsScreen(
         aura?.let {
             Image(
                 bitmap = it.asImageBitmap(),
-                contentDescription = "Аура фон",
+                contentDescription = "",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )

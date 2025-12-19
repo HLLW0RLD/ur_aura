@@ -34,5 +34,46 @@
     <string name="metric_intuition">Intuition Level</string>
     <string name="metric_social">Social Energy</string>
 
+    <string name="field_last_name">Фамилия</string>
+    <string name="field_first_name">Имя</string>
+    <string name="field_middle_name_optional">Отчество (опционально)</string>
+    <string name="field_birth_date">Дата рождения (ДД/ММ/ГГГГ)</string>
+    <string name="field_birth_time">Время рождения (ЧЧ:ММ)</string>
+    <string name="field_birth_place">Место рождения</string>
+    <string name="gender_male">Мужской</string>
+    <string name="gender_female">Женский</string>
+    <string name="action_login">войти</string>
+    <string name="error_fill_required_fields">Заполните обязательные поля</string>
+
+    <string name="profile_title">Your profile</string>
+    <string name="profile_name_level">%1$s, %2$d уровень</string>
+    <string name="profile_zodiac">%1$s</string>
+
+    <string name="profile_aura_details">Aura Details</string>
+    <string name="profile_daily_tests">Daily Tests</string>
+    <string name="profile_personal_tests">Personal Tests</string>
+    <string name="profile_diary">Diary</string>
+    <string name="profile_settings">Settings</string>
+    <string name="profile_logout">Выйти из профиля</string>
+    <string name="profile_delete">Удалить профиль</string>
+    <string name="profile_no_user">Нет данных пользователя</string>
+    <string name="profile_daily_test_done">Тест уже пройден</string>
+    <string name="all_test_done">Все вопросы пройдены!</string>
+
+    <string name="settings_title">Settings</string>
+
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_palette_title">Цветовая палитра</string>
+
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Тёмная</string>
+
+    <string name="settings_palette_pink">Розовая</string>
+    <string name="settings_palette_blue">Синяя</string>
+    <string name="settings_palette_yellow">Жёлтая</string>
+    <string name="settings_palette_turquoise">Бирюзовая</string>
+    <string name="settings_palette_green">Зелёная</string>
+    <string name="settings_palette_burgundy">Бордовая</string>
 
 </resources>

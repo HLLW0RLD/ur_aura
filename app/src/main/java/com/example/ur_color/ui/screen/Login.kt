@@ -24,8 +24,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.ur_color.R
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.ui.CustomAppBar
@@ -48,7 +50,6 @@ fun LoginScreen(
 
     val context = LocalContext.current
     val navController = LocalNavController.current
-    val scope = rememberCoroutineScope()
 
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -66,7 +67,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CustomAppBar(
-            title = "-__a__u__r__a__-",
+            title = stringResource(R.string.app_name_stylized),
         )
 
         Column(
@@ -85,7 +86,7 @@ fun LoginScreen(
                 ),
                 value = lastName,
                 onValueChange = { lastName = it },
-                label = { Text("Фамилия") },
+                label = { Text(stringResource(R.string.field_last_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -99,7 +100,7 @@ fun LoginScreen(
                 ),
                 value = firstName,
                 onValueChange = { firstName = it },
-                label = { Text("Имя") },
+                label = { Text(stringResource(R.string.field_first_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -113,7 +114,7 @@ fun LoginScreen(
                 ),
                 value = middleName,
                 onValueChange = { middleName = it },
-                label = { Text("Отчество (опционально)") },
+                label = { Text(stringResource(R.string.field_middle_name_optional)) },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -127,7 +128,7 @@ fun LoginScreen(
                 ),
                 value = birthDate,
                 onValueChange = { input -> birthDate = formatDateInput(birthDate, input) },
-                label = { Text("Дата рождения (ДД/ММ/ГГГГ)") },
+                label = { Text(stringResource(R.string.field_birth_date)) },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -141,7 +142,7 @@ fun LoginScreen(
                 ),
                 value = birthTime,
                 onValueChange = { input -> birthTime = formatTimeInput(birthTime, input)},
-                label = { Text("Время рождения (ЧЧ:ММ)") },
+                label = { Text(stringResource(R.string.field_birth_time)) },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -155,7 +156,7 @@ fun LoginScreen(
                 ),
                 value = birthPlace,
                 onValueChange = { birthPlace = it },
-                label = { Text("Место рождения") },
+                label = { Text(stringResource(R.string.field_birth_place)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -163,7 +164,10 @@ fun LoginScreen(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("Мужской", "Женский").forEach { option ->
+                listOf(
+                    stringResource(R.string.gender_male),
+                    stringResource(R.string.gender_female)
+                ).forEach { option ->
                     Button(
                         onClick = { gender = option },
                         colors = ButtonDefaults.buttonColors(
@@ -204,7 +208,7 @@ fun LoginScreen(
                     }
                 }
             ) {
-                Text("войти")
+                Text(stringResource(R.string.action_login))
             }
         }
     }

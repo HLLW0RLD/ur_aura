@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
@@ -69,7 +70,7 @@ fun DailyTestScreen(
             .background(AppColors.background)
     ) {
         CustomAppBar(
-            title = "daily test",
+            title = stringResource(R.string.profile_daily_tests),
             showBack = true,
             onBackClick = {
                 navController.popBack()
@@ -83,14 +84,14 @@ fun DailyTestScreen(
         if (questions.isEmpty()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "Все вопросы пройдены!",
+                text = stringResource(R.string.all_test_done),
                 color = AppColors.textPrimary,
             )
         } else {
             if (currentIndex >= questions.size) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "Все вопросы пройдены!",
+                    text = stringResource(R.string.all_test_done),
                     style = MaterialTheme.typography.titleLarge,
                     color = AppColors.textPrimary,
                 )

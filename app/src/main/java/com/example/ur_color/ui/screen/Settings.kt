@@ -1,5 +1,6 @@
 package com.example.ur_color.ui.screen
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,22 +16,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.ur_color.R
 import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.ui.AuraRadioButton
 import com.example.ur_color.ui.CustomAppBar
+import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
+import com.example.ur_color.ui.screen.viewModel.SettingsViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.ThemeMode
 import com.example.ur_color.ui.theme.ThemePalette
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 object Settings: Screen
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    settingsViewModel: SettingsViewModel = koinViewModel()
+) {
     val context = LocalContext.current
     val navController = LocalNavController.current
 
@@ -45,7 +53,7 @@ fun SettingsScreen() {
             .background(AppColors.background),
     ) {
         CustomAppBar(
-            title = "Settings",
+            title = stringResource(R.string.settings_title),
             showBack = true,
             onBackClick = { navController.popBack() },
             showDivider = true,
@@ -62,9 +70,8 @@ fun SettingsScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- Тема ---
             Text(
-                "Тема",
+                text = stringResource(R.string.settings_theme_title),
                 color = AppColors.textPrimary,
                 style = MaterialTheme.typography.titleMedium
             )
@@ -72,21 +79,21 @@ fun SettingsScreen() {
 
             AuraRadioButton(
                 selected = themeMode == ThemeMode.SYSTEM,
-                text = "Системная",
+                text = stringResource(R.string.settings_theme_system),
                 onClick = {
                     scope.launch { SystemDataManager.saveTheme(context, ThemeMode.SYSTEM) }
                 }
             )
             AuraRadioButton(
                 selected = themeMode == ThemeMode.LIGHT,
-                text = "Светлая",
+                text = stringResource(R.string.settings_theme_light),
                 onClick = {
                     scope.launch { SystemDataManager.saveTheme(context, ThemeMode.LIGHT) }
                 }
             )
             AuraRadioButton(
                 selected = themeMode == ThemeMode.DARK,
-                text = "Тёмная",
+                text = stringResource(R.string.settings_theme_dark),
                 onClick = {
                     scope.launch { SystemDataManager.saveTheme(context, ThemeMode.DARK) }
                 }
@@ -95,60 +102,24 @@ fun SettingsScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                "Цветовая палитра",
+                text = stringResource(R.string.settings_palette_title),
                 color = AppColors.textPrimary,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            AuraRadioButton(
-                selected = palette == ThemePalette.PINK,
-                text = "Розовая",
-                color = Color(0xFFE91E63),
-                onClick = {
-                    scope.launch { SystemDataManager.savePalette(context, ThemePalette.PINK) }
-                }
-            )
-            AuraRadioButton(
-                selected = palette == ThemePalette.BLUE,
-                text = "Синяя",
-                color = Color(0xFF2196F3),
-                onClick = {
-                    scope.launch { SystemDataManager.savePalette(context, ThemePalette.BLUE) }
-                }
-            )
-            AuraRadioButton(
-                selected = palette == ThemePalette.YELLOW,
-                text = "Жёлтая",
-                color = Color(0xFFFFC107),
-                onClick = {
-                    scope.launch { SystemDataManager.savePalette(context, ThemePalette.YELLOW) }
-                }
-            )
-            AuraRadioButton(
-                selected = palette == ThemePalette.TURQUOISE,
-                text = "Бирюзовая",
-                color = Color(0xFF00BCD4),
-                onClick = {
-                    scope.launch { SystemDataManager.savePalette(context, ThemePalette.TURQUOISE) }
-                }
-            )
-            AuraRadioButton(
-                selected = palette == ThemePalette.GREEN,
-                text = "Зелёная",
-                color = Color(0xFF4CAF50),
-                onClick = {
-                    scope.launch { SystemDataManager.savePalette(context, ThemePalette.GREEN) }
-                }
-            )
-            AuraRadioButton(
-                selected = palette == ThemePalette.BURGUNDY,
-                text = "Бордовая",
-                color = Color(0xFF800020),
-                onClick = {
-                    scope.launch { SystemDataManager.savePalette(context, ThemePalette.BURGUNDY) }
-                }
-            )
+            settingsViewModel.paletteItems.forEach { item ->
+                AuraRadioButton(
+                    selected = palette == item.palette,
+                    text = stringResource(item.titleRes),
+                    color = item.color,
+                    onClick = {
+                        scope.launch {
+                            SystemDataManager.savePalette(context, item.palette)
+                        }
+                    }
+                )
+            }
         }
     }
 }

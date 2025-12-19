@@ -16,15 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.toast
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -55,7 +55,7 @@ fun ProfileScreen() {
             .background(AppColors.background)
     ) {
         CustomAppBar(
-            title = "Your profile",
+            title = stringResource(R.string.profile_title),
             showBack = true,
             onBackClick = {
                 navController.popBack()
@@ -71,7 +71,6 @@ fun ProfileScreen() {
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Круглый аватар (по uri или placeholder)
                 val avatarPainter = if (u.avatarUri != null) {
                     rememberAsyncImagePainter(u.avatarUri)
                 } else {
@@ -80,7 +79,7 @@ fun ProfileScreen() {
 
                 Image(
                     painter = avatarPainter,
-                    contentDescription = "Аватар профиля",
+                    contentDescription = "",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(96.dp)
@@ -92,12 +91,19 @@ fun ProfileScreen() {
                 Column {
                     Text(
                         color = AppColors.textPrimary,
-                        text = "${u.firstName}, ${level?.toInt() ?: 1} уровень",
+                        text = stringResource(
+                            R.string.profile_name_level,
+                            u.firstName,
+                            level?.toInt() ?: 1
+                        ),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
                         color = AppColors.textPrimary,
-                        text = "${u.zodiacSign.lowercase()}",
+                        text = stringResource(
+                            R.string.profile_zodiac,
+                            u.zodiacSign.lowercase()
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -116,7 +122,7 @@ fun ProfileScreen() {
             ) {
                 Text(
                     color = AppColors.textPrimary,
-                    text = "Aura Details",
+                    text = stringResource(R.string.profile_aura_details),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -125,9 +131,10 @@ fun ProfileScreen() {
                         }
                         .padding(8.dp)
                 )
+                val s = stringResource(R.string.profile_daily_test_done)
                 Text(
                     color = AppColors.textPrimary,
-                    text = "Daily Tests",
+                    text = stringResource(R.string.profile_daily_tests),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -135,14 +142,15 @@ fun ProfileScreen() {
                             if (isDailyTestAvailable) {
                                 navController.nav(DailyTest)
                             } else {
-                                context.toast("Тест уже пройден")
+
+                                context.toast(s)
                             }
                         }
                         .padding(8.dp)
                 )
                 Text(
                     color = AppColors.textPrimary,
-                    text = "Personal Tests",
+                    text = stringResource(R.string.profile_personal_tests),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -153,7 +161,7 @@ fun ProfileScreen() {
                 )
                 Text(
                     color = AppColors.textPrimary,
-                    text = "Diary",
+                    text = stringResource(R.string.profile_diary),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -164,7 +172,7 @@ fun ProfileScreen() {
                 )
                 Text(
                     color = AppColors.textPrimary,
-                    text = "Settings",
+                    text = stringResource(R.string.profile_settings),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -174,7 +182,7 @@ fun ProfileScreen() {
                         .padding(8.dp)
                 )
                 Text(
-                    "Выйти из профиля",
+                    stringResource(R.string.profile_logout),
                     style = MaterialTheme.typography.bodyLarge,
                     color = AppColors.textPrimary,
                     modifier = Modifier
@@ -182,14 +190,13 @@ fun ProfileScreen() {
                         .clickable {
                             scope.launch {
                                 profileViewModel.deleteUser(context)
-                                // например, вернуться на экран логина
                                 navController.nav(Login, true)
                             }
                         }
                         .padding(8.dp)
                 )
                 Text(
-                    "Удалить профиль",
+                    stringResource(R.string.profile_delete),
                     style = MaterialTheme.typography.bodyLarge,
                     color = AppColors.error,
                     modifier = Modifier
@@ -201,7 +208,7 @@ fun ProfileScreen() {
                 )
             }
         } ?: run {
-            Text("Нет данных пользователя", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.profile_no_user), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

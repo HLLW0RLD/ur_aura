@@ -106,6 +106,7 @@ import com.example.ur_color.ui.theme.ThemeMode
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
@@ -546,7 +547,7 @@ private fun PagerDotsIndicator(
         ) {
             Image(
                 painter = painterResource(activeImage),
-                contentDescription = "Active dot",
+                contentDescription = "",
                 colorFilter = ColorFilter.tint(activeColor),
                 modifier = Modifier.fillMaxSize()
             )
@@ -556,7 +557,7 @@ private fun PagerDotsIndicator(
 
 @Composable
 fun CustomAppBar(
-    title: String,
+    title: String = stringResource(R.string.app_name_stylized),
     showBack: Boolean = false,
     showOptions: Boolean = false,
     isCentered: Boolean = true,

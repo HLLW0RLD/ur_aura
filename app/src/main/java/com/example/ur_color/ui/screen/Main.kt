@@ -145,7 +145,6 @@ fun MainScreen(
     ) {
 
         CustomAppBar(
-            title = stringResource(R.string.app_name_stylized),
             showOptions = true,
             showDivider = true,
             optionsIcon = if (progress >= 0.95f) {

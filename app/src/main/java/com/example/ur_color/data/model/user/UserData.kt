@@ -3,9 +3,11 @@ package com.example.ur_color.data.model.user
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AuraColors
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 data class UserData(
+    val id: String = UUID.randomUUID().toString(),
     val firstName: String,
     val lastName: String,
     val middleName: String?,
@@ -17,16 +19,13 @@ data class UserData(
     val avatarUri: String? = null,
     val birthTimestamp: Long = 0L,
 
-    // уровень пользователя
-    // считается от активности пользователя
+
     val userLevel: Int = 1,
 
-    // дополнительные переменные пользователя
-    // устанавливается пользователем 1 раз
+
     val personalityType: String? = null,
 
-    // динамические переменные пользователя
-    // считается от прохождения тестов
+
     val energyLevel: Int = 5,
     val mood: Int = 5,
     val stressLevel: Int = 5,
@@ -40,8 +39,7 @@ data class UserData(
     val socialEnergy: Int = 5,
     val dominantColor: String = AuraColors.WHITE.hex,
 
-    // динамический вектор пользователя
-    // 10 последних значения динамических переменных
+
     val energyCapacity: List<Int> = List(10) { 5 },
     val moodVector: List<Int> = List(10) { 5 },
     val stressVector: List<Int> = List(10) { 5 },

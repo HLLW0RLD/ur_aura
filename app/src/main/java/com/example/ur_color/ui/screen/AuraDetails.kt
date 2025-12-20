@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
+import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.toColoredText
@@ -54,14 +55,15 @@ data class AuraDetails(val color: String? = null) : Screen
 @Composable
 fun AuraDetailsScreen(
     cd: AuraDetails,
-    auraDetailsViewModel: AuraDetailsViewModel = koinViewModel()
+    auraDetailsViewModel: AuraDetailsViewModel = koinViewModel(),
+    profileViewModel: ProfileViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
     val scrollState = rememberScrollState()
 
-    val aura by auraDetailsViewModel.aura.collectAsState()
-    val userData by auraDetailsViewModel.user.collectAsState()
+    val aura by profileViewModel.aura.collectAsState()
+    val userData by profileViewModel.user.collectAsState()
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -81,6 +83,10 @@ fun AuraDetailsScreen(
 
     val progress = ((collapsedY - offsetY.value) / (collapsedY - expandedY)).coerceIn(0f, 1f)
     val canScroll = progress >= 0.999f
+
+    LaunchedEffect(Unit) {
+        profileViewModel.init(context)
+    }
 
     fun animateToExpanded() {
         scope.launch {

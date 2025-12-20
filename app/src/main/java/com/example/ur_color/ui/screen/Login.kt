@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.R
+import com.example.ur_color.data.model.user.CharacteristicData
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.ui.CustomAppBar
@@ -199,7 +200,8 @@ fun LoginScreen(
                             birthTime = birthTime.text,
                             birthPlace = birthPlace,
                             gender = gender,
-                            zodiacSign = zodiac.nameRu
+                            zodiacSign = zodiac.nameRu,
+                            characteristics = CharacteristicData()
                         )
 
                         loginViewModel.saveUser(context, user) {

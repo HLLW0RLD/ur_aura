@@ -2,14 +2,8 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,13 +56,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.lerp
 import com.example.ur_color.R
 import com.example.ur_color.data.local.mocServece.LocalMotivationService
-import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.model.user.ZodiacSign
 import com.example.ur_color.ui.AutoScrollHorizontalPager
 import com.example.ur_color.ui.ExpandableFloatingBox
-import com.example.ur_color.ui.DynamicDoubleColumn
 import com.example.ur_color.ui.ExpandableGradientGraphBox
-import com.example.ur_color.ui.GradientGraphBox
 import com.example.ur_color.ui.MarketplaceContentCard
 import com.example.ur_color.ui.WindowType
 import com.example.ur_color.ui.demoCards
@@ -102,7 +92,7 @@ fun MainScreen(
     val user = profileViewModel.user.collectAsState().value
     val aura by profileViewModel.aura.collectAsState()
     val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
-    val zodiacSign = ZodiacSign.fromName(user!!.zodiacSign) ?: ZodiacSign.GEMINI
+    val zodiacSign = ZodiacSign.fromName(user?.zodiacSign ?: "") ?: ZodiacSign.GEMINI
 
     var motivated by remember { mutableStateOf<String?>(null) }
     var card by remember { mutableStateOf<Card?>(null) }
@@ -110,13 +100,14 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         mainViewModel.loadDailyHoroscope(sign = zodiacSign.value)
-        val result = dailyCardService.generateDailyCard(userName =  user.firstName)
+        val result = dailyCardService.generateDailyCard(userName =  user?.firstName ?: "")
         result.onSuccess { card = it }
         motivated = localMotivationService.getPhraseForToday()
     }
 
     LaunchedEffect(Unit) {
         profileViewModel.checkDailyTestAvailability(context)
+        profileViewModel.init(context)
     }
 
     val density = LocalDensity.current
@@ -284,16 +275,16 @@ fun MainScreen(
                 Spacer(modifier = Modifier.size(16.dp))
 
                 val metrics = listOf(
-                    user.energyCapacity to stringResource(R.string.metric_energy),
-                    user.moodVector to stringResource(R.string.metric_mood),
-                    user.stressVector to stringResource(R.string.metric_stress),
-                    user.motivationVector to stringResource(R.string.metric_motivation),
-                    user.creativityVector to stringResource(R.string.metric_creativity),
-                    user.emotionalBalanceVector to stringResource(R.string.metric_emotional_balance),
-                    user.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
-                    user.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
-                    user.intuitionVector to stringResource(R.string.metric_intuition),
-                    user.socialVector to stringResource(R.string.metric_social)
+                    user?.characteristics?.energyCapacity to stringResource(R.string.metric_energy),
+                    user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
+                    user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
+                    user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
+                    user?.characteristics?.creativityVector to stringResource(R.string.metric_creativity),
+                    user?.characteristics?.emotionalBalanceVector to stringResource(R.string.metric_emotional_balance),
+                    user?.characteristics?.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
+                    user?.characteristics?.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
+                    user?.characteristics?.intuitionVector to stringResource(R.string.metric_intuition),
+                    user?.characteristics?.socialVector to stringResource(R.string.metric_social)
                 )
 
                 Column(
@@ -319,7 +310,7 @@ fun MainScreen(
                             key = { index -> "metric_$index" }
                         ) { vector ->
                             val metric = metrics[vector]
-                            val value = metric.first
+                            val value = metric.first ?: listOf<Int>()
                             val label = metric.second
 
                             var exp by rememberSaveable { mutableStateOf(false) }
@@ -356,15 +347,15 @@ fun MainScreen(
                                     if (page % 2 == 0) {
                                         stringResource(
                                             R.string.card_today_title,
-                                            user.firstName,
+                                            user?.firstName ?: "",
                                             card?.name ?: stringResource(R.string.error_oops)
                                         )
                                     } else {
-                                        stringResource(R.string.horoscope_for_user, user.firstName)
+                                        stringResource(R.string.horoscope_for_user, user?.firstName ?: "")
                                     },
                                 expandedTitle =
                                     if (page % 2 == 0) card?.advice ?: "oops"
-                                    else user.zodiacSign,
+                                    else user?.zodiacSign ?: "",
                                 windowType = WindowType.Regular,
                                 canShowFull = true,
                                 onOpen = {

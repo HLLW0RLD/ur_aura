@@ -16,8 +16,8 @@ val viewModelModule = module {
 
     viewModel { LoginViewModel() }
     viewModel { MainViewModel(get()) }
-    viewModel { ProfileViewModel() }
+    viewModel { ProfileViewModel(get()) }
     viewModel { AuraDetailsViewModel() }
-    viewModel { DailyTestViewModel() }
+    viewModel { DailyTestViewModel(get()) }
 
 }

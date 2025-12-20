@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
@@ -44,12 +45,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val navController = rememberNavController()
+                val context = LocalContext.current
 
                 var startRoute by remember { mutableStateOf<Screen?>(null) } // или тип Any для data class
                 var isInitialized by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
-                    val user = PersonalDataManager.user.firstOrNull()
+                    val user = PersonalDataManager.getUser(context = context)
                     startRoute = if (user != null) Main else Login
                     isInitialized = true
                 }

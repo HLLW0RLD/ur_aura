@@ -8,7 +8,6 @@ object AppDataManager {
 
     suspend fun initialize(context: Context) = withContext(Dispatchers.IO) {
         SystemDataManager.initialize(context)
-        PersonalDataManager.initialize(context)
     }
 
     suspend fun clearAll(context: Context) = withContext(Dispatchers.IO) {

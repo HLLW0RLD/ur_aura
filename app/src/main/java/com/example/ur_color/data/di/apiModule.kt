@@ -30,5 +30,4 @@ val apiModule = module {
     }
 
     single { get<Retrofit>().create(HoroscopeApi::class.java) }
-    single { HoroscopeRepository(get()) }
 }

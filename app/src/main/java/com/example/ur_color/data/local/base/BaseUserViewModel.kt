@@ -9,24 +9,24 @@ import kotlinx.coroutines.flow.*
 
 abstract class BaseViewModel : ViewModel() {
 
-    val user: StateFlow<UserData?> = PersonalDataManager.user
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
-        )
-
-    val aura: StateFlow<Bitmap?> = PersonalDataManager.aura
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
-        )
-
-    val level: StateFlow<Float?> = PersonalDataManager.level
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
-        )
+//    val cachedUser: StateFlow<UserData?> = PersonalDataManager.user
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.Eagerly,
+//            initialValue = null
+//        )
+//
+//    val cachedAura: StateFlow<Bitmap?> = PersonalDataManager.aura
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.Eagerly,
+//            initialValue = null
+//        )
+//
+//    val cachedLevel: StateFlow<Float?> = PersonalDataManager.level
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.Eagerly,
+//            initialValue = null
+//        )
 }

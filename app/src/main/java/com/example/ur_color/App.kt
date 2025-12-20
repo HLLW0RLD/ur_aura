@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ur_color.data.di.apiModule
 import com.example.ur_color.data.di.appModule
+import com.example.ur_color.data.di.repoModule
 import com.example.ur_color.data.di.viewModelModule
 import com.example.ur_color.data.local.dataManager.AppDataManager
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,7 @@ class App : Application() {
             modules(
                 appModule,
                 apiModule,
+                repoModule,
                 viewModelModule
             )
         }

@@ -5,6 +5,7 @@ import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
+import com.example.ur_color.data.model.user.CharacteristicData
 import com.example.ur_color.data.model.user.UserData
 import kotlin.collections.iterator
 import kotlin.math.roundToInt
@@ -24,8 +25,9 @@ object DailyTestOperator {
         }
     }
 
-    suspend fun applyDailyResult(context: Context, user: UserData) {
-        var updated = user
+    suspend fun applyDailyResult(context: Context, user: UserData?) {
+        if (user == null) return
+        var updated = user!!
 
         for ((type, list) in accumulators) {
             if (list.isEmpty()) continue
@@ -40,10 +42,10 @@ object DailyTestOperator {
             updated = updateUserValue(updated, type, newValue)
         }
 
-        PersonalDataManager.updateUser(context, updated)
+        PersonalDataManager.saveUser(context, updated)
 
         val aura = AuraGenerator.applyDynamicAura(updated)
-        if (aura != null) PersonalDataManager.updateAura(context, aura)
+        if (aura != null) PersonalDataManager.saveAura(context, aura)
 
         resetDaily()
     }
@@ -52,67 +54,101 @@ object DailyTestOperator {
         fun vec(v: List<Int>) = updateVector(v, value)
 
         return when (type) {
-            ModType.ENERGY_LEVEL -> user.copy(
-                energyLevel = value,
-                energyCapacity = vec(user.energyCapacity)
-            )
-            ModType.MOOD -> user.copy(
-                mood = value,
-                moodVector = vec(user.moodVector)
-            )
-            ModType.STRESS_LEVEL -> user.copy(
-                stressLevel = value,
-                stressVector = vec(user.stressVector)
-            )
-            ModType.FOCUS -> user.copy(
-                focus = value,
-                focusVector = vec(user.focusVector)
-            )
-            ModType.MOTIVATION -> user.copy(
-                motivation = value,
-                motivationVector = vec(user.motivationVector)
-            )
-            ModType.CREATIVITY -> user.copy(
-                creativity = value,
-                creativityVector = vec(user.creativityVector)
-            )
-            ModType.EMOTIONAL_BALANCE -> user.copy(
-                emotionalBalance = value,
-                emotionalBalanceVector = vec(user.emotionalBalanceVector)
-            )
-            ModType.PHYSICAL_ENERGY -> user.copy(
-                physicalEnergy = value,
-                physicalEnergyVector = vec(user.physicalEnergyVector)
-            )
-            ModType.SLEEP_QUALITY -> user.copy(
-                sleepQuality = value,
-                sleepQualityVector = vec(user.sleepQualityVector)
-            )
-            ModType.INTUITION_LEVEL -> user.copy(
-                intuitionLevel = value,
-                intuitionVector = vec(user.intuitionVector)
-            )
-            ModType.SOCIAL_ENERGY -> user.copy(
-                socialEnergy = value,
-                socialVector = vec(user.socialVector)
-            )
+            ModType.ENERGY_LEVEL -> {
+                user.characteristics.copy(
+                    energyLevel = value,
+                    energyCapacity = vec(user.characteristics.energyCapacity)
+                )
+                user
+            }
+            ModType.MOOD -> {
+                user.characteristics.copy(
+                    mood = value,
+                    moodVector = vec(user.characteristics.moodVector)
+                )
+                user
+            }
+            ModType.STRESS_LEVEL -> {
+                user.characteristics.copy(
+                    stressLevel = value,
+                    stressVector = vec(user.characteristics.stressVector)
+                )
+                user
+            }
+            ModType.FOCUS -> {
+                user.characteristics.copy(
+                    focus = value,
+                    focusVector = vec(user.characteristics.focusVector)
+                )
+                user
+            }
+            ModType.MOTIVATION -> {
+                user.characteristics.copy(
+                    motivation = value,
+                    motivationVector = vec(user.characteristics.motivationVector)
+                )
+                user
+            }
+            ModType.CREATIVITY -> {
+                user.characteristics.copy(
+                    creativity = value,
+                    creativityVector = vec(user.characteristics.creativityVector)
+                )
+                user
+            }
+            ModType.EMOTIONAL_BALANCE -> {
+                user.characteristics.copy(
+                    emotionalBalance = value,
+                    emotionalBalanceVector = vec(user.characteristics.emotionalBalanceVector)
+                )
+                user
+            }
+            ModType.PHYSICAL_ENERGY -> {
+                user.characteristics.copy(
+                    physicalEnergy = value,
+                    physicalEnergyVector = vec(user.characteristics.physicalEnergyVector)
+                )
+                user
+            }
+            ModType.SLEEP_QUALITY -> {
+                user.characteristics.copy(
+                    sleepQuality = value,
+                    sleepQualityVector = vec(user.characteristics.sleepQualityVector)
+                )
+                user
+            }
+            ModType.INTUITION_LEVEL -> {
+                user.characteristics.copy(
+                    intuitionLevel = value,
+                    intuitionVector = vec(user.characteristics.intuitionVector)
+                )
+                user
+            }
+            ModType.SOCIAL_ENERGY -> {
+                user.characteristics.copy(
+                    socialEnergy = value,
+                    socialVector = vec(user.characteristics.socialVector)
+                )
+                user
+            }
             ModType.DOMINANT_COLOR -> user
+
         }
     }
 
     private fun getValue(user: UserData, type: ModType): Int =
         when (type) {
-            ModType.ENERGY_LEVEL -> user.energyLevel
-            ModType.MOOD -> user.mood
-            ModType.STRESS_LEVEL -> user.stressLevel
-            ModType.FOCUS -> user.focus
-            ModType.MOTIVATION -> user.motivation
-            ModType.CREATIVITY -> user.creativity
-            ModType.EMOTIONAL_BALANCE -> user.emotionalBalance
-            ModType.PHYSICAL_ENERGY -> user.physicalEnergy
-            ModType.SLEEP_QUALITY -> user.sleepQuality
-            ModType.INTUITION_LEVEL -> user.intuitionLevel
-            ModType.SOCIAL_ENERGY -> user.socialEnergy
+            ModType.ENERGY_LEVEL -> user.characteristics.energyLevel
+            ModType.MOOD -> user.characteristics.mood
+            ModType.STRESS_LEVEL -> user.characteristics.stressLevel
+            ModType.FOCUS -> user.characteristics.focus
+            ModType.MOTIVATION -> user.characteristics.motivation
+            ModType.CREATIVITY -> user.characteristics.creativity
+            ModType.EMOTIONAL_BALANCE -> user.characteristics.emotionalBalance
+            ModType.PHYSICAL_ENERGY -> user.characteristics.physicalEnergy
+            ModType.SLEEP_QUALITY -> user.characteristics.sleepQuality
+            ModType.INTUITION_LEVEL -> user.characteristics.intuitionLevel
+            ModType.SOCIAL_ENERGY -> user.characteristics.socialEnergy
             ModType.DOMINANT_COLOR -> 0
         }
 

@@ -25,17 +25,17 @@ object UserStorage {
         }
     }
 
-    suspend fun load(context: Context): UserData? {
-        val json = context.dataStore.data.first()[USER_KEY] ?: return null
-        return gson.fromJson(json, UserData::class.java)
-    }
-
     suspend fun delete(context: Context) {
         context.dataStore.edit { prefs ->
             prefs.remove(USER_KEY)
             prefs.remove(DAILY_TEST_KEY)
             prefs.remove(USER_LVL_KEY)
         }
+    }
+
+    suspend fun load(context: Context): UserData? {
+        val json = context.dataStore.data.first()[USER_KEY] ?: return null
+        return gson.fromJson(json, UserData::class.java)
     }
 
     // DAILY TEST

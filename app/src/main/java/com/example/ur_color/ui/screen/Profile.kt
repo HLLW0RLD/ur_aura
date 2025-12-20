@@ -49,6 +49,10 @@ fun ProfileScreen() {
         profileViewModel.checkDailyTestAvailability(context)
     }
 
+    LaunchedEffect(Unit) {
+        profileViewModel.init(context)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

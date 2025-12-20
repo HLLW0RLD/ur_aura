@@ -19,7 +19,8 @@ class LoginViewModel() : BaseViewModel() {
         viewModelScope.launch(Dispatchers.Default) {
 
             val bitmap = AuraGenerator.generateBaseAura(user)
-            PersonalDataManager.save(context, user, bitmap)
+            PersonalDataManager.saveUser(context, user)
+            PersonalDataManager.saveAura(context, bitmap)
 
             withContext(Dispatchers.Main) {
                 onSuccess()

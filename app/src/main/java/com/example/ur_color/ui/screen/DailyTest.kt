@@ -1,5 +1,7 @@
 package com.example.ur_color.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -38,16 +40,16 @@ import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.SwipeCard
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.LocalNavController
-import com.example.ur_color.utils.logDebug
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Serializable
 data object DailyTest : Screen
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun DailyTestScreen(
-    dailyTestViewModel: DailyTestViewModel = koinViewModel()
+    dailyTestViewModel: DailyTestViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -63,6 +65,9 @@ fun DailyTestScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        dailyTestViewModel.getUser(context)
+    }
 
     Box(
         modifier = Modifier

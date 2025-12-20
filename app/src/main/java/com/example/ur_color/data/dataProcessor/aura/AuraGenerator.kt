@@ -14,27 +14,29 @@ object AuraGenerator {
     }
 
     fun applyExtendedAura(user: UserData): Bitmap? {
-        val base = PersonalDataManager.aura.value
-
-        val width = base?.width ?: 0
-        val height = base?.height ?: 0
-
-        val archetype = PatternLibrary.archetypeLayer(width, height, user)
-        val symbol = PatternLibrary.symbolLayer(width, height, user)
-
-        return base?.let { AuraLayer.overlay(it, listOf(archetype, symbol)) }
+//        val base = PersonalDataManager.aura.value
+//
+//        val width = base?.width ?: 0
+//        val height = base?.height ?: 0
+//
+//        val archetype = PatternLibrary.archetypeLayer(width, height, user)
+//        val symbol = PatternLibrary.symbolLayer(width, height, user)
+//
+//        return base?.let { AuraLayer.overlay(it, listOf(archetype, symbol)) }
+        return null
     }
 
     fun applyDynamicAura(user: UserData): Bitmap? {
-        val base = PersonalDataManager.aura.value
-
-        val width = base?.width ?: 0
-        val height = base?.height ?: 0
-
-        val dynamic = DynamicLayerLibrary.vectorHistoryLayer(width, height, user)
-        val particles = DynamicLayerLibrary.particleLayer(width, height, user)
-
-        return base?.let { AuraLayer.overlay(it, listOf(dynamic, particles)) }
+//        val base = PersonalDataManager.aura.value
+//
+//        val width = base?.width ?: 0
+//        val height = base?.height ?: 0
+//
+//        val dynamic = DynamicLayerLibrary.vectorHistoryLayer(width, height, user)
+//        val particles = DynamicLayerLibrary.particleLayer(width, height, user)
+//
+//        return base?.let { AuraLayer.overlay(it, listOf(dynamic, particles)) }
+        return null
     }
 
 //    fun generateFullAura(user: UserData, width: Int = 1080, height: Int = 1080): Bitmap {

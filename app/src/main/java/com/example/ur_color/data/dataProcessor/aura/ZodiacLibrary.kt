@@ -22,14 +22,14 @@ object ZodiacLibrary {
             "cancer","scorpio","pisces" -> 260f
             else -> 180f
         }
-        val frameColor = Color.HSVToColor( (100 + user.energyLevel*10).coerceAtMost(255), floatArrayOf(hue, 0.7f, 1f) )
+        val frameColor = Color.HSVToColor( (100 + user.characteristics.energyLevel*10).coerceAtMost(255), floatArrayOf(hue, 0.7f, 1f) )
 
         // Внешняя рамка
-        if ((user.energyLevel + rnd.nextInt(100)) % 2 == 0) {
+        if ((user.characteristics.energyLevel + rnd.nextInt(100)) % 2 == 0) {
             val margin = (width / 10f) + rnd.nextInt(0, 40)
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 style = Paint.Style.STROKE
-                strokeWidth = (2.5f + user.energyLevel * 0.35f)
+                strokeWidth = (2.5f + user.characteristics.energyLevel * 0.35f)
                 color = frameColor
                 alpha = 180
             }

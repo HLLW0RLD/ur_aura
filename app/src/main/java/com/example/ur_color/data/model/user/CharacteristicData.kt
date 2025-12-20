@@ -19,16 +19,16 @@ data class CharacteristicData(
     val dominantColor: String = AuraColors.WHITE.hex,
 
 
-    val energyCapacity: List<Int> = List(10) { 5 },
-    val moodVector: List<Int> = List(10) { 5 },
-    val stressVector: List<Int> = List(10) { 5 },
-    val focusVector: List<Int> = List(10) { 5 },
-    val motivationVector: List<Int> = List(10) { 5 },
-    val creativityVector: List<Int> = List(10) { 5 },
-    val emotionalBalanceVector: List<Int> = List(10) { 5 },
-    val physicalEnergyVector: List<Int> = List(10) { 5 },
-    val sleepQualityVector: List<Int> = List(10) { 5 },
-    val intuitionVector: List<Int> = List(10) { 5 },
-    val socialVector: List<Int> = List(10) { 5 },
+    val energyCapacity: List<Int> = List(10) { 1 },
+    val moodVector: List<Int> = List(10) { 1 },
+    val stressVector: List<Int> = List(10) { 1 },
+    val focusVector: List<Int> = List(10) { 1 },
+    val motivationVector: List<Int> = List(10) { 1 },
+    val creativityVector: List<Int> = List(10) { 1 },
+    val emotionalBalanceVector: List<Int> = List(10) { 1 },
+    val physicalEnergyVector: List<Int> = List(10) { 1 },
+    val sleepQualityVector: List<Int> = List(10) { 1 },
+    val intuitionVector: List<Int> = List(10) { 1 },
+    val socialVector: List<Int> = List(10) { 1 },
     val colorVector: List<String> = List(10) { AuraColors.WHITE.hex }
 )

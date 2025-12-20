@@ -1,6 +1,7 @@
 package com.example.ur_color.ui.screen.viewModel
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
@@ -22,11 +23,13 @@ class DailyTestViewModel(
 
     private val _user = MutableStateFlow<UserData?>(null)
     private val _level = MutableStateFlow<Float>(1f)
+    private val _aura = MutableStateFlow<Bitmap?>(null)
 
     fun getUser(context: Context) {
         viewModelScope.launch {
             _user.value = userRepository.getUser(context)
             _level.value = userRepository.getLvl(context)
+            _aura.value = userRepository.getAura(context)
         }
     }
 
@@ -36,7 +39,7 @@ class DailyTestViewModel(
             val data = _user.value ?: return@launch
             val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
             DailyTestOperator.consumeAnswer(question = question, answer = answer)
-            DailyTestOperator.applyDailyResult(context, data)
+            DailyTestOperator.applyDailyResult(context, data, _aura.value)
             PersonalDataManager.saveDailyTestDate(context, today)
         }
     }

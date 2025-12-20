@@ -1,11 +1,11 @@
 package com.example.ur_color.data.dataProcessor.testOperator
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
-import com.example.ur_color.data.model.user.CharacteristicData
 import com.example.ur_color.data.model.user.UserData
 import kotlin.collections.iterator
 import kotlin.math.roundToInt
@@ -25,7 +25,7 @@ object DailyTestOperator {
         }
     }
 
-    suspend fun applyDailyResult(context: Context, user: UserData?) {
+    suspend fun applyDailyResult(context: Context, user: UserData?, aura: Bitmap?) {
         if (user == null) return
         var updated = user!!
 
@@ -44,7 +44,7 @@ object DailyTestOperator {
 
         PersonalDataManager.saveUser(context, updated)
 
-        val aura = AuraGenerator.applyDynamicAura(updated)
+        val aura = AuraGenerator.updateDynamicAura(aura, updated)
         if (aura != null) PersonalDataManager.saveAura(context, aura)
 
         resetDaily()
@@ -53,87 +53,77 @@ object DailyTestOperator {
     private fun updateUserValue(user: UserData, type: ModType, value: Int): UserData {
         fun vec(v: List<Int>) = updateVector(v, value)
 
-        return when (type) {
+        val updatedCharacteristics = when (type) {
             ModType.ENERGY_LEVEL -> {
                 user.characteristics.copy(
                     energyLevel = value,
                     energyCapacity = vec(user.characteristics.energyCapacity)
                 )
-                user
             }
             ModType.MOOD -> {
                 user.characteristics.copy(
                     mood = value,
                     moodVector = vec(user.characteristics.moodVector)
                 )
-                user
             }
             ModType.STRESS_LEVEL -> {
                 user.characteristics.copy(
                     stressLevel = value,
                     stressVector = vec(user.characteristics.stressVector)
                 )
-                user
             }
             ModType.FOCUS -> {
                 user.characteristics.copy(
                     focus = value,
                     focusVector = vec(user.characteristics.focusVector)
                 )
-                user
             }
             ModType.MOTIVATION -> {
                 user.characteristics.copy(
                     motivation = value,
                     motivationVector = vec(user.characteristics.motivationVector)
                 )
-                user
             }
             ModType.CREATIVITY -> {
                 user.characteristics.copy(
                     creativity = value,
                     creativityVector = vec(user.characteristics.creativityVector)
                 )
-                user
             }
             ModType.EMOTIONAL_BALANCE -> {
                 user.characteristics.copy(
                     emotionalBalance = value,
                     emotionalBalanceVector = vec(user.characteristics.emotionalBalanceVector)
                 )
-                user
             }
             ModType.PHYSICAL_ENERGY -> {
                 user.characteristics.copy(
                     physicalEnergy = value,
                     physicalEnergyVector = vec(user.characteristics.physicalEnergyVector)
                 )
-                user
             }
             ModType.SLEEP_QUALITY -> {
                 user.characteristics.copy(
                     sleepQuality = value,
                     sleepQualityVector = vec(user.characteristics.sleepQualityVector)
                 )
-                user
             }
             ModType.INTUITION_LEVEL -> {
                 user.characteristics.copy(
                     intuitionLevel = value,
                     intuitionVector = vec(user.characteristics.intuitionVector)
                 )
-                user
             }
             ModType.SOCIAL_ENERGY -> {
                 user.characteristics.copy(
                     socialEnergy = value,
                     socialVector = vec(user.characteristics.socialVector)
                 )
-                user
             }
-            ModType.DOMINANT_COLOR -> user
-
+            ModType.DOMINANT_COLOR -> user.characteristics
         }
+
+        return user.copy(characteristics = updatedCharacteristics)
     }
 
     private fun getValue(user: UserData, type: ModType): Int =

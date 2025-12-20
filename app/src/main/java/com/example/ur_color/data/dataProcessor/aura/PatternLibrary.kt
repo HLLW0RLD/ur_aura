@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Shader
 import com.example.ur_color.data.model.user.UserData
 import kotlin.math.cos
@@ -30,8 +31,9 @@ object PatternLibrary {
             Shader.TileMode.CLAMP
         )
 
-        val p = Paint().apply { this.shader = shader }
-        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), p)
+        val paint = Paint().apply { this.shader = shader }
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+
         return bmp
     }
 
@@ -39,8 +41,7 @@ object PatternLibrary {
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
         val rnd = AuraUtils.seededRandom(user.auraSeed)
-        val shapes = ShapeType.values()
-        val chosen = shapes[rnd.nextInt(shapes.size)]
+        val chosen = ShapeType.values()[rnd.nextInt(ShapeType.values().size)]
         drawPatternChoice(canvas, chosen, width, height, user, rnd)
         return bmp
     }
@@ -79,6 +80,7 @@ object PatternLibrary {
             val y = cy + sin(a) * r
             canvas.drawCircle(x.toFloat(), y.toFloat(), 6f + rnd.nextFloat() * 8f, paint)
         }
+
         return bmp
     }
 
@@ -106,11 +108,10 @@ object PatternLibrary {
             ShapeType.CIRCLE -> {
                 val rings = 3 + user.characteristics.energyLevel / 2
                 for (i in 0 until rings) {
-                    val r = (min(width, height) * (0.12f + i * 0.06f))
+                    val r = min(width, height) * (0.12f + i * 0.06f)
                     canvas.drawCircle(cx, cy, r, paint)
                 }
             }
-
             ShapeType.POLYGON, ShapeType.HEXAGON -> {
                 val sides = if (shape == ShapeType.HEXAGON) 6 else (3 + user.characteristics.creativity / 3)
                 val layers = 2 + user.characteristics.energyLevel / 3
@@ -118,34 +119,15 @@ object PatternLibrary {
                     drawPolygon(canvas, cx.toDouble(), cy.toDouble(), sides, (60 + l * 20).toFloat() * intensity, paint)
                 }
             }
-
-            ShapeType.STAR -> {
-                drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.creativity / 4, paint)
+            ShapeType.STAR -> drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.creativity / 4, paint)
+            ShapeType.SPIRAL -> drawSpiral(canvas, cx.toDouble(), cy.toDouble(), (2 + user.characteristics.energyLevel / 2), paint)
+            ShapeType.PETAL -> drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.creativity / 3, 80f * intensity, paint)
+            ShapeType.WAVE -> drawWave(canvas, cx.toDouble(), cy.toDouble(), 20 + user.characteristics.energyLevel * 3, min(width, height).toFloat() * 0.8f, paint)
+            ShapeType.CROSS -> drawCross(canvas, cx.toDouble(), cy.toDouble(), 40f + user.characteristics.energyLevel * 5, paint)
+            ShapeType.RINGS -> for (i in 0 until 5) {
+                val rr = 40f + i * 60f + rnd.nextFloat() * 30f
+                canvas.drawCircle(cx, cy, rr, paint)
             }
-
-            ShapeType.SPIRAL -> {
-                drawSpiral(canvas, cx.toDouble(), cy.toDouble(), (2 + user.characteristics.energyLevel / 2), paint)
-            }
-
-            ShapeType.PETAL -> {
-                drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.creativity / 3, 80f * intensity, paint)
-            }
-
-            ShapeType.WAVE -> {
-                drawWave(canvas, cx.toDouble(), cy.toDouble(), 20 + user.characteristics.energyLevel * 3, min(width, height).toFloat() * 0.8f, paint)
-            }
-
-            ShapeType.CROSS -> {
-                drawCross(canvas, cx.toDouble(), cy.toDouble(), 40f + user.characteristics.energyLevel * 5, paint)
-            }
-
-            ShapeType.RINGS -> {
-                for (i in 0 until 5) {
-                    val rr = 40f + i * 60f + rnd.nextFloat() * 30f
-                    canvas.drawCircle(cx, cy, rr, paint)
-                }
-            }
-
             ShapeType.DOTS -> {
                 val count = 50 + user.characteristics.energyLevel * 10
                 val p = Paint(paint).apply { style = Paint.Style.FILL }
@@ -158,11 +140,79 @@ object PatternLibrary {
         }
     }
 
-    // --- ниже вспомогательные функции (без изменений) ---
-    private fun drawPolygon(canvas: Canvas, cx: Double, cy: Double, sides: Int, r: Float, paint: Paint) { /* ... */ }
-    private fun drawStar(canvas: Canvas, cx: Double, cy: Double, points: Int, paint: Paint) { /* ... */ }
-    private fun drawSpiral(canvas: Canvas, cx: Double, cy: Double, complexity: Int, paint: Paint) { /* ... */ }
-    private fun drawPetal(canvas: Canvas, cx: Double, cy: Double, points: Int, r: Float, paint: Paint) { /* ... */ }
-    private fun drawWave(canvas: Canvas, cx: Double, cy: Double, amplitude: Int, length: Float, paint: Paint) { /* ... */ }
-    private fun drawCross(canvas: Canvas, cx: Double, cy: Double, r: Float, paint: Paint) { /* ... */ }
+    // --- вспомогательные функции для отрисовки ---
+    private fun drawPolygon(canvas: Canvas, cx: Double, cy: Double, sides: Int, r: Float, paint: Paint) {
+        if (sides < 3) return
+        val path = Path()
+        for (i in 0 until sides) {
+            val angle = 2 * Math.PI * i / sides
+            val x = cx + r * cos(angle)
+            val y = cy + r * sin(angle)
+            if (i == 0) path.moveTo(x.toFloat(), y.toFloat()) else path.lineTo(x.toFloat(), y.toFloat())
+        }
+        path.close()
+        canvas.drawPath(path, paint)
+    }
+
+    private fun drawStar(canvas: Canvas, cx: Double, cy: Double, points: Int, paint: Paint) {
+        if (points < 2) return
+        val path = Path()
+        val outerR = 40.0
+        val innerR = 20.0
+        for (i in 0 until points * 2) {
+            val r = if (i % 2 == 0) outerR else innerR
+            val angle = Math.PI * i / points
+            val x = cx + r * cos(angle)
+            val y = cy + r * sin(angle)
+            if (i == 0) path.moveTo(x.toFloat(), y.toFloat()) else path.lineTo(x.toFloat(), y.toFloat())
+        }
+        path.close()
+        canvas.drawPath(path, paint)
+    }
+
+    private fun drawSpiral(canvas: Canvas, cx: Double, cy: Double, complexity: Int, paint: Paint) {
+        val path = Path()
+        var angle = 0.0
+        val step = 0.1
+        val maxRadius = 100.0 + complexity * 20
+        while (angle < Math.PI * complexity * 2) {
+            val r = maxRadius * angle / (Math.PI * complexity * 2)
+            val x = cx + r * cos(angle)
+            val y = cy + r * sin(angle)
+            if (angle == 0.0) path.moveTo(x.toFloat(), y.toFloat()) else path.lineTo(x.toFloat(), y.toFloat())
+            angle += step
+        }
+        canvas.drawPath(path, paint)
+    }
+
+    private fun drawPetal(canvas: Canvas, cx: Double, cy: Double, points: Int, r: Float, paint: Paint) {
+        val path = Path()
+        for (i in 0 until points) {
+            val angle = 2 * Math.PI * i / points
+            val x = cx + r * cos(angle)
+            val y = cy + r * sin(angle)
+            if (i == 0) path.moveTo(cx.toFloat(), cy.toFloat())
+            path.quadTo(x.toFloat(), y.toFloat(), cx.toFloat(), cy.toFloat())
+        }
+        path.close()
+        canvas.drawPath(path, paint)
+    }
+
+    private fun drawWave(canvas: Canvas, cx: Double, cy: Double, amplitude: Int, length: Float, paint: Paint) {
+        val path = Path()
+        val width = canvas.width
+        val points = 50
+        for (i in 0..points) {
+            val x = i * width / points.toFloat()
+            val y = cy + sin(i.toDouble() * 2 * Math.PI / points) * amplitude
+            if (i == 0) path.moveTo(x, y.toFloat()) else path.lineTo(x, y.toFloat())
+        }
+        canvas.drawPath(path, paint)
+    }
+
+    private fun drawCross(canvas: Canvas, cx: Double, cy: Double, r: Float, paint: Paint) {
+        canvas.drawLine((cx - r).toFloat(), cy.toFloat(), (cx + r).toFloat(), cy.toFloat(), paint)
+        canvas.drawLine(cx.toFloat(), (cy - r).toFloat(), cx.toFloat(), (cy + r).toFloat(), paint)
+    }
+
 }

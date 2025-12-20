@@ -108,6 +108,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import coil.request.ImageRequest
+import com.example.ur_color.ui.theme.AppTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -707,6 +708,7 @@ fun SwipeCard(
                         modifier = Modifier
                             .size(100.dp),
                         painter = centerImg,
+                        colorFilter = ColorFilter.tint(AppColors.accentPrimary),
                         contentDescription = null
                     )
                 }
@@ -728,6 +730,7 @@ fun SwipeCard(
                         .size(170.dp)
                         .align(Alignment.Center),
                     painter = centerImg,
+                    colorFilter = ColorFilter.tint(AppColors.accentPrimary),
                     contentDescription = null
                 )
             }

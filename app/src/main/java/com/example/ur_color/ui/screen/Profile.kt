@@ -143,12 +143,13 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            if (isDailyTestAvailable) {
-                                navController.nav(DailyTest)
-                            } else {
-
-                                context.toast(s)
-                            }
+                            navController.nav(DailyTest)
+//                            if (isDailyTestAvailable) {
+//                                navController.nav(DailyTest)
+//                            } else {
+//
+//                                context.toast(s)
+//                            }
                         }
                         .padding(8.dp)
                 )

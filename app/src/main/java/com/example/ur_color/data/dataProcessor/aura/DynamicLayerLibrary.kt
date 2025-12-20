@@ -19,23 +19,35 @@ object DynamicLayerLibrary {
         val cy = height / 2f
         val rnd = AuraUtils.seededRandom(user.auraSeed + 1234)
 
-        // 1) Energy capacity -> concentric rings (history visible от центра к краю)
         drawEnergyRings(canvas, cx, cy, min(width, height) * 0.45f, user.characteristics.energyCapacity, user)
-
-        // 2) Mood vector -> horizontal sine waves (несколько слоёв, старые значения слабее)
         drawMoodWaves(canvas, user.characteristics.moodVector, user, offsetY = height * 0.25f)
-
-        // 3) Stress vector -> radial spikes overlay
         drawStressSpikes(canvas, cx, cy, min(width, height) * 0.42f, user.characteristics.stressVector, user)
-
-        // 4) Small particle history whose density follows socialVector / physicalEnergyVector
         drawHistoryParticles(canvas, width, height, user)
 
         return bmp
     }
 
+    fun particleLayer(width: Int, height: Int, user: UserData): Bitmap {
+        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bmp)
+        val rnd = AuraUtils.seededRandom(user.auraSeed + 7777)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+
+        val count = (30 + user.characteristics.physicalEnergy * 5 + user.characteristics.socialEnergy * 5).toInt()
+        repeat(count) { i ->
+            val x = rnd.nextFloat() * width
+            val y = rnd.nextFloat() * height
+            val size = rnd.nextFloat() * (3f + user.characteristics.creativity / 2f)
+            val color = AuraUtils.getColorFromEnum(user.characteristics.colorVector, i % user.characteristics.colorVector.size, "#FFFFFF")
+            paint.color = AuraUtils.adjustAlpha(color, 0.4f + rnd.nextFloat() * 0.6f)
+            canvas.drawCircle(x, y, size, paint)
+        }
+
+        return bmp
+    }
+
+    // --- приватные функции рисования слоёв ---
     private fun drawEnergyRings(canvas: Canvas, cx: Float, cy: Float, maxR: Float, vector: List<Int>, user: UserData) {
-        // normalize length to available radius
         val count = vector.size.coerceAtLeast(1)
         val step = maxR / (count + 1)
         vector.forEachIndexed { idx, v ->
@@ -54,39 +66,9 @@ object DynamicLayerLibrary {
         }
     }
 
-    fun particleLayer(width: Int, height: Int, user: UserData): Bitmap {
-        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bmp)
-        val rnd = AuraUtils.seededRandom(user.auraSeed + 7777)
-
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.FILL
-        }
-
-        // Количество частиц зависит от физической и социальной энергии
-        val count = (30 + user.characteristics.physicalEnergy * 5 + user.characteristics.socialEnergy * 5).toInt()
-
-        repeat(count) { i ->
-            val x = rnd.nextFloat() * width
-            val y = rnd.nextFloat() * height
-            val size = rnd.nextFloat() * (3f + user.characteristics.creativity / 2f)
-            val color = AuraUtils.getColorFromEnum(
-                user.characteristics.colorVector,
-                i % user.characteristics.colorVector.size,
-                "#FFFFFF"
-            )
-
-            paint.color = AuraUtils.adjustAlpha(color, 0.4f + rnd.nextFloat() * 0.6f)
-            canvas.drawCircle(x, y, size, paint)
-        }
-
-        return bmp
-    }
-
     private fun drawMoodWaves(canvas: Canvas, vector: List<Int>, user: UserData, offsetY: Float) {
         if (vector.isEmpty()) return
         val width = canvas.width
-        // draw 2-3 layered waves; older vectors (index 0) drawn faint, newer bold
         for (layer in 0 until 3) {
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 style = Paint.Style.STROKE
@@ -99,10 +81,9 @@ object DynamicLayerLibrary {
             vector.forEachIndexed { i, v ->
                 val x = i * step
                 val normal = v.coerceIn(0, 10) / 10f
-                // phase shift by layer to create multiple waves
                 val phase = (layer * 0.6f + i * 0.15f)
                 val amplitude = 20f + user.characteristics.mood * 3f + normal * 30f
-                val y = offsetY + Math.sin(phase.toDouble()).toFloat() * amplitude * normal * (1f / (layer + 1))
+                val y = offsetY + sin(phase) * amplitude * normal * (1f / (layer + 1))
                 if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
             }
             canvas.drawPath(path, paint)
@@ -143,3 +124,4 @@ object DynamicLayerLibrary {
         }
     }
 }
+

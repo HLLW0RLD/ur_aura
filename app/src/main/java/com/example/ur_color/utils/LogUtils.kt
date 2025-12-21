@@ -82,15 +82,25 @@ private fun log(
     }
 
     val callingTime = SimpleDateFormat("HH:mm:ss").format(Date())
+    val msg =  buildString {
+        appendLine("---- START $fixedLabel ----------------------------------------------------------")
+        appendLine("\n${formattedMessage}")
+        appendLine("\n---- END | $fileLocation ($callingTime)--------------------------------")
+    }
 
-    println(
-        buildString {
-            appendLine("\n<<<< START $fixedLabel ${if (resolvedTag != null) "[$resolvedTag] " else ""}LOG ----------------------------------------------------------")
-            appendLine("\n${formattedMessage}")
-            appendLine("\n$fileLocation ($callingTime)")
-            appendLine("<<<< END $fixedLabel LOG ----------------------------------------------------------")
-        }
-    )
+    val logTag = resolvedTag ?: when (fixedLabel) {
+        LogType.DEBUG -> "DEBUG"
+        LogType.SUCCESS -> "SUCCESS"
+        LogType.ERROR -> "ERROR"
+        else -> "INFO"
+    }
+
+    when (fixedLabel) {
+        LogType.DEBUG -> Log.d(logTag, msg)
+        LogType.ERROR -> Log.e(logTag, msg)
+        LogType.SUCCESS -> Log.i(logTag, msg)
+        else -> Log.i(logTag, msg)
+    }
 }
 
 fun autoFormatString(input: String): String {
@@ -129,16 +139,15 @@ private val tagColorMap = mapOf(
     LogType.SUCCESS to LogColor.GREEN,
     LogType.ERROR to LogColor.RED,
     LogType.API to LogColor.BLUE,
-    LogType.IO to LogColor.PURPLE,
     LogType.DB to LogColor.MAGENTA
 )
 
 object LogType {
-    const val IO = "IO"
     const val DEBUG = "DEBUG"
-    const val API = "API"
-    const val ERROR = "ERROR"
     const val SUCCESS = "SUCCESS"
+    const val ERROR = "ERROR"
+
+    const val API = "API"
     const val DB  = "DB"
 }
 

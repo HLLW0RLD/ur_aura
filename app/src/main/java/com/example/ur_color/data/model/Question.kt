@@ -8,7 +8,7 @@ data class Question(
 
 data class Mod(
     val targetVariable: ModType,    // название динамической переменной из UserData
-    val factor: Double,            // коэффициент влияния (можно отрицательный)
+    val factor: Float,            // коэффициент влияния (можно отрицательный)
     val useVector: Boolean = true,  // учитывать ли предыдущие значения в векторе
 )
 
@@ -24,13 +24,13 @@ enum class ModType {
     SLEEP_QUALITY,
     INTUITION_LEVEL,
     SOCIAL_ENERGY,
-    DOMINANT_COLOR // можно оставить для будущих визуальных метрик
+    DOMINANT_COLOR // для этого тоже нужно вставлять моды
 }
 
 object ModFactors {
-    const val VERY_HIGH = 0.9
-    const val HIGH = 0.8
-    const val MEDIUM = 0.7
-    const val LOW = 0.6
-    const val VERY_LOW = 0.5
+    const val VERY_HIGH = 0.9f
+    const val HIGH = 0.8f
+    const val MEDIUM = 0.7f
+    const val LOW = 0.6f
+    const val VERY_LOW = 0.5f
 }

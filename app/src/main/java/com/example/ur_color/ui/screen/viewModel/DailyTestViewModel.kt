@@ -25,8 +25,14 @@ class DailyTestViewModel(
     private val _level = MutableStateFlow<Float>(1f)
     private val _aura = MutableStateFlow<Bitmap?>(null)
 
-    fun getUser(context: Context) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun init(context: Context) {
         viewModelScope.launch {
+            PersonalDataManager.saveDailyTestDate(context, today)
+
             _user.value = userRepository.getUser(context)
             _level.value = userRepository.getLvl(context)
             _aura.value = userRepository.getAura(context)
@@ -36,18 +42,15 @@ class DailyTestViewModel(
     @RequiresApi(Build.VERSION_CODES.O)
     fun consumeAnswer(context: Context, question: Question, answer: Boolean) {
         viewModelScope.launch {
-            val data = _user.value ?: return@launch
-            val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
             DailyTestOperator.consumeAnswer(question = question, answer = answer)
-            DailyTestOperator.applyDailyResult(context, data, _aura.value)
-            PersonalDataManager.saveDailyTestDate(context, today)
         }
     }
 
     fun updateAfterTest(context: Context) {
         viewModelScope.launch {
+            val data = _user.value ?: return@launch
+            DailyTestOperator.applyDailyResult(context, data, _aura.value)
             PersonalDataManager.level(context, 0.2f)
-            logDebug(_level.value)
         }
     }
 }

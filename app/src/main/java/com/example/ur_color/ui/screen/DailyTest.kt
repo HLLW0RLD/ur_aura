@@ -66,7 +66,7 @@ fun DailyTestScreen(
     }
 
     LaunchedEffect(Unit) {
-        dailyTestViewModel.getUser(context)
+        dailyTestViewModel.init(context)
     }
 
     Box(

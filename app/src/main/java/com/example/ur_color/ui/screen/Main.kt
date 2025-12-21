@@ -175,6 +175,7 @@ fun MainScreen(
                             translationY = -auraShiftDp.toPx()
                         }
                         .clip(RoundedCornerShape(24.dp))
+                        .background(AppColors.surfaceDark)
                         .border(
                             shape = RoundedCornerShape(24.dp),
                             color = AppColors.divider,
@@ -275,7 +276,7 @@ fun MainScreen(
                 Spacer(modifier = Modifier.size(16.dp))
 
                 val metrics = listOf(
-                    user?.characteristics?.energyCapacity to stringResource(R.string.metric_energy),
+                    user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
                     user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
                     user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
                     user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
@@ -310,7 +311,13 @@ fun MainScreen(
                             key = { index -> "metric_$index" }
                         ) { vector ->
                             val metric = metrics[vector]
-                            val value = metric.first ?: listOf<Int>()
+                            val valueFloat = metric.first
+                            val value = mutableListOf<Int>()
+
+                            valueFloat?.forEach {
+                                value.add(it.toInt())
+                            }
+
                             val label = metric.second
 
                             var exp by rememberSaveable { mutableStateOf(false) }

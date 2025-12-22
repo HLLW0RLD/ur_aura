@@ -7,10 +7,8 @@ import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
 import com.example.ur_color.data.model.user.UserData
-import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.utils.logDebug
 import kotlin.collections.iterator
-import kotlin.math.roundToInt
 
 object DailyTestOperator {
 
@@ -18,7 +16,7 @@ object DailyTestOperator {
 
     fun consumeAnswer(question: Question, answer: Boolean) {
         for (mod in question.mods) {
-            val diff = (5 * mod.factor)
+            val diff = (5 * mod.coef)
             val delta = if (answer) diff else -diff
 
             accumulators
@@ -58,27 +56,17 @@ object DailyTestOperator {
         when (type) {
             ModType.ENERGY_LEVEL -> user.characteristics.energy
             ModType.MOOD -> user.characteristics.mood
-            ModType.STRESS_LEVEL -> user.characteristics.stressLevel
+            ModType.STRESS -> user.characteristics.stress
             ModType.FOCUS -> user.characteristics.focus
             ModType.MOTIVATION -> user.characteristics.motivation
-            ModType.CREATIVITY -> user.characteristics.creativity
-            ModType.EMOTIONAL_BALANCE -> user.characteristics.emotionalBalance
+            ModType.CHARISMA -> user.characteristics.charisma
             ModType.PHYSICAL_ENERGY -> user.characteristics.physicalEnergy
             ModType.SLEEP_QUALITY -> user.characteristics.sleepQuality
-            ModType.INTUITION_LEVEL -> user.characteristics.intuitionLevel
+            ModType.COMMUNICATION -> user.characteristics.communication
             ModType.SOCIAL_ENERGY -> user.characteristics.socialEnergy
-            ModType.DOMINANT_COLOR -> 0f
+            ModType.ANXIETY -> user.characteristics.anxiety
+            ModType.FATIGUE -> user.characteristics.fatigue
         }
-
-    private fun updateColor(
-        oldVector: List<String>,
-        value: String,
-        maxSize: Int = 10
-    ): List<String> {
-        val newList = oldVector + value
-        val result = if (newList.size > maxSize) newList.takeLast(maxSize) else newList
-        return result
-    }
 
     private fun updateVector(
         oldVector: List<Float>,
@@ -101,8 +89,8 @@ object DailyTestOperator {
                 mood = value,
                 moodVector = updateVector(c.moodVector, value)
             )
-            ModType.STRESS_LEVEL -> c.copy(
-                stressLevel = value,
+            ModType.STRESS -> c.copy(
+                stress = value,
                 stressVector = updateVector(c.stressVector, value)
             )
             ModType.FOCUS -> c.copy(
@@ -113,13 +101,9 @@ object DailyTestOperator {
                 motivation = value,
                 motivationVector = updateVector(c.motivationVector, value)
             )
-            ModType.CREATIVITY -> c.copy(
-                creativity = value,
-                creativityVector = updateVector(c.creativityVector, value)
-            )
-            ModType.EMOTIONAL_BALANCE -> c.copy(
-                emotionalBalance = value,
-                emotionalBalanceVector = updateVector(c.emotionalBalanceVector, value)
+            ModType.CHARISMA -> c.copy(
+                charisma = value,
+                charismaVector = updateVector(c.charismaVector, value)
             )
             ModType.PHYSICAL_ENERGY -> c.copy(
                 physicalEnergy = value,
@@ -129,34 +113,22 @@ object DailyTestOperator {
                 sleepQuality = value,
                 sleepQualityVector = updateVector(c.sleepQualityVector, value)
             )
-            ModType.INTUITION_LEVEL -> c.copy(
-                intuitionLevel = value,
-                intuitionVector = updateVector(c.intuitionVector, value)
+            ModType.COMMUNICATION -> c.copy(
+                communication = value,
+                communicationVector = updateVector(c.communicationVector, value)
             )
             ModType.SOCIAL_ENERGY -> c.copy(
                 socialEnergy = value,
                 socialVector = updateVector(c.socialVector, value)
             )
-            ModType.DOMINANT_COLOR -> {
-                val color = when (value.roundToInt().coerceIn(1, 10)) {
-                    1 -> AuraColors.MINT.hex
-                    2 -> AuraColors.BLUE.hex
-                    3 -> AuraColors.LAVENDER.hex
-                    4 -> AuraColors.CORAL.hex
-                    5 -> AuraColors.YELLOW.hex
-                    6 -> AuraColors.GREEN.hex
-                    7 -> AuraColors.RED.hex
-                    8 -> AuraColors.PEACH.hex
-                    9 -> AuraColors.BURGUNDY.hex
-                    10 -> AuraColors.SILVER.hex
-                    else -> AuraColors.WHITE.hex
-                }
-
-                c.copy(
-                    dominantColor = color,
-                    colorVector = updateColor(c.colorVector, color)
-                )
-            }
+            ModType.ANXIETY -> c.copy(
+                anxiety = value,
+                anxietyVector = updateVector(c.anxietyVector, value)
+            )
+            ModType.FATIGUE -> c.copy(
+                anxiety = value,
+                anxietyVector = updateVector(c.anxietyVector, value)
+            )
         }
 
         return user.copy(characteristics = updated)

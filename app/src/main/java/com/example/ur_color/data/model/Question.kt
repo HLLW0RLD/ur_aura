@@ -1,36 +1,50 @@
 package com.example.ur_color.data.model
 
+import java.util.UUID
+
 data class Question(
-    val id: String,
+    val id: String? = UUID.randomUUID().toString(),
     val text: String,
     val mods: List<Mod> = emptyList()
 )
 
 data class Mod(
     val targetVariable: ModType,    // название динамической переменной из UserData
-    val factor: Float,            // коэффициент влияния (можно отрицательный)
+    val coef: Float,            // коэффициент влияния (можно отрицательный)
     val useVector: Boolean = true,  // учитывать ли предыдущие значения в векторе
 )
 
-enum class ModType {
-    ENERGY_LEVEL,
-    MOOD,
-    STRESS_LEVEL,
-    FOCUS,
-    MOTIVATION,
-    CREATIVITY,
-    EMOTIONAL_BALANCE,
-    PHYSICAL_ENERGY,
-    SLEEP_QUALITY,
-    INTUITION_LEVEL,
-    SOCIAL_ENERGY,
-    DOMINANT_COLOR // для этого тоже нужно вставлять моды
+enum class ModCategory {
+    PHYSICAL,
+    EMOTIONAL,
+    SOCIAL,
+    NEGATIVE
+}
+
+enum class ModType(val category: ModCategory) {
+    // PHYSICAL
+    ENERGY_LEVEL(ModCategory.PHYSICAL),
+    PHYSICAL_ENERGY(ModCategory.PHYSICAL),
+    SLEEP_QUALITY(ModCategory.PHYSICAL),
+
+    // EMOTIONAL
+    MOOD(ModCategory.EMOTIONAL),
+    MOTIVATION(ModCategory.EMOTIONAL),
+    FOCUS(ModCategory.EMOTIONAL),
+
+    // SOCIAL
+    CHARISMA(ModCategory.SOCIAL),
+    SOCIAL_ENERGY(ModCategory.SOCIAL),
+    COMMUNICATION(ModCategory.SOCIAL),
+
+    // NEGATIVE
+    STRESS(ModCategory.NEGATIVE),
+    ANXIETY(ModCategory.NEGATIVE),
+    FATIGUE(ModCategory.NEGATIVE)
 }
 
 object ModFactors {
-    const val VERY_HIGH = 0.9f
     const val HIGH = 0.8f
-    const val MEDIUM = 0.7f
-    const val LOW = 0.6f
-    const val VERY_LOW = 0.5f
+    const val MEDIUM = 0.55f
+    const val LOW = 0.3f
 }

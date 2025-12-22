@@ -1,22 +1,21 @@
 package com.example.ur_color.data.model.user
 
-import com.example.ur_color.ui.theme.AuraColors
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class CharacteristicData(
     val energy: Float = 5f,
     val mood: Float = 5f,
-    val stressLevel: Float = 5f,
+    val stress: Float = 5f,
     val focus: Float = 5f,
     val motivation: Float = 5f,
-    val creativity: Float = 5f,
-    val emotionalBalance: Float = 5f,
+    val charisma: Float = 5f,
     val physicalEnergy: Float = 5f,
     val sleepQuality: Float = 5f,
-    val intuitionLevel: Float = 5f,
+    val communication: Float = 5f,
     val socialEnergy: Float = 5f,
-    val dominantColor: String = AuraColors.WHITE.hex,
+    val anxiety: Float = 5f,
+    val fatigue: Float = 5f,
 
 
     val energyVector: List<Float> = List(10) { 5f },
@@ -24,11 +23,11 @@ data class CharacteristicData(
     val stressVector: List<Float> = List(10) { 5f },
     val focusVector: List<Float> = List(10) { 5f },
     val motivationVector: List<Float> = List(10) { 5f },
-    val creativityVector: List<Float> = List(10) { 5f },
-    val emotionalBalanceVector: List<Float> = List(10) { 5f },
+    val charismaVector: List<Float> = List(10) { 5f },
     val physicalEnergyVector: List<Float> = List(10) { 5f },
     val sleepQualityVector: List<Float> = List(10) { 5f },
-    val intuitionVector: List<Float> = List(10) { 5f },
+    val communicationVector: List<Float> = List(10) { 5f },
     val socialVector: List<Float> = List(10) { 5f },
-    val colorVector: List<String> = List(10) { AuraColors.WHITE.hex }
+    val anxietyVector: List<Float> = List(10) { 5f },
+    val fatigueVector: List<Float> = List(10) { 5f }
 )

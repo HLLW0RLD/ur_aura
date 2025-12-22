@@ -55,7 +55,7 @@ fun DailyTestScreen(
     val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
 
-    val questions = remember { LocalDailyTestService().firstVarTest.toMutableStateList() }
+    val questions = remember { LocalDailyTestService().questionMods.toMutableStateList() }
     var currentIndex by remember { mutableStateOf(0) }
     val offsetX = remember { Animatable(0f) }
 

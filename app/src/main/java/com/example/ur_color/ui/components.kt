@@ -1,7 +1,6 @@
 package com.example.ur_color.ui
 
 import android.os.Build
-import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDp
@@ -100,15 +99,9 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
-import com.example.ur_color.data.local.dataManager.SystemDataManager
 import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.ui.theme.ThemeMode
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import coil.request.ImageRequest
-import com.example.ur_color.ui.theme.AppTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -808,7 +801,7 @@ fun SwipeCard(
 @Composable
 fun ExpandableGradientGraphBox(
     label: String,
-    values: List<Int>,
+    values: List<Float>,
     vector: Int? = null,
     icon: Painter? = null,
     expanded: Boolean,
@@ -911,19 +904,21 @@ fun ExpandableGradientGraphBox(
 
 @Composable
 fun GradientGraphBox(
-    values: List<Int>,
+    values: List<Float>,
     modifier: Modifier = Modifier,
     barSpacingDp: Int = 6,
-    startColor: Color = AppColors.accentPrimary
+    topColor: Color = AppColors.success,
+    middleColor: Color = AppColors.accentPrimary,
+    bottomColor: Color = AppColors.error,
 ) {
-    val safeValues = values.map { it.coerceIn(0, 10) }
+    val safeValues = values.map { it.coerceIn(0F, 10F) }
     val barCount = safeValues.size
     val anims = remember(values) { safeValues.map { Animatable(0f) } }
 
     LaunchedEffect(safeValues) {
         anims.forEach { it.snapTo(0f) }
         safeValues.forEachIndexed { idx, v ->
-            val target = (v.coerceIn(0, 10) / 10f)
+            val target = (v.coerceIn(0F, 10F) / 10f)
             launch {
                 delay(idx * 40L)
                 anims[idx].animateTo(
@@ -951,24 +946,19 @@ fun GradientGraphBox(
         val bottomPadding = 4.dp.toPx()
         val graphHeight = h - topPadding - bottomPadding
 
+
         fun colorForValue(fraction: Float): Color {
-            return when {
-                fraction <= 0.5f -> lerp(
-                    start = Color(0xFFFF4D4D),
-                    stop = startColor,
-                    fraction = fraction / 0.5f
-                )
-                else -> lerp(
-                    start = Color(0xFF45D07B),
-                    stop = startColor,
-                    fraction = (fraction - 0.5f) / 0.5f
-                )
+            val clamped = fraction.coerceIn(0f, 1f)
+            return if (clamped < 0.5f) {
+                lerp(bottomColor, middleColor, clamped * 2f)
+            } else {
+                lerp(middleColor, topColor, (clamped - 0.5f) * 2f)
             }
         }
 
         safeValues.forEachIndexed { i, v ->
             val x = i * (barWidth + spacing)
-            val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0, 10) / 10f)
+            val frac = anims.getOrNull(i)?.value ?: (v.coerceIn(0F, 10F) / 10f)
             val barHeight = frac * graphHeight
             val top = topPadding + (graphHeight - barHeight)
 

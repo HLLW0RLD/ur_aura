@@ -21,7 +21,7 @@ object PatternLibrary {
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
 
-        val primary = AuraUtils.getColorFromEnum(user.characteristics.colorVector, 0, "#FFFFFF")
+        val primary = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
         val secondary = AuraUtils.adjustAlpha(primary, 0.6f)
 
         val shader = LinearGradient(
@@ -67,7 +67,7 @@ object PatternLibrary {
 
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            color = AuraUtils.getColorFromEnum(user.characteristics.colorVector, 1, "#FFFFFF")
+            color = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 1)
             alpha = 90
         }
 
@@ -95,7 +95,7 @@ object PatternLibrary {
     ) {
         val cx = width / 2f
         val cy = height / 2f
-        val baseColor = AuraUtils.getColorFromEnum(user.characteristics.colorVector, 0, "#FFFFFF")
+        val baseColor = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
 
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
@@ -113,15 +113,15 @@ object PatternLibrary {
                 }
             }
             ShapeType.POLYGON, ShapeType.HEXAGON -> {
-                val sides = if (shape == ShapeType.HEXAGON) 6 else (3 + user.characteristics.creativity.toInt() / 3)
+                val sides = if (shape == ShapeType.HEXAGON) 6 else (3 + user.characteristics.charisma.toInt() / 3)
                 val layers = 2 + user.characteristics.energy.toInt() / 3
                 for (l in 0 until layers) {
                     drawPolygon(canvas, cx.toDouble(), cy.toDouble(), sides, (60 + l * 20).toFloat() * intensity, paint)
                 }
             }
-            ShapeType.STAR -> drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.creativity.toInt() / 4, paint)
+            ShapeType.STAR -> drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.charisma.toInt() / 4, paint)
             ShapeType.SPIRAL -> drawSpiral(canvas, cx.toDouble(), cy.toDouble(), (2 + user.characteristics.energy.toInt() / 2), paint)
-            ShapeType.PETAL -> drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.creativity.toInt() / 3, 80f * intensity, paint)
+            ShapeType.PETAL -> drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.charisma.toInt() / 3, 80f * intensity, paint)
             ShapeType.WAVE -> drawWave(canvas, cx.toDouble(), cy.toDouble(), 20 + user.characteristics.energy.toInt() * 3, min(width, height).toFloat() * 0.8f, paint)
             ShapeType.CROSS -> drawCross(canvas, cx.toDouble(), cy.toDouble(), 40f + user.characteristics.energy.toInt() * 5, paint)
             ShapeType.RINGS -> for (i in 0 until 5) {

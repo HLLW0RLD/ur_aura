@@ -21,7 +21,7 @@ object PatternLibrary {
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
 
-        val primary = AuraUtils.getColorFromEnum(user.characteristics.colorVector, 0, "#FFFFFF")
+        val primary = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
         val secondary = AuraUtils.adjustAlpha(primary, 0.6f)
 
         val shader = LinearGradient(
@@ -67,7 +67,7 @@ object PatternLibrary {
 
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            color = AuraUtils.getColorFromEnum(user.characteristics.colorVector, 1, "#FFFFFF")
+            color = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 1)
             alpha = 90
         }
 
@@ -95,41 +95,41 @@ object PatternLibrary {
     ) {
         val cx = width / 2f
         val cy = height / 2f
-        val baseColor = AuraUtils.getColorFromEnum(user.characteristics.colorVector, 0, "#FFFFFF")
+        val baseColor = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
 
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
             color = baseColor
-            strokeWidth = (2f + user.characteristics.energyLevel * 0.3f) * intensity
-            alpha = (80 + user.characteristics.mood * 10).coerceAtMost(230)
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
         }
 
         when (shape) {
             ShapeType.CIRCLE -> {
-                val rings = 3 + user.characteristics.energyLevel / 2
+                val rings = 3 + user.characteristics.energy.toInt() / 2
                 for (i in 0 until rings) {
                     val r = min(width, height) * (0.12f + i * 0.06f)
                     canvas.drawCircle(cx, cy, r, paint)
                 }
             }
             ShapeType.POLYGON, ShapeType.HEXAGON -> {
-                val sides = if (shape == ShapeType.HEXAGON) 6 else (3 + user.characteristics.creativity / 3)
-                val layers = 2 + user.characteristics.energyLevel / 3
+                val sides = if (shape == ShapeType.HEXAGON) 6 else (3 + user.characteristics.charisma.toInt() / 3)
+                val layers = 2 + user.characteristics.energy.toInt() / 3
                 for (l in 0 until layers) {
                     drawPolygon(canvas, cx.toDouble(), cy.toDouble(), sides, (60 + l * 20).toFloat() * intensity, paint)
                 }
             }
-            ShapeType.STAR -> drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.creativity / 4, paint)
-            ShapeType.SPIRAL -> drawSpiral(canvas, cx.toDouble(), cy.toDouble(), (2 + user.characteristics.energyLevel / 2), paint)
-            ShapeType.PETAL -> drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.creativity / 3, 80f * intensity, paint)
-            ShapeType.WAVE -> drawWave(canvas, cx.toDouble(), cy.toDouble(), 20 + user.characteristics.energyLevel * 3, min(width, height).toFloat() * 0.8f, paint)
-            ShapeType.CROSS -> drawCross(canvas, cx.toDouble(), cy.toDouble(), 40f + user.characteristics.energyLevel * 5, paint)
+            ShapeType.STAR -> drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.charisma.toInt() / 4, paint)
+            ShapeType.SPIRAL -> drawSpiral(canvas, cx.toDouble(), cy.toDouble(), (2 + user.characteristics.energy.toInt() / 2), paint)
+            ShapeType.PETAL -> drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.charisma.toInt() / 3, 80f * intensity, paint)
+            ShapeType.WAVE -> drawWave(canvas, cx.toDouble(), cy.toDouble(), 20 + user.characteristics.energy.toInt() * 3, min(width, height).toFloat() * 0.8f, paint)
+            ShapeType.CROSS -> drawCross(canvas, cx.toDouble(), cy.toDouble(), 40f + user.characteristics.energy.toInt() * 5, paint)
             ShapeType.RINGS -> for (i in 0 until 5) {
                 val rr = 40f + i * 60f + rnd.nextFloat() * 30f
                 canvas.drawCircle(cx, cy, rr, paint)
             }
             ShapeType.DOTS -> {
-                val count = 50 + user.characteristics.energyLevel * 10
+                val count = 50 + user.characteristics.energy.toInt() * 10
                 val p = Paint(paint).apply { style = Paint.Style.FILL }
                 repeat(count) {
                     val x = rnd.nextFloat() * width

@@ -25,16 +25,16 @@ object ZodiacLibrary {
         }
 
         val frameColor = Color.HSVToColor(
-            (100 + user.characteristics.energyLevel * 10).coerceAtMost(255),
+            (100 + user.characteristics.energy.toInt() * 10).coerceAtMost(255),
             floatArrayOf(hue, 0.7f, 1f)
         )
 
         // Внешняя рамка
-        if ((user.characteristics.energyLevel + rnd.nextInt(100)) % 2 == 0) {
+        if ((user.characteristics.energy.toInt() + rnd.nextInt(100)) % 2 == 0) {
             val margin = (width / 10f) + rnd.nextInt(0, 40)
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 style = Paint.Style.STROKE
-                strokeWidth = (2.5f + user.characteristics.energyLevel * 0.35f)
+                strokeWidth = (2.5f + user.characteristics.energy * 0.35f)
                 color = frameColor
                 alpha = 180
             }

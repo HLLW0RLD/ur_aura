@@ -275,16 +275,18 @@ fun MainScreen(
                 Spacer(modifier = Modifier.size(16.dp))
 
                 val metrics = listOf(
-                    user?.characteristics?.energyCapacity to stringResource(R.string.metric_energy),
+                    user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
                     user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
                     user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
+                    user?.characteristics?.focusVector to stringResource(R.string.metric_stress),
                     user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
-                    user?.characteristics?.creativityVector to stringResource(R.string.metric_creativity),
-                    user?.characteristics?.emotionalBalanceVector to stringResource(R.string.metric_emotional_balance),
+                    user?.characteristics?.charismaVector to stringResource(R.string.metric_creativity),
                     user?.characteristics?.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
                     user?.characteristics?.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
-                    user?.characteristics?.intuitionVector to stringResource(R.string.metric_intuition),
-                    user?.characteristics?.socialVector to stringResource(R.string.metric_social)
+                    user?.characteristics?.communicationVector to stringResource(R.string.metric_intuition),
+                    user?.characteristics?.socialVector to stringResource(R.string.metric_social),
+                    user?.characteristics?.anxietyVector to stringResource(R.string.metric_emotional_balance),
+                    user?.characteristics?.fatigueVector to stringResource(R.string.metric_social),
                 )
 
                 Column(
@@ -310,7 +312,7 @@ fun MainScreen(
                             key = { index -> "metric_$index" }
                         ) { vector ->
                             val metric = metrics[vector]
-                            val value = metric.first ?: listOf<Int>()
+                            val value = metric.first ?: listOf()
                             val label = metric.second
 
                             var exp by rememberSaveable { mutableStateOf(false) }

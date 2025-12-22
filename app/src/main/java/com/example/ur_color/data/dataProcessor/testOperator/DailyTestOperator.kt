@@ -7,8 +7,8 @@ import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
 import com.example.ur_color.data.model.user.UserData
+import com.example.ur_color.utils.logDebug
 import kotlin.collections.iterator
-import kotlin.math.roundToInt
 
 object DailyTestOperator {
 
@@ -16,7 +16,7 @@ object DailyTestOperator {
 
     fun consumeAnswer(question: Question, answer: Boolean) {
         for (mod in question.mods) {
-            val diff = (10 * mod.factor)
+            val diff = (5 * mod.coef)
             val delta = if (answer) diff else -diff
 
             accumulators
@@ -32,14 +32,16 @@ object DailyTestOperator {
         for ((type, list) in accumulators) {
             if (list.isEmpty()) continue
 
-            val oldValue = getValue(user, type)
+            val oldValue = getValue(updated, type)
 
-            // средний вклад всех вопросов по этой переменной
-            val avgDelta = list.average()
+            val avgDelta = list.sum().toFloat()
 
-            val newValue = (oldValue + avgDelta).roundToInt().coerceIn(1, 10)
+            val newValue = (oldValue + avgDelta).coerceIn(1f, 10f)
 
             updated = updateUserValue(updated, type, newValue)
+            logDebug("type $type oldValue ${oldValue}")
+            logDebug("type $type avgDelta ${avgDelta}")
+            logDebug("type $type newValue ${newValue}")
         }
 
         PersonalDataManager.saveUser(context, updated)
@@ -50,106 +52,86 @@ object DailyTestOperator {
         resetDaily()
     }
 
-    private fun updateUserValue(user: UserData, type: ModType, value: Int): UserData {
-        fun vec(v: List<Int>) = updateVector(v, value)
-
-        val updatedCharacteristics = when (type) {
-            ModType.ENERGY_LEVEL -> {
-                user.characteristics.copy(
-                    energyLevel = value,
-                    energyCapacity = vec(user.characteristics.energyCapacity)
-                )
-            }
-            ModType.MOOD -> {
-                user.characteristics.copy(
-                    mood = value,
-                    moodVector = vec(user.characteristics.moodVector)
-                )
-            }
-            ModType.STRESS_LEVEL -> {
-                user.characteristics.copy(
-                    stressLevel = value,
-                    stressVector = vec(user.characteristics.stressVector)
-                )
-            }
-            ModType.FOCUS -> {
-                user.characteristics.copy(
-                    focus = value,
-                    focusVector = vec(user.characteristics.focusVector)
-                )
-            }
-            ModType.MOTIVATION -> {
-                user.characteristics.copy(
-                    motivation = value,
-                    motivationVector = vec(user.characteristics.motivationVector)
-                )
-            }
-            ModType.CREATIVITY -> {
-                user.characteristics.copy(
-                    creativity = value,
-                    creativityVector = vec(user.characteristics.creativityVector)
-                )
-            }
-            ModType.EMOTIONAL_BALANCE -> {
-                user.characteristics.copy(
-                    emotionalBalance = value,
-                    emotionalBalanceVector = vec(user.characteristics.emotionalBalanceVector)
-                )
-            }
-            ModType.PHYSICAL_ENERGY -> {
-                user.characteristics.copy(
-                    physicalEnergy = value,
-                    physicalEnergyVector = vec(user.characteristics.physicalEnergyVector)
-                )
-            }
-            ModType.SLEEP_QUALITY -> {
-                user.characteristics.copy(
-                    sleepQuality = value,
-                    sleepQualityVector = vec(user.characteristics.sleepQualityVector)
-                )
-            }
-            ModType.INTUITION_LEVEL -> {
-                user.characteristics.copy(
-                    intuitionLevel = value,
-                    intuitionVector = vec(user.characteristics.intuitionVector)
-                )
-            }
-            ModType.SOCIAL_ENERGY -> {
-                user.characteristics.copy(
-                    socialEnergy = value,
-                    socialVector = vec(user.characteristics.socialVector)
-                )
-            }
-            ModType.DOMINANT_COLOR -> user.characteristics
-        }
-
-        return user.copy(characteristics = updatedCharacteristics)
-    }
-
-    private fun getValue(user: UserData, type: ModType): Int =
+    private fun getValue(user: UserData, type: ModType): Float =
         when (type) {
-            ModType.ENERGY_LEVEL -> user.characteristics.energyLevel
+            ModType.ENERGY_LEVEL -> user.characteristics.energy
             ModType.MOOD -> user.characteristics.mood
-            ModType.STRESS_LEVEL -> user.characteristics.stressLevel
+            ModType.STRESS -> user.characteristics.stress
             ModType.FOCUS -> user.characteristics.focus
             ModType.MOTIVATION -> user.characteristics.motivation
-            ModType.CREATIVITY -> user.characteristics.creativity
-            ModType.EMOTIONAL_BALANCE -> user.characteristics.emotionalBalance
+            ModType.CHARISMA -> user.characteristics.charisma
             ModType.PHYSICAL_ENERGY -> user.characteristics.physicalEnergy
             ModType.SLEEP_QUALITY -> user.characteristics.sleepQuality
-            ModType.INTUITION_LEVEL -> user.characteristics.intuitionLevel
+            ModType.COMMUNICATION -> user.characteristics.communication
             ModType.SOCIAL_ENERGY -> user.characteristics.socialEnergy
-            ModType.DOMINANT_COLOR -> 0
+            ModType.ANXIETY -> user.characteristics.anxiety
+            ModType.FATIGUE -> user.characteristics.fatigue
         }
 
     private fun updateVector(
-        oldVector: List<Int>,
-        value: Int,
+        oldVector: List<Float>,
+        value: Float,
         maxSize: Int = 10
-    ): List<Int> {
-        val newList = oldVector + value.coerceIn(1, 10)
+    ): List<Float> {
+        val newList = oldVector + value.coerceIn(1f, 10f)
         val result = if (newList.size > maxSize) newList.takeLast(maxSize) else newList
         return result
+    }
+
+    private fun updateUserValue(user: UserData, type: ModType, value: Float): UserData {
+        val c = user.characteristics
+        val updated = when (type) {
+            ModType.ENERGY_LEVEL -> c.copy(
+                energy = value,
+                energyVector = updateVector(c.energyVector, value)
+            )
+            ModType.MOOD -> c.copy(
+                mood = value,
+                moodVector = updateVector(c.moodVector, value)
+            )
+            ModType.STRESS -> c.copy(
+                stress = value,
+                stressVector = updateVector(c.stressVector, value)
+            )
+            ModType.FOCUS -> c.copy(
+                focus = value,
+                focusVector = updateVector(c.focusVector, value)
+            )
+            ModType.MOTIVATION -> c.copy(
+                motivation = value,
+                motivationVector = updateVector(c.motivationVector, value)
+            )
+            ModType.CHARISMA -> c.copy(
+                charisma = value,
+                charismaVector = updateVector(c.charismaVector, value)
+            )
+            ModType.PHYSICAL_ENERGY -> c.copy(
+                physicalEnergy = value,
+                physicalEnergyVector = updateVector(c.physicalEnergyVector, value)
+            )
+            ModType.SLEEP_QUALITY -> c.copy(
+                sleepQuality = value,
+                sleepQualityVector = updateVector(c.sleepQualityVector, value)
+            )
+            ModType.COMMUNICATION -> c.copy(
+                communication = value,
+                communicationVector = updateVector(c.communicationVector, value)
+            )
+            ModType.SOCIAL_ENERGY -> c.copy(
+                socialEnergy = value,
+                socialVector = updateVector(c.socialVector, value)
+            )
+            ModType.ANXIETY -> c.copy(
+                anxiety = value,
+                anxietyVector = updateVector(c.anxietyVector, value)
+            )
+            ModType.FATIGUE -> c.copy(
+                anxiety = value,
+                anxietyVector = updateVector(c.anxietyVector, value)
+            )
+        }
+
+        return user.copy(characteristics = updated)
     }
 
     fun resetDaily() {

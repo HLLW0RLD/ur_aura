@@ -85,13 +85,7 @@ fun Main(main : Main) {
             val navController = LocalNavController.current
 
             CustomAppBar(
-                showOptions = true,
                 showDivider = true,
-                optionsIcon = painterResource(R.drawable.switcher_options),
-                onOptionsClick = {
-                    // будут уведомления
-//                    navController.nav(Settings)
-                },
                 isCentered = true,
                 backgroundColor = AppColors.background.copy(alpha = 0.85f),
             )

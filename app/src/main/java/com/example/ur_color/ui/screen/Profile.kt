@@ -49,6 +49,11 @@ fun Profile(profile : Profile) {
                 onBackClick = {
                     navController.popBack()
                 },
+                showOptions = true,
+                optionsIcon = painterResource(R.drawable.switcher_options),
+                onOptionsClick = {
+                    navController.nav(Settings)
+                },
                 isCentered = false,
                 backgroundColor = AppColors.background,
             )

@@ -32,7 +32,7 @@ fun AppScaffold(
     topBar: @Composable () -> Unit = {},
     showBottomBar: Boolean = false,
     bottomBar: (@Composable () -> Unit)? = null,
-    navigationColor: Color = AppColors.surface,
+    navigationColor: Color = AppColors.background,
     isFullscreen: Boolean = false,
     screenOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
     content: @Composable (PaddingValues) -> Unit,
@@ -44,26 +44,11 @@ fun AppScaffold(
     }
 
     Scaffold(
-        modifier = Modifier.windowInsetsPadding(
-            if (!isFullscreen) WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
-            else WindowInsets(0, 0, 0, 0)
-        ),
         topBar = topBar,
         bottomBar = {
-            if (showBottomBar) {
+            if (showBottomBar && bottomBar != null) {
                 Column {
-                    when {
-                        bottomBar != null -> bottomBar()
-                    }
-
-                    if (!isFullscreen) {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .windowInsetsBottomHeight(WindowInsets.safeDrawing)
-                                .background(navigationColor)
-                        )
-                    }
+                    bottomBar()
                 }
             }
         },
@@ -72,24 +57,6 @@ fun AppScaffold(
     )
 
     val context = LocalContext.current
-    val view = LocalView.current
-    LaunchedEffect(isFullscreen) {
-        WindowCompat.getInsetsController(context.findActivity().window, view).apply {
-            val isShown = WindowInsetsCompat.toWindowInsetsCompat(view.rootWindowInsets, view).let {
-                it.isVisible(WindowInsetsCompat.Type.statusBars()) ||
-                        it.isVisible(WindowInsetsCompat.Type.navigationBars()) ||
-                        it.isVisible(WindowInsetsCompat.Type.captionBar())
-            }
-            val isHidden = (!WindowInsetsCompat.toWindowInsetsCompat(view.rootWindowInsets, view)
-                .isVisible(WindowInsetsCompat.Type.systemBars()))
-
-            if (isFullscreen && isShown) {
-                hide(WindowInsetsCompat.Type.systemBars())
-            } else if (!isFullscreen && isHidden) {
-                show(WindowInsetsCompat.Type.systemBars())
-            }
-        }
-    }
 
     LaunchedEffect(screenOrientation) {
         context.findActivity().requestedOrientation = screenOrientation

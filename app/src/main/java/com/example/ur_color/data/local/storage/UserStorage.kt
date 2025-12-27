@@ -2,6 +2,7 @@ package com.example.ur_color.data.local.storage
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.ur_color.data.model.user.UserData
@@ -14,7 +15,7 @@ object UserStorage {
 
     private val USER_KEY = stringPreferencesKey("user_json")
     private val DAILY_TEST_KEY = stringPreferencesKey("daily_test_date")
-    private val USER_LVL_KEY = stringPreferencesKey("user_lvl")
+    private val USER_LVL_KEY = floatPreferencesKey("user_lvl")
 
     private val gson = Gson()
 
@@ -52,11 +53,11 @@ object UserStorage {
     // USER LVL
     suspend fun saveLvl(context: Context, lvl: Float) {
         context.dataStore.edit { prefs ->
-            prefs[USER_LVL_KEY] = gson.toJson(lvl)
+            prefs[USER_LVL_KEY] = lvl
         }
     }
 
-    suspend fun loadLvl(context: Context): String? {
+    suspend fun loadLvl(context: Context): Float? {
         return context.dataStore.data.first()[USER_LVL_KEY]
     }
 }

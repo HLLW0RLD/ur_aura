@@ -42,7 +42,7 @@ object PersonalDataManager {
         return UserStorage.loadDailyTestDate(context)
     }
 
-    suspend fun level(context: Context, lvl: Float = 0f) {
+    suspend fun level(context: Context, lvl: Float = 0.1f) {
         try {
             val level = UserStorage.loadLvl(context)?.toFloat() ?: 1f
             UserStorage.saveLvl(context, level + lvl)

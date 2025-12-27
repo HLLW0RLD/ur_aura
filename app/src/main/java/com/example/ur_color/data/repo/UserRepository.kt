@@ -57,7 +57,6 @@ class UserRepository {
                 lvl = PersonalDataManager.getLvl(context)
                 logError(e)
             }
-            PersonalDataManager.level(context, lvl)
             lvl
         }
     }

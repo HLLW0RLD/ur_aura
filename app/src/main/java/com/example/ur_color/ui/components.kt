@@ -102,6 +102,12 @@ import coil.compose.AsyncImage
 import com.example.ur_color.data.model.SocialContent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
+import com.example.ur_color.utils.IconPosition
+import com.example.ur_color.utils.TwoColumnScope
+import com.example.ur_color.utils.TwoColumnScopeImpl
+import com.example.ur_color.utils.WindowType
+import com.example.ur_color.utils.animPic
+import com.example.ur_color.utils.lerp
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -1247,11 +1253,13 @@ private fun ExpandableContent(
 }
 
 @Composable
-fun MarketplaceContentCard(
+fun FeedContentCard(
     content: SocialContent,
     modifier: Modifier = Modifier,
     onClick: (SocialContent) -> Unit = {}
 ) {
+
+    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -1271,17 +1279,19 @@ fun MarketplaceContentCard(
                 .padding(6.dp)
         ) {
             when (content) {
-                is SocialContent.Product -> {
+                is SocialContent.Post -> {
                     Box {
-                        AsyncImage(
-                            model = content.image,
-                            contentDescription = content.title,
-                            modifier = Modifier
-                                .height(300.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
+                        if (content.image != null && content.image.isNotBlank()) {
+                            AsyncImage(
+                                model = content.image,
+                                contentDescription = content.title,
+                                modifier = Modifier
+                                    .height(300.dp)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
 
                         Text(
                             text = content.title,
@@ -1321,15 +1331,17 @@ fun MarketplaceContentCard(
 
                 is SocialContent.Ad -> {
                     Box {
-                        AsyncImage(
-                            model = content.image,
-                            contentDescription = content.title,
-                            modifier = Modifier
-                                .height(300.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
+                        if (content.image != null && content.image.isNotBlank()) {
+                            AsyncImage(
+                                model = content.image,
+                                contentDescription = content.title,
+                                modifier = Modifier
+                                    .height(300.dp)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
 
                         Text(
                             text = content.title,
@@ -1360,8 +1372,7 @@ fun MarketplaceContentCard(
             Spacer(Modifier.height(8.dp))
 
             when (content) {
-
-                is SocialContent.Product -> {
+                is SocialContent.Post -> {
                     Text(
                         text = content.title,
                         fontSize = 14.sp,
@@ -1376,7 +1387,7 @@ fun MarketplaceContentCard(
                     Spacer(Modifier.height(2.dp))
 
                     Text(
-                        text = content.price,
+                        text = content.author,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.basicMarquee(
@@ -1389,6 +1400,16 @@ fun MarketplaceContentCard(
                 is SocialContent.User -> {
                     Text(
                         text = content.username,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        modifier = Modifier.basicMarquee(
+                            iterations = MAX_VALUE
+                        ),
+                        color = AppColors.textPrimary
+                    )
+                    Text(
+                        text = content.about,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,

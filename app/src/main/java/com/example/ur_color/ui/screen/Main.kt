@@ -60,9 +60,9 @@ import com.example.ur_color.data.model.user.ZodiacSign
 import com.example.ur_color.ui.AutoScrollHorizontalPager
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.ExpandableGradientGraphBox
-import com.example.ur_color.ui.MarketplaceContentCard
-import com.example.ur_color.ui.WindowType
-import com.example.ur_color.ui.demoCards
+import com.example.ur_color.ui.FeedContentCard
+import com.example.ur_color.utils.WindowType
+import com.example.ur_color.utils.demoCards
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
@@ -486,9 +486,9 @@ fun MainScreen(
                         .padding(vertical = 16.dp)
                 ) {
                     demoCards.forEach {
-                        MarketplaceContentCard(
+                        FeedContentCard(
                             modifier = Modifier
-                                .height(400.dp)
+//                                .heightIn(max = 400.dp)
                                 .padding(4.dp),
                             content = it,
                             onClick = {  }

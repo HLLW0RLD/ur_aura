@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
@@ -39,6 +40,7 @@ import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.SwipeCard
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
@@ -48,8 +50,35 @@ data object DailyTest : Screen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
+fun DailyTest(dailyTest : DailyTest) {
+    AppScaffold(
+        showBottomBar = false,
+        topBar = {
+            val navController = LocalNavController.current
+
+            CustomAppBar(
+                title = stringResource(R.string.profile_daily_tests),
+                showBack = true,
+                onBackClick = {
+                    navController.popBack()
+                },
+                showDivider = true,
+                isCentered = false,
+                backgroundColor = AppColors.background,
+            )
+        },
+    ) {
+        DailyTestScreen(
+            modifier = Modifier.padding(it)
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
 fun DailyTestScreen(
     dailyTestViewModel: DailyTestViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -70,21 +99,10 @@ fun DailyTestScreen(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(AppColors.background)
     ) {
-        CustomAppBar(
-            title = stringResource(R.string.profile_daily_tests),
-            showBack = true,
-            onBackClick = {
-                navController.popBack()
-            },
-            showDivider = true,
-            isCentered = false,
-            backgroundColor = AppColors.background,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
 
         if (questions.isEmpty()) {
             Text(

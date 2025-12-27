@@ -1,6 +1,7 @@
 package com.example.ur_color.ui.theme
 
 import android.content.pm.ActivityInfo
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,23 +17,32 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.ur_color.ui.screen.LocalBottomBarState
 import com.example.ur_color.utils.findActivity
 
 @Composable
 fun AppScaffold(
     topBar: @Composable () -> Unit = {},
-    bottomBar: @Composable () -> Unit = {},
+    showBottomBar: Boolean = false,
+    bottomBar: (@Composable () -> Unit)? = null,
     navigationColor: Color = AppColors.surface,
     isFullscreen: Boolean = false,
     screenOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val bottomBarState = LocalBottomBarState.current
+
+    SideEffect {
+        bottomBarState.visible = showBottomBar
+    }
+
     Scaffold(
         modifier = Modifier.windowInsetsPadding(
             if (!isFullscreen) WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
@@ -40,15 +50,20 @@ fun AppScaffold(
         ),
         topBar = topBar,
         bottomBar = {
-            Column {
-                bottomBar()
-                if (!isFullscreen) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .windowInsetsBottomHeight(WindowInsets.safeDrawing)
-                            .background(navigationColor)
-                    )
+            if (showBottomBar) {
+                Column {
+                    when {
+                        bottomBar != null -> bottomBar()
+                    }
+
+                    if (!isFullscreen) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .windowInsetsBottomHeight(WindowInsets.safeDrawing)
+                                .background(navigationColor)
+                        )
+                    }
                 }
             }
         },

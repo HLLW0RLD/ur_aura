@@ -41,6 +41,7 @@ import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.toColoredText
 import kotlinx.coroutines.launch
@@ -53,10 +54,37 @@ data class AuraDetails(val color: String? = null) : Screen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
+fun AuraDetails(auraDetails : AuraDetails) {
+    AppScaffold(
+        showBottomBar = false,
+        topBar = {
+            val navController = LocalNavController.current
+
+            CustomAppBar(
+                title = stringResource(R.string.app_name_stylized),
+                showBack = true,
+                onBackClick = {
+                    navController.popBack()
+                },
+                optionsIcon = painterResource(R.drawable.arrow_down),
+                showDivider = true,
+                isCentered = true,
+                backgroundColor = AppColors.background,
+            )
+        },
+    ) {
+        AuraDetailsScreen(
+            modifier = Modifier.padding(it)
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
 fun AuraDetailsScreen(
-    cd: AuraDetails,
     auraDetailsViewModel: AuraDetailsViewModel = koinViewModel(),
-    profileViewModel: ProfileViewModel = koinViewModel()
+    profileViewModel: ProfileViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -101,26 +129,11 @@ fun AuraDetailsScreen(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(AppColors.background),
     ) {
-        CustomAppBar(
-            title = stringResource(R.string.app_name_stylized),
-            showBack = true,
-            showOptions = canScroll,
-            onBackClick = {
-                navController.popBack()
-            },
-            onOptionsClick = {
-                scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
-            },
-            optionsIcon = painterResource(R.drawable.arrow_down),
-            showDivider = true,
-            isCentered = false,
-            backgroundColor = AppColors.background,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+
 
         aura?.let {
             Image(

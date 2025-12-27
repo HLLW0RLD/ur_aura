@@ -84,7 +84,7 @@ private fun log(
     val callingTime = SimpleDateFormat("HH:mm:ss").format(Date())
     val msg =  buildString {
         appendLine("---- START $fixedLabel ----------------------------------------------------------")
-        appendLine("\n${formattedMessage}")
+        appendLine("${formattedMessage}")
         appendLine("\n---- END | $fileLocation ($callingTime)--------------------------------")
     }
 

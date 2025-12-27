@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -42,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -67,12 +66,40 @@ import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.ui.theme.AppScaffold
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Serializable
 object Main : Screen
+
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
+fun Main(main : Main) {
+    val scrollState = rememberScrollState()
+
+    AppScaffold(
+        showBottomBar = true,
+        topBar = {
+            val navController = LocalNavController.current
+
+            CustomAppBar(
+                showOptions = true,
+                showDivider = true,
+                optionsIcon = painterResource(R.drawable.switcher_options),
+                onOptionsClick = {
+                    // будут уведомления
+//                    navController.nav(Settings)
+                },
+                isCentered = true,
+                backgroundColor = AppColors.background.copy(alpha = 0.85f),
+            )
+        },
+    ) {
+        MainScreen()
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -114,10 +141,9 @@ fun MainScreen(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
-    val statusBarHeight = WindowInsets.statusBars.getTop(density).toFloat()
     val collapsedHeight = screenHeight / 1.8f
     val collapsedY = with(density) { collapsedHeight.toPx() }               // свернутая подложка
-    val expandedY = statusBarHeight + 170f                                  // полностью раскрытая подложка
+    val expandedY = 170f                                                             // полностью раскрытая подложка
 
     val offsetY = remember { Animatable(collapsedY) }
 
@@ -134,27 +160,6 @@ fun MainScreen(
             .fillMaxSize()
             .background(AppColors.background)
     ) {
-
-        CustomAppBar(
-            showOptions = true,
-            showDivider = true,
-            optionsIcon = if (progress >= 0.95f) {
-                painterResource(R.drawable.arrow_down)
-            } else {
-                painterResource(R.drawable.switcher_options)
-            },
-            onOptionsClick = {
-                if (offsetY.value != collapsedY) {
-                    scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
-                } else {
-                    navController.nav(Profile())
-                }
-            },
-            isCentered = true,
-//            backgroundColor = AppColors.background,
-            backgroundColor = AppColors.background.copy(alpha = 0.85f * progress),
-        )
-
         aura?.let {
             Box(
                 modifier = Modifier
@@ -246,6 +251,7 @@ fun MainScreen(
             color = AppColors.background.copy(alpha = 0.95f * progress),
             tonalElevation = 8.dp
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -276,17 +282,20 @@ fun MainScreen(
 
                 val metrics = listOf(
                     user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
-                    user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
-                    user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
-                    user?.characteristics?.focusVector to stringResource(R.string.metric_stress),
-                    user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
-                    user?.characteristics?.charismaVector to stringResource(R.string.metric_creativity),
                     user?.characteristics?.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
                     user?.characteristics?.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
-                    user?.characteristics?.communicationVector to stringResource(R.string.metric_intuition),
+
+                    user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
+                    user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
+                    user?.characteristics?.focusVector to stringResource(R.string.metric_focus),
+
+                    user?.characteristics?.charismaVector to stringResource(R.string.metric_charisma),
                     user?.characteristics?.socialVector to stringResource(R.string.metric_social),
-                    user?.characteristics?.anxietyVector to stringResource(R.string.metric_emotional_balance),
-                    user?.characteristics?.fatigueVector to stringResource(R.string.metric_social),
+                    user?.characteristics?.communicationVector to stringResource(R.string.metric_communication),
+
+                    user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
+                    user?.characteristics?.anxietyVector to stringResource(R.string.metric_anxiety),
+                    user?.characteristics?.fatigueVector to stringResource(R.string.metric_fatigue),
                 )
 
                 Column(
@@ -497,6 +506,29 @@ fun MainScreen(
                 }
 
                 Spacer(Modifier.height(120.dp))
+            }
+        }
+
+        if (progress >= 0.95f) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .fillMaxWidth()
+                    .padding(end = 16.dp, bottom = 100.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
+                    },
+                    containerColor = AppColors.accentPrimary.copy(alpha = 0.5f),
+                    contentColor = Color.White
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_up),
+                        contentDescription = "Добавить"
+                    )
+                }
             }
         }
     }

@@ -101,7 +101,9 @@ import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
 import com.example.ur_color.data.model.SocialContent
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.example.ur_color.data.model.User
 import com.example.ur_color.utils.IconPosition
 import com.example.ur_color.utils.TwoColumnScope
 import com.example.ur_color.utils.TwoColumnScopeImpl
@@ -684,6 +686,7 @@ fun SwipeCard(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .height(60.dp)
+                    .padding(horizontal = 16.dp)
             )
 
             if (centerText != null && centerImg != null) {
@@ -847,6 +850,7 @@ fun ExpandableGradientGraphBox(
                             7 -> painterResource(R.drawable.candle)
                             8 -> painterResource(R.drawable.witch_hat)
                             9 -> painterResource(R.drawable.illusion_eye)
+                            10 -> painterResource(R.drawable.magic_hat)
                             else -> painterResource(R.drawable.magic_hat)
                         },
                         contentDescription = "Active dot",
@@ -1269,6 +1273,11 @@ fun FeedContentCard(
                 .matchParentSize()
                 .clip(RoundedCornerShape(12.dp))
                 .background(AppColors.backgroundDark)
+                .border(
+                    shape = RoundedCornerShape(12.dp),
+                    color = AppColors.surfaceLight, // divider
+                    width = 0.2.dp
+                )
                 .blur(16.dp)
                 .clickable { onClick(content) }
         )
@@ -1280,68 +1289,37 @@ fun FeedContentCard(
         ) {
             when (content) {
                 is SocialContent.Post -> {
-                    Box {
-                        if (content.image != null && content.image.isNotBlank()) {
-                            AsyncImage(
-                                model = content.image,
-                                contentDescription = content.title,
-                                modifier = Modifier
-                                    .height(300.dp)
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Crop
-                            )
+                    Column {
+                        PostAuthorHeader(content.author)
+
+                        Spacer(Modifier.height(8.dp))
+                        if (!content.image.isNullOrBlank()) {
+                            Box {
+                                AsyncImage(
+                                    model = content.image,
+                                    contentDescription = content.text,
+                                    modifier = Modifier
+                                        .height(300.dp)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
-
-                        Text(
-                            text = content.title,
-                            color = AppColors.autoText(Color.Black.copy(alpha = 0.3f)),
-                            fontSize = 14.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .fillMaxWidth()
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color.Transparent,
-                                            AppColors.backgroundDark.copy(alpha = 0.85f)
-                                        )
-                                    )
-                                )
-                                .padding(horizontal = 4.dp, vertical = 4.dp)
-                                .basicMarquee(
-                                    iterations = MAX_VALUE
-                                )
-                        )
                     }
-                }
-
-                is SocialContent.User -> {
-                    AsyncImage(
-                        model = content.avatar,
-                        contentDescription = content.username,
-                        modifier = Modifier
-                            .size(300.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .clip(CircleShape)
-                    )
                 }
 
                 is SocialContent.Ad -> {
                     Box {
-                        if (content.image != null && content.image.isNotBlank()) {
-                            AsyncImage(
-                                model = content.image,
-                                contentDescription = content.title,
-                                modifier = Modifier
-                                    .height(300.dp)
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                        AsyncImage(
+                            model = content.image,
+                            contentDescription = content.title,
+                            modifier = Modifier
+                                .height(300.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
 
                         Text(
                             text = content.title,
@@ -1354,16 +1332,14 @@ fun FeedContentCard(
                                 .align(Alignment.BottomStart)
                                 .background(
                                     Brush.verticalGradient(
-                                        colors = listOf(
+                                        listOf(
                                             Color.Transparent,
                                             AppColors.backgroundDark.copy(alpha = 0.85f)
                                         )
                                     )
                                 )
-                                .padding(horizontal = 4.dp, vertical = 4.dp)
-                                .basicMarquee(
-                                    iterations = MAX_VALUE
-                                )
+                                .padding(4.dp)
+                                .basicMarquee(iterations = MAX_VALUE)
                         )
                     }
                 }
@@ -1373,67 +1349,19 @@ fun FeedContentCard(
 
             when (content) {
                 is SocialContent.Post -> {
-                    Text(
-                        text = content.title,
-                        fontSize = 14.sp,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee(
-                            iterations = MAX_VALUE
-                        ),
-                        color = AppColors.textPrimary
-                    )
-
-                    Spacer(Modifier.height(2.dp))
-
-                    Text(
-                        text = content.author,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.basicMarquee(
-                            iterations = MAX_VALUE
-                        ),
-                        color = AppColors.textPrimary
-                    )
-                }
-
-                is SocialContent.User -> {
-                    Text(
-                        text = content.username,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        modifier = Modifier.basicMarquee(
-                            iterations = MAX_VALUE
-                        ),
-                        color = AppColors.textPrimary
-                    )
-                    Text(
-                        text = content.about,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        modifier = Modifier.basicMarquee(
-                            iterations = MAX_VALUE
-                        ),
-                        color = AppColors.textPrimary
-                    )
+                    if (!content.text.isNullOrBlank()) {
+                        Text(
+                            text = content.text,
+                            fontSize = 14.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.basicMarquee(iterations = MAX_VALUE),
+                            color = AppColors.textPrimary
+                        )
+                    }
                 }
 
                 is SocialContent.Ad -> {
-                    Text(
-                        text = content.title,
-                        fontSize = 14.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee(
-                            iterations = MAX_VALUE
-                        ),
-                        color = AppColors.textPrimary
-                    )
-
-                    Spacer(Modifier.height(2.dp))
-
                     Text(
                         text = content.cta,
                         fontSize = 14.sp,
@@ -1441,6 +1369,47 @@ fun FeedContentCard(
                         color = Color(0xFF007AFF)
                     )
                 }
+            }
+        }
+    }
+}
+@Composable
+private fun PostAuthorHeader(user: User) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        if (!user.avatar.isNullOrBlank()) {
+            AsyncImage(
+                model = user.avatar,
+                contentDescription = user.username,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(Modifier.width(8.dp))
+        }
+
+        Column {
+            Text(
+                text = user.username,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = AppColors.textPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            if (!user.about.isNullOrBlank()) {
+                Text(
+                    text = user.about,
+                    fontSize = 12.sp,
+                    color = AppColors.textSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

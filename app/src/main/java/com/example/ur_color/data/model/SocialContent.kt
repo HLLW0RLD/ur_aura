@@ -5,16 +5,9 @@ sealed class SocialContent {
 
     data class Post(
         override val id: String,
-        val title: String,
-        val author: String,
-        val image: String,
-    ) : SocialContent()
-
-    data class User(
-        override val id: String,
-        val username: String,
-        val about: String,
-        val avatar: String,
+        val text: String?,
+        val author: User,
+        val image: String?,
     ) : SocialContent()
 
     data class Ad(
@@ -24,3 +17,10 @@ sealed class SocialContent {
         val cta: String,
     ) : SocialContent()
 }
+
+data class User(
+    val id: String,
+    val username: String,
+    val about: String?,
+    val avatar: String?
+)

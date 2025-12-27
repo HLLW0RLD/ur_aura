@@ -34,6 +34,7 @@ import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.formatDateInput
 import com.example.ur_color.utils.formatTimeInput
@@ -43,10 +44,29 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 object Login : Screen
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
+fun Login(login : Login) {
+    AppScaffold(
+        showBottomBar = false,
+        topBar = {
+            CustomAppBar(
+                title = stringResource(R.string.app_name_stylized),
+            )
+        },
+    ) {
+        LoginScreen(
+            modifier = Modifier.padding(it)
+        )
+    }
+}
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = koinViewModel()
+    loginViewModel: LoginViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
 
     val context = LocalContext.current
@@ -61,15 +81,12 @@ fun LoginScreen(
     var gender by remember { mutableStateOf("Мужской") }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .imePadding()
             .fillMaxSize()
             .background(AppColors.background),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        CustomAppBar(
-            title = stringResource(R.string.app_name_stylized),
-        )
 
         Column(
             modifier = Modifier

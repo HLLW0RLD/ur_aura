@@ -10,6 +10,10 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -165,7 +169,25 @@ fun Screen.route(): String {
     }
 }
 
+fun Screen.baseRoute(): String {
+    val type = this::class.simpleName ?: error("No class name for $this")
+    return type
+}
+
 enum class Direction { LEFT, RIGHT, TOP, BOTTOM }
 
 @Serializable
 sealed interface Screen
+
+
+
+
+
+class BottomBarState  {
+    var enabled by mutableStateOf(true)
+    var visible by mutableStateOf(true)
+}
+val LocalBottomBarState =
+    staticCompositionLocalOf<BottomBarState > {
+        error("BottomBarState not provided")
+    }

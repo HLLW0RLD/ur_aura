@@ -1,5 +1,7 @@
 package com.example.ur_color.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.screen.viewModel.SettingsViewModel
 import com.example.ur_color.ui.theme.AppColors
+import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.ui.theme.ThemeMode
 import com.example.ur_color.ui.theme.ThemePalette
 import com.example.ur_color.utils.LocalNavController
@@ -35,9 +38,34 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 object Settings: Screen
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
+fun Settings(settings : Settings) {
+    AppScaffold(
+        showBottomBar = false,
+        topBar = {
+            val navController = LocalNavController.current
+
+            CustomAppBar(
+                title = stringResource(R.string.settings_title),
+                showBack = true,
+                onBackClick = { navController.popBack() },
+                showDivider = true,
+                isCentered = false,
+                backgroundColor = AppColors.background,
+            )
+        },
+    ) {
+        SettingsScreen(
+            modifier = Modifier.padding(it)
+        )
+    }
+}
+
 @Composable
 fun SettingsScreen(
-    settingsViewModel: SettingsViewModel = koinViewModel()
+    settingsViewModel: SettingsViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -48,19 +76,10 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(AppColors.background),
     ) {
-        CustomAppBar(
-            title = stringResource(R.string.settings_title),
-            showBack = true,
-            onBackClick = { navController.popBack() },
-            showDivider = true,
-            isCentered = false,
-            backgroundColor = AppColors.background,
-//            modifier = Modifier.align(Alignment.TopCenter)
-        )
 
         Column(
             modifier = Modifier

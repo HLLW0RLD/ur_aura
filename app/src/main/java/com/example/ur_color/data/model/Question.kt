@@ -11,7 +11,6 @@ data class Question(
 data class Mod(
     val targetVariable: ModType,    // название динамической переменной из UserData
     val coef: Float,            // коэффициент влияния (можно отрицательный)
-    val useVector: Boolean = true,  // учитывать ли предыдущие значения в векторе
 )
 
 enum class ModCategory {
@@ -44,7 +43,7 @@ enum class ModType(val category: ModCategory) {
 }
 
 object ModFactors {
-    const val HIGH = 0.8f
-    const val MEDIUM = 0.55f
-    const val LOW = 0.3f
+    const val HIGH = 0.4f
+    const val MEDIUM = 0.3f
+    const val LOW = 0.2f
 }

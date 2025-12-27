@@ -126,8 +126,8 @@ object DailyTestOperator {
                 anxietyVector = updateVector(c.anxietyVector, value)
             )
             ModType.FATIGUE -> c.copy(
-                anxiety = value,
-                anxietyVector = updateVector(c.anxietyVector, value)
+                fatigue = value,
+                fatigueVector = updateVector(c.fatigueVector, value)
             )
         }
 

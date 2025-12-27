@@ -23,16 +23,18 @@
     <string name="horoscope_for_user">гороскоп для %1$s</string>
 
     <!-- Metrics -->
-    <string name="metric_energy">Energy Level</string>
-    <string name="metric_mood">Mood</string>
-    <string name="metric_stress">Stress Level</string>
-    <string name="metric_motivation">Motivation</string>
-    <string name="metric_creativity">Creativity</string>
-    <string name="metric_emotional_balance">Emotional Balance</string>
+    <string name="metric_energy">Energy</string>
     <string name="metric_physical_energy">Physical Energy</string>
     <string name="metric_sleep_quality">Sleep Quality</string>
-    <string name="metric_intuition">Intuition Level</string>
+    <string name="metric_mood">Mood</string>
+    <string name="metric_motivation">Motivation</string>
+    <string name="metric_focus">Focus</string>
+    <string name="metric_charisma">Charisma</string>
     <string name="metric_social">Social Energy</string>
+    <string name="metric_communication">Communication</string>
+    <string name="metric_stress">Stress</string>
+    <string name="metric_anxiety">Anxiety</string>
+    <string name="metric_fatigue">Fatigue</string>
 
     <string name="field_last_name">Фамилия</string>
     <string name="field_first_name">Имя</string>

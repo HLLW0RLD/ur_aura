@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.ur_color.ui.screen.LocalBottomBarState
 import com.example.ur_color.utils.findActivity
@@ -17,8 +16,6 @@ fun AppScaffold(
     topBar: @Composable () -> Unit = {},
     showBottomBar: Boolean = false,
     bottomBar: (@Composable () -> Unit)? = null,
-    navigationColor: Color = AppColors.background,
-    isFullscreen: Boolean = false,
     screenOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
     content: @Composable (PaddingValues) -> Unit,
 ) {

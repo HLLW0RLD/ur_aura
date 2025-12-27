@@ -4,10 +4,10 @@
     <string name="app_name_stylized">a u r a</string>
 
     <!-- Errors / placeholders -->
-    <string name="error_oops">oops</string>
+    <string name="error_oops">упс</string>
     <string name="error_try_later">Попробуйте позже</string>
     <string name="loading_horoscope">Загружается гороскоп...</string>
-    <string name="motivation_fallback">упс, мотивацию надо поднять!</string>
+    <string name="motivation_fallback">Упс, мотивацию нужно поднять!</string>
 
     <!-- Daily test -->
     <string name="daily_test_new">новый тест!</string>
@@ -20,21 +20,21 @@
     <string name="card_compatible">Совместимые карты: %1$s</string>
 
     <!-- Horoscope -->
-    <string name="horoscope_for_user">гороскоп для %1$s</string>
+    <string name="horoscope_for_user">Гороскоп для %1$s</string>
 
     <!-- Metrics -->
-    <string name="metric_energy">Energy</string>
-    <string name="metric_physical_energy">Physical Energy</string>
-    <string name="metric_sleep_quality">Sleep Quality</string>
-    <string name="metric_mood">Mood</string>
-    <string name="metric_motivation">Motivation</string>
-    <string name="metric_focus">Focus</string>
-    <string name="metric_charisma">Charisma</string>
-    <string name="metric_social">Social Energy</string>
-    <string name="metric_communication">Communication</string>
-    <string name="metric_stress">Stress</string>
-    <string name="metric_anxiety">Anxiety</string>
-    <string name="metric_fatigue">Fatigue</string>
+    <string name="metric_energy">Энергия</string>
+    <string name="metric_physical_energy">Физическая энергия</string>
+    <string name="metric_sleep_quality">Качество сна</string>
+    <string name="metric_mood">Настроение</string>
+    <string name="metric_motivation">Мотивация</string>
+    <string name="metric_focus">Фокус</string>
+    <string name="metric_charisma">Харизма</string>
+    <string name="metric_social">Социальная энергия</string>
+    <string name="metric_communication">Коммуникация</string>
+    <string name="metric_stress">Стресс</string>
+    <string name="metric_anxiety">Тревога</string>
+    <string name="metric_fatigue">Усталость</string>
 
     <string name="field_last_name">Фамилия</string>
     <string name="field_first_name">Имя</string>
@@ -44,28 +44,32 @@
     <string name="field_birth_place">Место рождения</string>
     <string name="gender_male">Мужской</string>
     <string name="gender_female">Женский</string>
-    <string name="action_login">войти</string>
+    <string name="action_login">Войти</string>
     <string name="error_fill_required_fields">Заполните обязательные поля</string>
 
-    <string name="profile_title">Your profile</string>
+    <string name="profile_title">Профиль</string>
     <string name="profile_name_level">%1$s, %2$d уровень</string>
     <string name="profile_zodiac">%1$s</string>
 
-    <string name="profile_aura_details">Aura Details</string>
-    <string name="profile_daily_tests">Daily Tests</string>
-    <string name="profile_personal_tests">Personal Tests</string>
-    <string name="profile_diary">Diary</string>
-    <string name="profile_settings">Settings</string>
+    <string name="profile_aura_details">Детали ауры</string>
+    <string name="profile_daily_tests">Ежедневные тесты</string>
+    <string name="profile_personal_tests">Персональные тесты</string>
+    <string name="profile_tests">Tесты</string>
+    <string name="profile_diary">Дневник</string>
+    <string name="profile_settings">Настройки</string>
     <string name="profile_logout">Выйти из профиля</string>
     <string name="profile_delete">Удалить профиль</string>
     <string name="profile_no_user">Нет данных пользователя</string>
     <string name="profile_daily_test_done">Тест уже пройден</string>
     <string name="all_test_done">Все вопросы пройдены!</string>
+    <string name="personal_tests_description">Персональные вопросы раскрывают глубинные особенности личности и формируют основу вашей ауры.</string>
+    <string name="daily_tests_description">Ежедневные вопросы помогают отслеживать ваше текущее состояние и динамику ауры.</string>
 
-    <string name="settings_title">Settings</string>
+    <string name="settings_title">Настройки</string>
 
     <string name="settings_theme_title">Тема</string>
     <string name="settings_palette_title">Цветовая палитра</string>
+    <string name="settings_palette_account">Аккаунт</string>
 
     <string name="settings_theme_system">Системная</string>
     <string name="settings_theme_light">Светлая</string>
@@ -77,5 +81,4 @@
     <string name="settings_palette_turquoise">Бирюзовая</string>
     <string name="settings_palette_green">Зелёная</string>
     <string name="settings_palette_burgundy">Бордовая</string>
-
 </resources>

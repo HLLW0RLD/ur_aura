@@ -3,10 +3,13 @@ package com.example.ur_color.ui.screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -62,6 +68,7 @@ fun Settings(settings : Settings) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel = koinViewModel(),
@@ -69,6 +76,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
+    val profileViewModel: ProfileViewModel = koinViewModel()
 
     val themeMode by SystemDataManager.theme.collectAsState()
     val palette by SystemDataManager.palette.collectAsState()
@@ -89,55 +97,114 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            var expandedTheme by remember { mutableStateOf(false) }
             Text(
                 text = stringResource(R.string.settings_theme_title),
                 color = AppColors.textPrimary,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expandedTheme = !expandedTheme }
+                    .padding(8.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-
-            AuraRadioButton(
-                selected = themeMode == ThemeMode.SYSTEM,
-                text = stringResource(R.string.settings_theme_system),
-                onClick = {
-                    scope.launch { SystemDataManager.saveTheme(context, ThemeMode.SYSTEM) }
+            AnimatedVisibility(visible = expandedTheme) {
+                Column {
+                    AuraRadioButton(
+                        selected = themeMode == ThemeMode.SYSTEM,
+                        text = stringResource(R.string.settings_theme_system),
+                        onClick = {
+                            scope.launch { SystemDataManager.saveTheme(context, ThemeMode.SYSTEM) }
+                        }
+                    )
+                    AuraRadioButton(
+                        selected = themeMode == ThemeMode.LIGHT,
+                        text = stringResource(R.string.settings_theme_light),
+                        onClick = {
+                            scope.launch { SystemDataManager.saveTheme(context, ThemeMode.LIGHT) }
+                        }
+                    )
+                    AuraRadioButton(
+                        selected = themeMode == ThemeMode.DARK,
+                        text = stringResource(R.string.settings_theme_dark),
+                        onClick = {
+                            scope.launch { SystemDataManager.saveTheme(context, ThemeMode.DARK) }
+                        }
+                    )
                 }
-            )
-            AuraRadioButton(
-                selected = themeMode == ThemeMode.LIGHT,
-                text = stringResource(R.string.settings_theme_light),
-                onClick = {
-                    scope.launch { SystemDataManager.saveTheme(context, ThemeMode.LIGHT) }
-                }
-            )
-            AuraRadioButton(
-                selected = themeMode == ThemeMode.DARK,
-                text = stringResource(R.string.settings_theme_dark),
-                onClick = {
-                    scope.launch { SystemDataManager.saveTheme(context, ThemeMode.DARK) }
-                }
-            )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            var expandedPalette by remember { mutableStateOf(false) }
             Text(
                 text = stringResource(R.string.settings_palette_title),
                 color = AppColors.textPrimary,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expandedPalette = !expandedPalette }
+                    .padding(8.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-
-            settingsViewModel.paletteItems.forEach { item ->
-                AuraRadioButton(
-                    selected = palette == item.palette,
-                    text = stringResource(item.titleRes),
-                    color = item.color,
-                    onClick = {
-                        scope.launch {
-                            SystemDataManager.savePalette(context, item.palette)
-                        }
+            AnimatedVisibility(visible = expandedPalette) {
+                Column {
+                    settingsViewModel.paletteItems.forEach { item ->
+                        AuraRadioButton(
+                            selected = palette == item.palette,
+                            text = stringResource(item.titleRes),
+                            color = item.color,
+                            onClick = {
+                                scope.launch {
+                                    SystemDataManager.savePalette(context, item.palette)
+                                }
+                            }
+                        )
                     }
-                )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            var expandedAccount by remember { mutableStateOf(false) }
+            Text(
+                text = stringResource(R.string.settings_palette_account),
+                style = MaterialTheme.typography.bodyLarge,
+                color = AppColors.textPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expandedAccount = !expandedAccount }
+                    .padding(8.dp)
+            )
+
+            AnimatedVisibility(visible = expandedAccount) {
+                Column{
+                    Text(
+                        stringResource(R.string.profile_logout),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = AppColors.textPrimary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch {
+                                    profileViewModel.deleteUser(context)
+                                    navController.nav(Login, true)
+                                }
+                            }
+                            .padding(8.dp)
+                    )
+                    Text(
+                        stringResource(R.string.profile_delete),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = AppColors.error,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+
+                            }
+                            .padding(8.dp)
+                    )
+                }
             }
         }
     }

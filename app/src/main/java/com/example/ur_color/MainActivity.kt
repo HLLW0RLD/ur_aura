@@ -50,6 +50,7 @@ import com.example.ur_color.ui.screen.DailyTest
 import com.example.ur_color.ui.screen.LocalBottomBarState
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.Settings
+import com.example.ur_color.ui.screen.Tests
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.baseRoute
 import com.example.ur_color.ui.screen.nav
@@ -106,6 +107,9 @@ class MainActivity : ComponentActivity() {
                             animatedScreenComposable<DailyTest>(
                                 navController = navController,
                             ) { DailyTest(it) }
+                            animatedScreenComposable<Tests>(
+                                navController = navController,
+                            ) { Tests(it) }
                             animatedScreenComposable<AuraDetails>(
                                 navController = navController,
                             ) { AuraDetails(it) }
@@ -162,6 +166,12 @@ fun AppBottomNavigation(
             icon = R.drawable.ball_crystal,
             selected = currentRoute == Main.baseRoute(),
             onClick = { navController.nav(Main) }
+        )
+
+        BottomNavItem(
+            icon = R.drawable.card_trick,
+            selected = currentRoute == Tests.baseRoute(),
+            onClick = { navController.nav(Tests) }
         )
 
         BottomNavItem(

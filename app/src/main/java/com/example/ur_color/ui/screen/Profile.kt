@@ -45,16 +45,12 @@ fun Profile(profile : Profile) {
 
             CustomAppBar(
                 title = stringResource(R.string.profile_title),
-                showBack = true,
-                onBackClick = {
-                    navController.popBack()
-                },
                 showOptions = true,
                 optionsIcon = painterResource(R.drawable.switcher_options),
                 onOptionsClick = {
                     navController.nav(Settings)
                 },
-                isCentered = false,
+                isCentered = true,
                 backgroundColor = AppColors.background,
             )
         },
@@ -149,35 +145,6 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                val s = stringResource(R.string.profile_daily_test_done)
-                Text(
-                    color = AppColors.textPrimary,
-                    text = stringResource(R.string.profile_daily_tests),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.nav(DailyTest)
-//                            if (isDailyTestAvailable) {
-//                                navController.nav(DailyTest)
-//                            } else {
-//
-//                                context.toast(s)
-//                            }
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    color = AppColors.textPrimary,
-                    text = stringResource(R.string.profile_personal_tests),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-
-                        }
-                        .padding(8.dp)
-                )
                 Text(
                     color = AppColors.textPrimary,
                     text = stringResource(R.string.profile_aura_details) + " (premium)",
@@ -193,42 +160,6 @@ fun ProfileScreen(
                     color = AppColors.textPrimary,
                     text = stringResource(R.string.profile_diary) + " (premium)",
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    color = AppColors.textPrimary,
-                    text = stringResource(R.string.profile_settings),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.nav(Settings)
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    stringResource(R.string.profile_logout),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = AppColors.textPrimary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            scope.launch {
-                                profileViewModel.deleteUser(context)
-                                navController.nav(Login, true)
-                            }
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    stringResource(R.string.profile_delete),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = AppColors.error,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {

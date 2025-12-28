@@ -169,8 +169,8 @@ fun SettingsScreen(
             var expandedAccount by remember { mutableStateOf(false) }
             Text(
                 text = stringResource(R.string.settings_palette_account),
-                style = MaterialTheme.typography.bodyLarge,
                 color = AppColors.textPrimary,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expandedAccount = !expandedAccount }
@@ -178,7 +178,11 @@ fun SettingsScreen(
             )
 
             AnimatedVisibility(visible = expandedAccount) {
-                Column{
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
                     Text(
                         stringResource(R.string.profile_logout),
                         style = MaterialTheme.typography.bodyLarge,

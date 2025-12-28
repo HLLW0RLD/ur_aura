@@ -81,4 +81,7 @@
     <string name="settings_palette_turquoise">Бирюзовая</string>
     <string name="settings_palette_green">Зелёная</string>
     <string name="settings_palette_burgundy">Бордовая</string>
+    <string name="bottom_menu_main">Главная</string>
+    <string name="bottom_menu_tests">Тесты</string>
+    <string name="bottom_menu_profile">Профиль</string>
 </resources>

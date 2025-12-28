@@ -14,8 +14,10 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +39,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -54,10 +60,12 @@ import com.example.ur_color.ui.screen.Tests
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.baseRoute
 import com.example.ur_color.ui.screen.nav
+import com.example.ur_color.ui.screen.popBack
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
+import org.w3c.dom.Text
 
 const val SCREEN_DATA = "{json}"
 class MainActivity : ComponentActivity() {
@@ -163,19 +171,28 @@ fun AppBottomNavigation(
     ) {
 
         BottomNavItem(
+            modifier = Modifier
+                .weight(1f),
             icon = R.drawable.ball_crystal,
+            text = stringResource(R.string.bottom_menu_main),
             selected = currentRoute == Main.baseRoute(),
-            onClick = { navController.nav(Main) }
+            onClick = { navController.popBack(Main) }
         )
 
         BottomNavItem(
+            modifier = Modifier
+                .weight(1f),
             icon = R.drawable.card_trick,
+            text = stringResource(R.string.bottom_menu_tests),
             selected = currentRoute == Tests.baseRoute(),
             onClick = { navController.nav(Tests) }
         )
 
         BottomNavItem(
+            modifier = Modifier
+                .weight(1f),
             icon = R.drawable.illusion_eye,
+            text = stringResource(R.string.bottom_menu_profile),
             selected = currentRoute == Profile().baseRoute(),
             onClick = { navController.nav(Profile()) }
         )
@@ -184,18 +201,36 @@ fun AppBottomNavigation(
 
 @Composable
 fun BottomNavItem(
+    text: String,
     @DrawableRes icon: Int,
     selected: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    IconButton(onClick = onClick) {
+    Column(
+        modifier = modifier
+            .clickable {
+                onClick()
+        },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Icon(
-            painterResource(icon),
+            painter = painterResource(icon),
             contentDescription = null,
             tint = if (selected)
                 AppColors.accentPrimary
             else
                 AppColors.textSecondary
+        )
+        Text(
+            text = text,
+            color = if (selected)
+                AppColors.accentPrimary
+            else
+                AppColors.textSecondary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Thin
         )
     }
 }

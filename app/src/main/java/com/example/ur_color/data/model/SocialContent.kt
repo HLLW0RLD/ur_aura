@@ -21,6 +21,7 @@ sealed class SocialContent {
 data class User(
     val id: String,
     val username: String,
+    val level: Int,
     val about: String?,
     val avatar: String?
 )

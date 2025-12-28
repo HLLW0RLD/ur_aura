@@ -2,6 +2,7 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -61,7 +62,7 @@ import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.FeedContentCard
 import com.example.ur_color.utils.WindowType
-import com.example.ur_color.utils.demoCards
+import com.example.ur_color.utils.feedCards
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
@@ -137,7 +138,7 @@ fun MainScreen(
 
     val collapsedHeight = screenHeight / 1.8f
     val collapsedY = with(density) { collapsedHeight.toPx() }               // свернутая подложка
-    val expandedY = 170f                                                             // полностью раскрытая подложка
+    val expandedY = 300f                                                             // полностью раскрытая подложка
 
     val offsetY = remember { Animatable(collapsedY) }
 
@@ -488,7 +489,7 @@ fun MainScreen(
                         )
                         .padding(vertical = 16.dp)
                 ) {
-                    demoCards.forEach {
+                    feedCards.forEach {
                         FeedContentCard(
                             modifier = Modifier
 //                                .heightIn(max = 400.dp)
@@ -503,7 +504,11 @@ fun MainScreen(
             }
         }
 
-        if (progress >= 0.95f) {
+        AnimatedVisibility(
+            visible = progress >= 0.95f,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+        ) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

@@ -8,8 +8,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.magnifier
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,12 +25,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
+import com.example.ur_color.ui.ExpandableFloatingBox
+import com.example.ur_color.ui.FeedContentCard
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
-import com.example.ur_color.utils.toast
-import kotlinx.coroutines.launch
+import com.example.ur_color.utils.feedCards
+import com.example.ur_color.utils.profileCards
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -99,7 +103,7 @@ fun ProfileScreen(
                 val avatarPainter = if (u.avatarUri != null) {
                     rememberAsyncImagePainter(u.avatarUri)
                 } else {
-                    rememberAsyncImagePainter(android.R.drawable.sym_def_app_icon)
+                    rememberAsyncImagePainter("https://picsum.photos/seed/abstract02/600/600")
                 }
 
                 Image(
@@ -131,6 +135,11 @@ fun ProfileScreen(
                         ),
                         style = MaterialTheme.typography.bodyMedium
                     )
+                    Text(
+                        color = AppColors.textPrimary,
+                        text = u.about ?: "Default about text, cant change.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
 
                     // dropdown with full user info
                     // ${calculateAge(u.birthDate)}
@@ -139,34 +148,67 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ExpandableFloatingBox(
+                closedTitle = stringResource(R.string.profile_more),
+                expandedTitle = stringResource(R.string.prrofile_other_info),
+                canShowFull = false,
+                expandHeight = 170f,
+                backgroundColor = AppColors.surfaceLight,
+                height = 56f,
+                modifier = Modifier,
+            ) {
+                Column {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        color = AppColors.white,
+                        text = stringResource(R.string.profile_aura_details) + " (premium)",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.nav(AuraDetails())
+                            }
+                            .padding(8.dp),
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        color = AppColors.white,
+                        text = stringResource(R.string.profile_aura_achievement) + " (premium)",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+
+                            }
+                            .padding(8.dp),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        AppColors.backgroundDark
+                            .copy(alpha = 0.2f)
+                    )
+                    .padding(vertical = 16.dp)
             ) {
-                Text(
-                    color = AppColors.textPrimary,
-                    text = stringResource(R.string.profile_aura_details) + " (premium)",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.nav(AuraDetails())
-                        }
-                        .padding(8.dp)
-                )
-                Text(
-                    color = AppColors.textPrimary,
-                    text = stringResource(R.string.profile_diary) + " (premium)",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-
-                        }
-                        .padding(8.dp)
-                )
+                profileCards.forEach {
+                    item {
+                        FeedContentCard(
+                            modifier = Modifier
+//                                .heightIn(max = 400.dp)
+                                .padding(4.dp),
+                            content = it,
+                            onClick = { }
+                        )
+                    }
+                }
             }
         } ?: run {
             Text(stringResource(R.string.profile_no_user), style = MaterialTheme.typography.bodyMedium)

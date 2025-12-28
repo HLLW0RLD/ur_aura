@@ -97,6 +97,20 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            Text(
+                text = stringResource(R.string.settings_palette_profile),
+                color = AppColors.textPrimary,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    }
+                    .padding(8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             var expandedTheme by remember { mutableStateOf(false) }
             Text(
                 text = stringResource(R.string.settings_theme_title),

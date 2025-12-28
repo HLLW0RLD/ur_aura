@@ -15,15 +15,14 @@ object AppColors {
         @Composable get() = Color.Black
 
 
-    val autoText: (Color) -> Color
-        @Composable get() = { bg ->
-            if (bg.luminance() > 0.5f) Color.Black else Color.White
-        }
-
     val textPrimary: Color
         @Composable get() = MaterialTheme.colorScheme.onBackground
     val textSecondary: Color
         @Composable get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+    val textAuto: (Color) -> Color
+        @Composable get() = { bg ->
+            if (bg.luminance() > 0.5f) Color.Black else Color.White
+        }
 
 
     val accentPrimary: Color

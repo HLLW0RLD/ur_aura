@@ -11,6 +11,7 @@ data class UserData(
     val firstName: String,
     val lastName: String,
     val middleName: String?,
+    val about: String? = "Default about text, cant change. sorry",
     val birthDate: String,
     val birthTime: String?,
     val birthPlace: String,
@@ -21,6 +22,8 @@ data class UserData(
     val characteristics: CharacteristicData,
     val userLevel: Int = 1,
     val personalityType: String? = null,
+
+    val achievements: List<Achievement> = listOf()
 )  {
     val auraSeed: Long = (firstName + lastName + birthPlace + zodiacSign).hashCode().toLong()
 }

@@ -139,49 +139,63 @@ val questionTemplates: Map<ModType, List<String>> = mapOf(
 
 val demoUsers = listOf(
     User(
+        id = "0",
+        username = "bobo",
+        level = 777,
+        about = "ауры это круто!",
+        avatar = "https://picsum.photos/seed/abstract02/600/600"
+    ),
+    User(
         id = "1",
         username = "Анастасия",
+        level = 2,
         about = "Исследую осознанность и телесные практики",
         avatar = "https://picsum.photos/seed/abstract01/600/600"
     ),
     User(
         id = "2",
         username = "Дмитрий",
+        level = 7,
         about = "Психология, логика и немного дзена",
         avatar = "https://picsum.photos/seed/abstract02/600/600"
     ),
     User(
         id = "3",
         username = "Мария",
+        level = 3,
         about = "Пишу о чувствах и внутренних состояниях",
         avatar = "https://picsum.photos/seed/abstract03/600/600"
     ),
     User(
         id = "4",
         username = "Илья",
+        level = 11,
         about = "Ищу баланс между рациональным и интуитивным",
         avatar = "https://picsum.photos/seed/abstract04/600/600"
     ),
     User(
         id = "5",
         username = "Екатерина",
+        level = 5,
         about = "Телесная терапия и мягкие практики",
         avatar = "https://picsum.photos/seed/abstract05/600/600"
     ),
     User(
         id = "6",
         username = "Ольга",
+        level = 2,
         about = "Практикую осознанное письмо",
         avatar = "https://picsum.photos/seed/abstract07/600/600"
     ),
     User(
         id = "7",
         username = "Валерия",
+        level = 1,
         about = "Работаю с эмоциями через визуальные образы",
         avatar = "https://picsum.photos/seed/abstract09/600/600"
     )
 )
-val demoCards = listOf(
+val feedCards = listOf(
     SocialContent.Post(
         id = "p1",
         text = "Иногда тишина говорит больше, чем слова",
@@ -236,5 +250,55 @@ val demoCards = listOf(
         title = "🔮 Индивидуальная сессия самопознания",
         image = "https://picsum.photos/seed/ad03/800/600",
         cta = "Записаться"
+    )
+)
+val profileCards = listOf(
+    SocialContent.Post(
+        id = "p1",
+        text = "Начал отвечать на ежедневные вопросы и неожиданно понял, как редко я вообще останавливаюсь и слушаю себя.",
+        author = demoUsers[0],
+        image = null
+    ),
+
+    SocialContent.Post(
+        id = "p2",
+        text = "Иногда тишина говорит больше, чем любые формулировки. Особенно когда честно отвечаешь себе.",
+        author = demoUsers[0],
+        image = "https://picsum.photos/seed/post01/900/600"
+    ),
+
+    SocialContent.Post(
+        id = "p3",
+        text = "Принятие — это не согласие и не оправдание. Скорее, это признание того, что сейчас именно так.",
+        author = demoUsers[0],
+        image = null
+    ),
+
+    SocialContent.Post(
+        id = "p4",
+        text = "Поймал себя на мысли, что путь — это не движение вперёд, а разрешение иногда не торопиться.",
+        author = demoUsers[0],
+        image = null
+    ),
+
+    SocialContent.Post(
+        id = "p5",
+        text = "Записывать ощущения после тестов оказалось важнее, чем я думал. Мысли становятся чётче, когда им дают форму.",
+        author = demoUsers[0],
+        image = "https://picsum.photos/seed/post02/900/600"
+    ),
+
+    SocialContent.Post(
+        id = "p6",
+        text = "Чем больше наблюдаю за собой, тем меньше хочется давать быстрые оценки — себе и другим.",
+        author = demoUsers[0],
+        image = null
+    ),
+
+    SocialContent.Post(
+        id = "p7",
+        text = "Иногда образ точнее слов. Состояние можно почувствовать, но сложно объяснить.",
+        author = demoUsers[0],
+        image = "https://picsum.photos/seed/post03/900/600"
     )
 )

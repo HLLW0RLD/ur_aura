@@ -52,6 +52,7 @@
     <string name="profile_zodiac">%1$s</string>
 
     <string name="profile_aura_details">Детали ауры</string>
+    <string name="profile_aura_achievement">Достижения за тесты</string>
     <string name="profile_daily_tests">Ежедневные тесты</string>
     <string name="profile_personal_tests">Персональные тесты</string>
     <string name="profile_tests">Tесты</string>
@@ -70,6 +71,7 @@
     <string name="settings_theme_title">Тема</string>
     <string name="settings_palette_title">Цветовая палитра</string>
     <string name="settings_palette_account">Аккаунт</string>
+    <string name="settings_palette_profile">Профиль</string>
 
     <string name="settings_theme_system">Системная</string>
     <string name="settings_theme_light">Светлая</string>
@@ -84,4 +86,7 @@
     <string name="bottom_menu_main">Главная</string>
     <string name="bottom_menu_tests">Тесты</string>
     <string name="bottom_menu_profile">Профиль</string>
+    <string name="user_lvl_header">, %1$d уровень</string>
+    <string name="profile_more">Больше</string>
+    <string name="prrofile_other_info">Другая информация</string>
 </resources>

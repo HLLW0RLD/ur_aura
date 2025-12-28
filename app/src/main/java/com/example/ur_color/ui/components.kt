@@ -1059,6 +1059,7 @@ fun ExpandableBox(
 fun ExpandableFloatingBox(
     closedTitle: String,
     expandedTitle: String,
+    backgroundColor: Color = AppColors.backgroundLight,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
     canShowFull: Boolean = false,
@@ -1142,7 +1143,7 @@ fun ExpandableFloatingBox(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .background(AppColors.backgroundLight)
+            .background(backgroundColor)
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
@@ -1285,7 +1286,7 @@ fun FeedContentCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(6.dp)
+                .padding(12.dp)
         ) {
             when (content) {
                 is SocialContent.Post -> {
@@ -1299,7 +1300,7 @@ fun FeedContentCard(
                                     model = content.image,
                                     contentDescription = content.text,
                                     modifier = Modifier
-                                        .height(300.dp)
+                                        .height(350.dp)
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(8.dp)),
                                     contentScale = ContentScale.Crop
@@ -1323,7 +1324,7 @@ fun FeedContentCard(
 
                         Text(
                             text = content.title,
-                            color = AppColors.autoText(Color.Black.copy(alpha = 0.3f)),
+                            color = AppColors.textAuto(Color.Black.copy(alpha = 0.3f)),
                             fontSize = 14.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -1353,9 +1354,8 @@ fun FeedContentCard(
                         Text(
                             text = content.text,
                             fontSize = 14.sp,
-                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.basicMarquee(iterations = MAX_VALUE),
+                            modifier = Modifier,
                             color = AppColors.textPrimary
                         )
                     }
@@ -1394,7 +1394,7 @@ private fun PostAuthorHeader(user: User) {
 
         Column {
             Text(
-                text = user.username,
+                text = user.username + stringResource(R.string.user_lvl_header, user.level),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = AppColors.textPrimary,

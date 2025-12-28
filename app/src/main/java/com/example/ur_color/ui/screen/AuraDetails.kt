@@ -2,6 +2,7 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.core.Animatable
@@ -18,11 +19,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -97,10 +101,10 @@ fun AuraDetailsScreen(
     val configuration = LocalConfiguration.current
     val screenHeightPx = with(density) { configuration.screenHeightDp.dp.toPx() }
 
-    val collapsedHeight = 130.dp
+    val collapsedHeight = 330.dp
     val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
 
-    val topInset = 108.5.dp
+    val topInset = 1.dp
     val topInsetPx = with(density) { topInset.toPx() }
 
     val expandedY = topInsetPx
@@ -133,7 +137,6 @@ fun AuraDetailsScreen(
             .fillMaxSize()
             .background(AppColors.background),
     ) {
-
 
         aura?.let {
             Image(
@@ -207,6 +210,33 @@ fun AuraDetailsScreen(
                     Text(
                         text = "✦ Вся аура кажется аккуратно собранной, как будто человек всю жизнь тренируется удерживать свои реакции внутри, чтобы не нагружать других. Внутренняя энергия яркая, живая, но запечатанная в удобную форму",
                         color = AppColors.textPrimary
+                    )
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = progress <= 0.95f,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+        ) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .fillMaxWidth()
+                    .padding(end = 16.dp, bottom = 100.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
+                    },
+                    containerColor = AppColors.accentPrimary.copy(alpha = 0.5f),
+                    contentColor = Color.White
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_up),
+                        contentDescription = "Добавить"
                     )
                 }
             }

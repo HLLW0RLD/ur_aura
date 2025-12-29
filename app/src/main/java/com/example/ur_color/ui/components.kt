@@ -1060,6 +1060,8 @@ fun ExpandableFloatingBox(
     closedTitle: String,
     expandedTitle: String,
     backgroundColor: Color = AppColors.backgroundLight,
+    borderColor: Color = AppColors.backgroundLight,
+    borderWidth: Float = 0f,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
     canShowFull: Boolean = false,
@@ -1147,8 +1149,8 @@ fun ExpandableFloatingBox(
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
-                    color = AppColors.backgroundLight,
-                    width = 1.dp
+                    color = borderColor,
+                    width = borderWidth.dp
                 )
             )
             .pointerInput(canShowFull) {
@@ -1202,7 +1204,9 @@ private fun ExpandableContent(
             .alpha(alpha)
     ) {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 36.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
@@ -1220,8 +1224,8 @@ private fun ExpandableContent(
             )
         }
 
-        Spacer(Modifier.height(4.dp))
         HorizontalDivider(thickness = 0.5.dp, color = AppColors.accentPrimary)
+        Spacer(Modifier.height(8.dp))
 
         Column(
             Modifier
@@ -1273,7 +1277,7 @@ fun FeedContentCard(
             modifier = Modifier
                 .matchParentSize()
                 .clip(RoundedCornerShape(12.dp))
-                .background(AppColors.backgroundDark)
+                .background(AppColors.backgroundLight)
                 .border(
                     shape = RoundedCornerShape(12.dp),
                     color = AppColors.surfaceLight, // divider

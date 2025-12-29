@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -30,11 +31,16 @@ import com.example.ur_color.ui.FeedContentCard
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
+import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.ui.theme.randomAuraColor
+import com.example.ur_color.ui.theme.toColor
 import com.example.ur_color.utils.LocalNavController
+import com.example.ur_color.utils.animPic
 import com.example.ur_color.utils.feedCards
 import com.example.ur_color.utils.profileCards
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import kotlin.random.Random
 
 @Serializable
 data class Profile(val user: String = "null") : Screen
@@ -148,19 +154,71 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(16.dp))
 
+            Text(
+                color = AppColors.textAuto(AppColors.surfaceLight),
+                text = stringResource(R.string.profile_aura_achievement),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    }
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
+            )
+            LazyRow(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .height(48.dp),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                item {
+                    Spacer(Modifier.size(16.dp))
+                }
+                items(animPic.size){
+                    val pic = animPic.shuffled()[it]
+                    val ind = AuraColors.values().toList().shuffled().first()
+
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(
+                                color = ind.toColor(),
+                                shape = CircleShape
+                            )
+                            .clip(CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(36.dp),
+                            painter = painterResource(pic),
+                            contentDescription = ""
+                        )
+                    }
+                }
+            }
+
             ExpandableFloatingBox(
                 closedTitle = stringResource(R.string.profile_more),
                 expandedTitle = stringResource(R.string.prrofile_other_info),
-                canShowFull = false,
-                expandHeight = 170f,
-                backgroundColor = AppColors.surfaceLight,
-                height = 56f,
+                canShowFull = true,
+                expandHeight = 200f,
+                width = 50f,
+                expandWidth = 100f,
+                backgroundColor = AppColors.background,
+                borderColor = AppColors.surfaceLight,
+                borderWidth = 2f,
+                height = 70f,
                 modifier = Modifier,
             ) {
-                Column {
+                Column(
+                    verticalArrangement = Arrangement.Top
+                ) {
+
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        color = AppColors.white,
+                        color = AppColors.textAuto(AppColors.background),
                         text = stringResource(R.string.profile_aura_details) + " (premium)",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
@@ -172,20 +230,20 @@ fun ProfileScreen(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        color = AppColors.white,
-                        text = stringResource(R.string.profile_aura_achievement) + " (premium)",
+                        color = AppColors.textAuto(AppColors.background),
+                        text = stringResource(R.string.profile_life_goals) + " (premium)",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                navController.nav(AuraDetails())
                             }
                             .padding(8.dp),
                     )
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
 
             LazyColumn(
                 modifier = Modifier
@@ -203,7 +261,7 @@ fun ProfileScreen(
                         FeedContentCard(
                             modifier = Modifier
 //                                .heightIn(max = 400.dp)
-                                .padding(4.dp),
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                             content = it,
                             onClick = { }
                         )

@@ -481,7 +481,6 @@ fun MainScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(
                             AppColors.backgroundDark
@@ -493,7 +492,7 @@ fun MainScreen(
                         FeedContentCard(
                             modifier = Modifier
 //                                .heightIn(max = 400.dp)
-                                .padding(4.dp),
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                             content = it,
                             onClick = {  }
                         )

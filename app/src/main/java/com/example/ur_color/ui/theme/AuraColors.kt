@@ -1,5 +1,8 @@
 package com.example.ur_color.ui.theme
 
+import androidx.compose.ui.graphics.Color
+import kotlin.random.Random
+
 enum class AuraColors(val hex: String) {
     WHITE("#FFFFFF"),
     RED("#FF0000"),
@@ -31,4 +34,12 @@ enum class AuraColors(val hex: String) {
     PEACH("#FFE5B4"),
     BURGUNDY("#800020"),
     SKY_BLUE("#87CEEB")
+}
+
+fun AuraColors.toColor(): Color {
+    return Color(android.graphics.Color.parseColor(hex))
+}
+
+fun randomAuraColor(seed: Long): AuraColors {
+    return AuraColors.values().random(Random(seed))
 }

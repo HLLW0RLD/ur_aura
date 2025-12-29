@@ -52,7 +52,8 @@
     <string name="profile_zodiac">%1$s</string>
 
     <string name="profile_aura_details">Детали ауры</string>
-    <string name="profile_aura_achievement">Достижения за тесты</string>
+    <string name="profile_life_goals">Жизненные цели</string>
+    <string name="profile_aura_achievement">Достижения</string>
     <string name="profile_daily_tests">Ежедневные тесты</string>
     <string name="profile_personal_tests">Персональные тесты</string>
     <string name="profile_tests">Tесты</string>

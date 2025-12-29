@@ -7,11 +7,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,7 +38,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -70,6 +78,7 @@ import org.w3c.dom.Text
 const val SCREEN_DATA = "{json}"
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalAnimationApi::class)
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,6 +160,10 @@ fun AppBottomNavigation(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route?.substringBefore('/')
 
+    val currentTab = BottomTab.values().firstOrNull {
+        it.route.baseRoute() == currentRoute
+    }
+
     Row(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -162,7 +175,7 @@ fun AppBottomNavigation(
             )
             .border(
                 shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp),
-                color = AppColors.surfaceLight, // surfaceLight
+                color = AppColors.surface,
                 width = 1.dp
             )
             .height(72.dp),
@@ -176,7 +189,13 @@ fun AppBottomNavigation(
             icon = R.drawable.ball_crystal,
             text = stringResource(R.string.bottom_menu_main),
             selected = currentRoute == Main.baseRoute(),
-            onClick = { navController.popBack(Main) }
+            onClick = {
+                navigateTab(
+                    target = BottomTab.MAIN,
+                    navController = navController,
+                    currentTab = currentTab
+                )
+            }
         )
 
         BottomNavItem(
@@ -185,7 +204,13 @@ fun AppBottomNavigation(
             icon = R.drawable.card_trick,
             text = stringResource(R.string.bottom_menu_tests),
             selected = currentRoute == Tests.baseRoute(),
-            onClick = { navController.nav(Tests) }
+            onClick = {
+                navigateTab(
+                    target = BottomTab.TESTS,
+                    navController = navController,
+                    currentTab = currentTab
+                )
+            }
         )
 
         BottomNavItem(
@@ -194,7 +219,13 @@ fun AppBottomNavigation(
             icon = R.drawable.illusion_eye,
             text = stringResource(R.string.bottom_menu_profile),
             selected = currentRoute == Profile().baseRoute(),
-            onClick = { navController.nav(Profile()) }
+            onClick = {
+                navigateTab(
+                    target = BottomTab.PROFILE,
+                    navController = navController,
+                    currentTab = currentTab
+                )
+            }
         )
     }
 }
@@ -233,4 +264,33 @@ fun BottomNavItem(
             fontWeight = FontWeight.Thin
         )
     }
+}
+
+fun navigateTab(
+    target: BottomTab,
+    navController: NavController,
+    currentTab: BottomTab?
+) {
+    if (currentTab == null) {
+        navController.nav(target.route)
+        return
+    }
+
+    when {
+        target.index > currentTab.index -> {
+            navController.nav(target.route)
+        }
+
+        target.index < currentTab.index -> {
+            navController.popBack(target.route)
+        }
+
+        else -> Unit
+    }
+}
+
+enum class BottomTab(val route: Screen, val index: Int) {
+    MAIN(Main, 0),
+    TESTS(Tests, 1),
+    PROFILE(Profile(), 2)
 }

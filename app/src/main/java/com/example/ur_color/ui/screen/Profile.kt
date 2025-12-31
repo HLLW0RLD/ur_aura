@@ -100,146 +100,157 @@ fun ProfileScreen(
             .background(AppColors.background)
     ) {
         user?.let { u ->
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(
+                        AppColors.backgroundDark
+                            .copy(alpha = 0.2f)
+                    )
             ) {
-                val avatarPainter = if (u.avatarUri != null) {
-                    rememberAsyncImagePainter(u.avatarUri)
-                } else {
-                    rememberAsyncImagePainter("https://picsum.photos/seed/abstract02/600/600")
-                }
-
-                Image(
-                    painter = avatarPainter,
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop,
+                Row(
                     modifier = Modifier
-                        .size(96.dp)
-                        .clip(CircleShape)
-                )
-
-                Spacer(Modifier.width(16.dp))
-
-                Column {
-                    Text(
-                        color = AppColors.textPrimary,
-                        text = stringResource(
-                            R.string.profile_name_level,
-                            u.firstName,
-                            level?.toInt() ?: 1
-                        ),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        color = AppColors.textPrimary,
-                        text = stringResource(
-                            R.string.profile_zodiac,
-                            u.zodiacSign.lowercase()
-                        ),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        color = AppColors.textPrimary,
-                        text = u.about ?: "Default about text, cant change.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    // dropdown with full user info
-                    // ${calculateAge(u.birthDate)}
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                color = AppColors.textAuto(AppColors.surfaceLight),
-                text = stringResource(R.string.profile_aura_achievement),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-
+                        .fillMaxWidth()
+//                        .padding(16.dp)
+                    ,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val avatarPainter = if (u.avatarUri != null) {
+                        rememberAsyncImagePainter(u.avatarUri)
+                    } else {
+                        rememberAsyncImagePainter("https://picsum.photos/seed/abstract02/600/600")
                     }
-                    .padding(vertical = 4.dp, horizontal = 16.dp),
-            )
-            LazyRow(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .height(48.dp),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                item {
-                    Spacer(Modifier.size(16.dp))
-                }
-                items(animPic.size){
-                    val pic = animPic.shuffled()[it]
-                    val ind = AuraColors.values().toList().shuffled().first()
 
-                    Box(
+                    Image(
+                        painter = avatarPainter,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(48.dp)
-                            .background(
-                                color = ind.toColor(),
-                                shape = CircleShape
-                            )
-                            .clip(CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
+                            .size(96.dp)
+                            .clip(CircleShape)
+                    )
+
+                    Spacer(Modifier.width(16.dp))
+
+                    Column {
+                        Text(
+                            color = AppColors.textPrimary,
+                            text = stringResource(
+                                R.string.profile_name_level,
+                                u.firstName,
+                                level?.toInt() ?: 1
+                            ),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            color = AppColors.textPrimary,
+                            text = stringResource(
+                                R.string.profile_zodiac,
+                                u.zodiacSign.lowercase()
+                            ),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            color = AppColors.textPrimary,
+                            text = u.about ?: "Default about text, cant change.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        // dropdown with full user info
+                        // ${calculateAge(u.birthDate)}
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    color = AppColors.textAuto(AppColors.surfaceLight),
+                    text = stringResource(R.string.profile_aura_achievement),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+
+                        }
+                        .padding(bottom = 4.dp, start = 16.dp),
+                )
+                LazyRow(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .height(48.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    item {
+                        Spacer(Modifier.size(8.dp))
+                    }
+                    items(animPic.size) {
+                        val pic = animPic.shuffled()[it]
+                        val ind = AuraColors.values().toList().shuffled().first()
+
+                        Box(
                             modifier = Modifier
-                                .size(36.dp),
-                            painter = painterResource(pic),
-                            contentDescription = ""
+                                .size(48.dp)
+                                .background(
+                                    color = ind.toColor(),
+                                    shape = CircleShape
+                                )
+                                .clip(CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(36.dp),
+                                painter = painterResource(pic),
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
+
+                ExpandableFloatingBox(
+                    closedTitle = stringResource(R.string.profile_more),
+                    expandedTitle = stringResource(R.string.prrofile_other_info),
+                    canShowFull = true,
+                    expandHeight = 200f,
+//                    width = 50f,
+//                    expandWidth = 100f,
+                    backgroundColor = AppColors.surface,
+                    borderColor = AppColors.surfaceLight,
+                    borderWidth = 2f,
+                    height = 70f,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp),
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Top
+                    ) {
+
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            color = AppColors.textAuto(AppColors.background),
+                            text = stringResource(R.string.profile_aura_details) + " (premium)",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.nav(AuraDetails())
+                                }
+                                .padding(8.dp),
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            color = AppColors.textAuto(AppColors.background),
+                            text = stringResource(R.string.profile_life_goals) + " (premium)",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.nav(AuraDetails())
+                                }
+                                .padding(8.dp),
                         )
                     }
-                }
-            }
-
-            ExpandableFloatingBox(
-                closedTitle = stringResource(R.string.profile_more),
-                expandedTitle = stringResource(R.string.prrofile_other_info),
-                canShowFull = true,
-                expandHeight = 200f,
-                width = 50f,
-                expandWidth = 100f,
-                backgroundColor = AppColors.background,
-                borderColor = AppColors.surfaceLight,
-                borderWidth = 2f,
-                height = 70f,
-                modifier = Modifier,
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Top
-                ) {
-
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        color = AppColors.textAuto(AppColors.background),
-                        text = stringResource(R.string.profile_aura_details) + " (premium)",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                navController.nav(AuraDetails())
-                            }
-                            .padding(8.dp),
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        color = AppColors.textAuto(AppColors.background),
-                        text = stringResource(R.string.profile_life_goals) + " (premium)",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                navController.nav(AuraDetails())
-                            }
-                            .padding(8.dp),
-                    )
                 }
             }
 
@@ -248,8 +259,8 @@ fun ProfileScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .clip(RoundedCornerShape(12.dp))
+//                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(25.dp))
                     .background(
                         AppColors.backgroundDark
                             .copy(alpha = 0.2f)

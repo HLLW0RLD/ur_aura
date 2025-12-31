@@ -296,7 +296,7 @@ fun MainScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(25.dp))
                         .background(
                             AppColors.backgroundDark
                                 .copy(alpha = 0.2f)
@@ -481,7 +481,7 @@ fun MainScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(25.dp))
                         .background(
                             AppColors.backgroundDark
                                 .copy(alpha = 0.2f)

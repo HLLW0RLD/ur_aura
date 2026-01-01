@@ -346,6 +346,8 @@ fun MainScreen(
                         ) { page ->
 
                             ExpandableFloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
                                 height = 200f,
                                 width = 1f,
                                 expandWidth = 1f,

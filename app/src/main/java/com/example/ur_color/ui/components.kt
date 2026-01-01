@@ -2,8 +2,6 @@ package com.example.ur_color.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -1060,7 +1058,11 @@ fun ExpandableFloatingBox(
     closedTitle: String,
     expandedTitle: String,
     backgroundColor: Color = AppColors.backgroundLight,
+    expandBackgroundColor: Color = AppColors.backgroundLight,
     borderColor: Color = AppColors.backgroundLight,
+    textColor: Color = AppColors.textPrimary,
+    titleColor: Color = AppColors.textPrimary,
+    closedTitleColor: Color = AppColors.textPrimary,
     borderWidth: Float = 0f,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
@@ -1080,33 +1082,19 @@ fun ExpandableFloatingBox(
     var currentWindowType by remember { mutableStateOf(windowType) }
 
     val transition = updateTransition(targetState = expanded, label = "expandTransition")
-    val animationSpeed = 700
-    val easing = LinearOutSlowInEasing
+    val animationSpeed = 400
+    val easing = LinearEasing
 
-    val scale by transition.animateFloat(
-        transitionSpec = { tween(animationSpeed, easing = easing) },
-        label = "scaleAnim"
-    ) { if (it) 1f else 0.9f }
+    val scale = 1f
 
-    val elevation by transition.animateDp(
-        transitionSpec = { tween(animationSpeed, easing = easing) },
-        label = "elevationAnim"
-    ) { if (it) 12.dp else 2.dp }
+    val elevation = 0.dp
+
+    val offsetY = 0.dp
 
     val alpha by transition.animateFloat(
         transitionSpec = { tween(animationSpeed, easing = easing) },
         label = "alphaAnim"
     ) { if (it) 1f else 0f }
-
-    val revAlpha by transition.animateFloat(
-        transitionSpec = { tween(animationSpeed, easing = easing) },
-        label = "alphaAnim"
-    ) { if (it) 0f else 1f }
-
-    val offsetY by transition.animateDp(
-        transitionSpec = { tween(animationSpeed, easing = easing) },
-        label = "offsetY"
-    ) { if (it) 0.dp else 50.dp }
 
     val targetHeightFraction = when (currentWindowType) {
         WindowType.Slim -> 0.25f
@@ -1145,7 +1133,7 @@ fun ExpandableFloatingBox(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .background(backgroundColor)
+            .background(if (expanded) expandBackgroundColor else backgroundColor)
             .border(
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(
@@ -1166,9 +1154,12 @@ fun ExpandableFloatingBox(
                 expandedTitle = expandedTitle,
                 scrollState = scrollState,
                 alpha = alpha,
+                titleColor = titleColor,
+                textColor = textColor,
                 onCancel = onCancel,
                 onConfirm = onConfirm,
                 onClose = { toggleExpand() },
+                backgroundColor = expandBackgroundColor,
                 content = content
             )
         } else {
@@ -1181,7 +1172,9 @@ fun ExpandableFloatingBox(
                     textAlign = TextAlign.Center,
                     text = closedTitle,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = AppColors.textPrimary
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = closedTitleColor
                 )
             }
         }
@@ -1191,8 +1184,10 @@ fun ExpandableFloatingBox(
 private fun ExpandableContent(
     expandedTitle: String,
     scrollState: ScrollState,
-    alpha: Float,
     titleColor: Color = AppColors.textPrimary,
+    textColor: Color = AppColors.textPrimary,
+    backgroundColor: Color = AppColors.backgroundLight,
+    alpha: Float,
     onCancel: (() -> Unit)?,
     onConfirm: (() -> Unit)?,
     onClose: () -> Unit,
@@ -1202,6 +1197,7 @@ private fun ExpandableContent(
         Modifier
             .fillMaxSize()
             .alpha(alpha)
+            .background(backgroundColor)
     ) {
         Row(
             Modifier
@@ -1244,7 +1240,7 @@ private fun ExpandableContent(
                     TextButton(onClick = it) {
                         Text(
                             text = "Отмена",
-                            color = AppColors.textPrimary,
+                            color = textColor,
                         )
                     }
                 }
@@ -1252,7 +1248,7 @@ private fun ExpandableContent(
                     TextButton(onClick = it) {
                         Text(
                             text = "ОК",
-                            color = AppColors.textPrimary,
+                            color = textColor,
                         )
                     }
                 }
@@ -1418,6 +1414,9 @@ private fun PostAuthorHeader(user: User) {
         }
     }
 }
+
+
+
 
 @Composable
 fun DynamicDoubleColumn(

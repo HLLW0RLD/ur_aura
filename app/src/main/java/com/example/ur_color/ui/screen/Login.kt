@@ -105,7 +105,9 @@ fun LoginScreen(
                 value = lastName,
                 onValueChange = { lastName = it },
                 label = { Text(stringResource(R.string.field_last_name)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth()
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
@@ -119,7 +121,9 @@ fun LoginScreen(
                 value = firstName,
                 onValueChange = { firstName = it },
                 label = { Text(stringResource(R.string.field_first_name)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth()
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
@@ -133,7 +137,9 @@ fun LoginScreen(
                 value = middleName,
                 onValueChange = { middleName = it },
                 label = { Text(stringResource(R.string.field_middle_name_optional)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth()
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
@@ -147,7 +153,9 @@ fun LoginScreen(
                 value = birthDate,
                 onValueChange = { input -> birthDate = formatDateInput(birthDate, input) },
                 label = { Text(stringResource(R.string.field_birth_date)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth()
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
@@ -161,7 +169,9 @@ fun LoginScreen(
                 value = birthTime,
                 onValueChange = { input -> birthTime = formatTimeInput(birthTime, input)},
                 label = { Text(stringResource(R.string.field_birth_time)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth()
             )
             OutlinedTextField(
                 colors = TextFieldDefaults.colors(
@@ -175,7 +185,9 @@ fun LoginScreen(
                 value = birthPlace,
                 onValueChange = { birthPlace = it },
                 label = { Text(stringResource(R.string.field_birth_place)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth()
             )
 
             // Пол

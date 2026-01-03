@@ -4,6 +4,7 @@ import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
@@ -110,7 +111,6 @@ inline fun <reified T : Screen> NavGraphBuilder.animatedScreenComposable(
         content(screen)
     }
 }
-
 
 fun enterTransition(enterFrom: Direction): EnterTransition {
     return when (enterFrom) {

@@ -1082,14 +1082,18 @@ fun ExpandableFloatingBox(
     var currentWindowType by remember { mutableStateOf(windowType) }
 
     val transition = updateTransition(targetState = expanded, label = "expandTransition")
-    val animationSpeed = 400
-    val easing = LinearEasing
+    val animationSpeed = 700
+    val easing = LinearOutSlowInEasing
 
-    val scale = 1f
+    val scale by transition.animateFloat(
+        transitionSpec = { tween(animationSpeed, easing = easing) },
+        label = "scaleAnim"
+    ) { if (it) 1f else 0.9f }
 
-    val elevation = 0.dp
-
-    val offsetY = 0.dp
+    val elevation by transition.animateDp(
+        transitionSpec = { tween(animationSpeed, easing = easing) },
+        label = "elevationAnim"
+    ) { if (it) 12.dp else 2.dp }
 
     val alpha by transition.animateFloat(
         transitionSpec = { tween(animationSpeed, easing = easing) },

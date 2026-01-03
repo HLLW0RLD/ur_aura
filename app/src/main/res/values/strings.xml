@@ -85,7 +85,7 @@
     <string name="settings_palette_green">Зелёная</string>
     <string name="settings_palette_burgundy">Бордовая</string>
     <string name="bottom_menu_main">Главная</string>
-    <string name="bottom_menu_tests">Тесты</string>
+    <string name="bottom_menu_lab">Лаборатория</string>
     <string name="bottom_menu_profile">Профиль</string>
     <string name="user_lvl_header">, %1$d уровень</string>
     <string name="profile_more">Больше</string>

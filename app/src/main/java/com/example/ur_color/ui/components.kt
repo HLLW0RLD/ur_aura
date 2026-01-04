@@ -808,6 +808,7 @@ fun SwipeCard(
 @Composable
 fun ExpandableGradientGraphBox(
     label: String,
+    indicator: Float,
     values: List<Float>,
     vector: Int? = null,
     icon: Painter? = null,
@@ -825,7 +826,6 @@ fun ExpandableGradientGraphBox(
                 shape = RoundedCornerShape(24.dp),
                 color = backgroundColor
             )
-            .padding(16.dp)
             .clickable(
                 interactionSource = null,
                 indication = null
@@ -833,45 +833,84 @@ fun ExpandableGradientGraphBox(
                 onToggleExpanded(false)
             }
     ) {
-        if (!expanded) {
-            when {
-                vector != null -> {
-                    Icon(
-                        painter = when (vector) {
-                            0 -> painterResource(R.drawable.illusion)
-                            1 -> painterResource(R.drawable.magic_sparkles)
-                            2 -> painterResource(R.drawable.magic_potion)
-                            3 -> painterResource(R.drawable.card_trick)
-                            4 -> painterResource(R.drawable.cauldron_potion)
-                            5 -> painterResource(R.drawable.magic_stick_sparckles)
-                            6 -> painterResource(R.drawable.ball_crystal)
-                            7 -> painterResource(R.drawable.candle)
-                            8 -> painterResource(R.drawable.witch_hat)
-                            9 -> painterResource(R.drawable.illusion_eye)
-                            10 -> painterResource(R.drawable.magic_hat)
-                            else -> painterResource(R.drawable.magic_hat)
-                        },
-                        contentDescription = "Active dot",
-                        tint = iconTint,
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .size(24.dp)
+
+        AnimatedVisibility(
+            visible = !expanded,
+            enter = expandVertically(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(
+                animationSpec = tween(300)
+            ),
+            exit = shrinkVertically(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(
+                animationSpec = tween(300)
+            )
+        ) {
+            Box {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd),
+                    textAlign = TextAlign.Center,
+                    text = indicator.toInt().toString(),
+                    color = AppColors.accentPrimary,
+                    fontSize = 12.sp
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when {
+                        vector != null -> {
+                            Icon(
+                                painter = when (vector) {
+                                    0 -> painterResource(R.drawable.illusion)
+                                    1 -> painterResource(R.drawable.magic_sparkles)
+                                    2 -> painterResource(R.drawable.magic_potion)
+                                    3 -> painterResource(R.drawable.card_trick)
+                                    4 -> painterResource(R.drawable.cauldron_potion)
+                                    5 -> painterResource(R.drawable.magic_stick_sparckles)
+                                    6 -> painterResource(R.drawable.ball_crystal)
+                                    7 -> painterResource(R.drawable.candle)
+                                    8 -> painterResource(R.drawable.witch_hat)
+                                    9 -> painterResource(R.drawable.illusion_eye)
+                                    10 -> painterResource(R.drawable.magic_hat)
+                                    else -> painterResource(R.drawable.magic_hat)
+                                },
+                                contentDescription = "Active dot",
+                                tint = iconTint,
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .size(24.dp)
 //                                        .padding(bottom = 36.dp)
-                    )
-                }
-                icon != null -> icon
-                icon == null && vector == null-> {
-                    Text(
-                        text = label,
-                        color = textColor,
-                    )
+                            )
+                        }
+
+                        icon != null -> icon
+                        icon == null && vector == null -> {
+                            Text(
+                                text = label,
+                                color = textColor,
+                            )
+                        }
+                    }
                 }
             }
         }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
+                .padding(16.dp)
                 .align(Alignment.BottomCenter)
         ) {
             AnimatedVisibility(
@@ -919,14 +958,14 @@ fun GradientGraphBox(
     middleColor: Color = AppColors.accentPrimary,
     bottomColor: Color = AppColors.error,
 ) {
-    val safeValues = values.map { it.coerceIn(0F, 10F) }
+    val safeValues = values.map { it.coerceIn(0F, 100F) }
     val barCount = safeValues.size
     val anims = remember(values) { safeValues.map { Animatable(0f) } }
 
     LaunchedEffect(safeValues) {
         anims.forEach { it.snapTo(0f) }
         safeValues.forEachIndexed { idx, v ->
-            val target = (v.coerceIn(0F, 10F) / 10f)
+            val target = (v.coerceIn(0F, 100F) / 100f)
             launch {
                 delay(idx * 40L)
                 anims[idx].animateTo(

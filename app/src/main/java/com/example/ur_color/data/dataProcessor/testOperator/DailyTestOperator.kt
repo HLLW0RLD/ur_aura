@@ -36,7 +36,7 @@ object DailyTestOperator {
 
             val avgDelta = list.sum().toFloat()
 
-            val newValue = (oldValue + avgDelta).coerceIn(1f, 10f)
+            val newValue = (oldValue + avgDelta).coerceIn(1f, 100f)
 
             updated = updateUserValue(updated, type, newValue)
             logDebug("type $type oldValue ${oldValue}")
@@ -73,7 +73,7 @@ object DailyTestOperator {
         value: Float,
         maxSize: Int = 10
     ): List<Float> {
-        val newList = oldVector + value.coerceIn(1f, 10f)
+        val newList = oldVector + value.coerceIn(1f, 100f)
         val result = if (newList.size > maxSize) newList.takeLast(maxSize) else newList
         return result
     }

@@ -11,7 +11,6 @@ import com.example.ur_color.data.dataProcessor.testOperator.DailyTestOperator
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.repo.UserRepository
-import com.example.ur_color.utils.logDebug
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -50,7 +49,8 @@ class DailyTestViewModel(
         viewModelScope.launch {
             val data = _user.value ?: return@launch
             DailyTestOperator.applyDailyResult(context, data, _aura.value)
-            PersonalDataManager.level(context, 0.2f)
+            PersonalDataManager.updateLevel(context, 0.2f)
+            // дать ачивку за первый тест
         }
     }
 }

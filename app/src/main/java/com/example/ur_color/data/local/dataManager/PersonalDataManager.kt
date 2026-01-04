@@ -42,13 +42,21 @@ object PersonalDataManager {
         return UserStorage.loadDailyTestDate(context)
     }
 
-    suspend fun level(context: Context, lvl: Float = 0.1f) {
+    suspend fun updateLevel(context: Context, lvl: Float = 0.1f) {
         try {
             val level = UserStorage.loadLvl(context)?.toFloat() ?: 1f
             UserStorage.saveLvl(context, level + lvl)
         } catch (e: Exception) {
             logError(e.message)
         }
+    }
+
+    suspend fun setAchievement(context: Context, achievement: String) {
+        UserStorage.saveAchievementId(context, achievement)
+    }
+
+    suspend fun getAchievements(context: Context): List<String>? {
+        return UserStorage.loadAchievements(context)
     }
 
     suspend fun delete(context: Context) {

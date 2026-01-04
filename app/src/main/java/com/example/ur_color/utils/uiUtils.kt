@@ -45,6 +45,10 @@ interface TwoColumnScope {
     fun item(content: @Composable () -> Unit)
 }
 
+
+
+ /* ---- MOC DATA FOR UI ---- */
+
 val animPic = listOf(
     R.drawable.illusion,
     R.drawable.magic_sparkles,

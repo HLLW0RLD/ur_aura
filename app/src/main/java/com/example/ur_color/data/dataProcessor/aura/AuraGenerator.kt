@@ -37,11 +37,4 @@ object AuraGenerator {
 
         return AuraLayer.overlay(base, listOf(vectorLayer, particleLayer))
     }
-
-//    fun generateFullAura(user: UserData, width: Int = 1080, height: Int = 1080): Bitmap {
-//        val base = generateBaseAura(user, width, height)
-//        val extended = applyExtendedAura(base, user)
-//        val dynamic = applyDynamicAura(extended, user)
-//        return dynamic
-//    }
 }

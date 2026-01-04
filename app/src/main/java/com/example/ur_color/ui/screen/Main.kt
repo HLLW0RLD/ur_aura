@@ -275,7 +275,7 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.size(16.dp))
 
-                val metrics = listOf(
+                val vectorMetrics = listOf(
                     user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
                     user?.characteristics?.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
                     user?.characteristics?.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
@@ -291,6 +291,24 @@ fun MainScreen(
                     user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
                     user?.characteristics?.anxietyVector to stringResource(R.string.metric_anxiety),
                     user?.characteristics?.fatigueVector to stringResource(R.string.metric_fatigue),
+                )
+
+                val metrics = listOf(
+                    user?.characteristics?.energy,
+                    user?.characteristics?.physicalEnergy,
+                    user?.characteristics?.sleepQuality,
+
+                    user?.characteristics?.mood,
+                    user?.characteristics?.motivation,
+                    user?.characteristics?.focus,
+
+                    user?.characteristics?.charisma,
+                    user?.characteristics?.socialEnergy,
+                    user?.characteristics?.communication,
+
+                    user?.characteristics?.stress,
+                    user?.characteristics?.anxiety,
+                    user?.characteristics?.fatigue,
                 )
 
                 Column(
@@ -312,10 +330,10 @@ fun MainScreen(
                         item { Spacer(modifier = Modifier.width(0.dp)) }
 
                         items(
-                            count = metrics.size,
+                            count = vectorMetrics.size,
                             key = { index -> "metric_$index" }
                         ) { vector ->
-                            val metric = metrics[vector]
+                            val metric = vectorMetrics[vector]
                             val value = metric.first ?: listOf()
                             val label = metric.second
 
@@ -323,6 +341,7 @@ fun MainScreen(
 
                             ExpandableGradientGraphBox(
                                 label = label,
+                                indicator = metrics[vector] ?: 0f,
                                 values = value,
                                 vector = vector,
                                 expanded = exp,

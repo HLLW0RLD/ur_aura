@@ -217,10 +217,10 @@ fun ProfileScreen(
                             expandedTitle = stringResource(R.string.prrofile_other_info),
                             canShowFull = true,
                             expandHeight = 200f,
-                            backgroundColor = AppColors.icon,
+                            backgroundColor = AppColors.surface,
                             expandBackgroundColor = AppColors.surface,
                             borderColor = AppColors.surface,
-                            closedTitleColor = AppColors.white,
+                            closedTitleColor = AppColors.textPrimary,
                             borderWidth = 2f,
                             height = 60f,
                             modifier = Modifier

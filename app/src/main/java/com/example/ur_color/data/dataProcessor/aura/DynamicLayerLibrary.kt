@@ -9,6 +9,7 @@ import com.example.ur_color.data.model.user.UserData
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+import kotlin.random.Random
 
 object DynamicLayerLibrary {
 
@@ -33,6 +34,7 @@ object DynamicLayerLibrary {
         val rnd = AuraUtils.seededRandom(user.auraSeed + 7777)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
 
+        // Фрактальное расположение частиц (Mandelbrot/Julia разброс)
         val count = (30 + user.characteristics.physicalEnergy * 5 + user.characteristics.socialEnergy * 5).toInt()
         repeat(count) { i ->
             val x = rnd.nextFloat() * width
@@ -50,6 +52,7 @@ object DynamicLayerLibrary {
     private fun drawEnergyRings(canvas: Canvas, cx: Float, cy: Float, maxR: Float, vector: List<Float>, user: UserData) {
         val count = vector.size.coerceAtLeast(1)
         val step = maxR / (count + 1)
+
         vector.forEachIndexed { idx, v ->
             val normalized = v.coerceIn(0f, 10f) / 10f
             val r = step * (idx + 1)
@@ -69,6 +72,7 @@ object DynamicLayerLibrary {
     private fun drawMoodWaves(canvas: Canvas, vector: List<Float>, user: UserData, offsetY: Float) {
         if (vector.isEmpty()) return
         val width = canvas.width
+
         for (layer in 0 until 3) {
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 style = Paint.Style.STROKE
@@ -76,8 +80,10 @@ object DynamicLayerLibrary {
                 color = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, layer)
                 alpha = (60 + (100 / (layer + 1))).coerceAtMost(220)
             }
+
             val path = Path()
             val step = width.toFloat() / (vector.size - 1).coerceAtLeast(1)
+
             vector.forEachIndexed { i, v ->
                 val x = i * step
                 val normal = v.coerceIn(0f, 10f) / 10f

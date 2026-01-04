@@ -2,10 +2,9 @@ package com.example.ur_color.data.dataProcessor.aura
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.LinearGradient
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.Shader
 import com.example.ur_color.data.model.user.UserData
 import kotlin.math.cos
 import kotlin.math.min
@@ -24,15 +23,8 @@ object PatternLibrary {
         val primary = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
         val secondary = AuraUtils.adjustAlpha(primary, 0.6f)
 
-        val shader = LinearGradient(
-            0f, 0f, width.toFloat(), height.toFloat(),
-            intArrayOf(primary, secondary),
-            null,
-            Shader.TileMode.CLAMP
-        )
-
-        val paint = Paint().apply { this.shader = shader }
-        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+        // Фрактальный градиент вместо линейного
+        drawFractalGradient(canvas, width, height, primary, secondary, user)
 
         return bmp
     }
@@ -42,7 +34,9 @@ object PatternLibrary {
         val canvas = Canvas(bmp)
         val rnd = AuraUtils.seededRandom(user.auraSeed)
         val chosen = ShapeType.values()[rnd.nextInt(ShapeType.values().size)]
-        drawPatternChoice(canvas, chosen, width, height, user, rnd)
+
+        // Все фигуры теперь рисуются фрактально
+        drawFractalPattern(canvas, chosen, width, height, user, rnd)
         return bmp
     }
 
@@ -56,7 +50,8 @@ object PatternLibrary {
             "artist" -> ShapeType.PETAL
             else -> ShapeType.RINGS
         }
-        drawPatternChoice(canvas, chosen, width, height, user, rnd, intensity = 0.6f)
+
+        drawFractalPattern(canvas, chosen, width, height, user, rnd, intensity = 0.6f)
         return bmp
     }
 
@@ -73,18 +68,31 @@ object PatternLibrary {
 
         val cx = width / 2f
         val cy = height / 2f
+
+        // Фрактальное расположение символов
         repeat(8) { i ->
-            val a = 2 * Math.PI * i / 8
-            val r = min(width, height) * (0.18f + rnd.nextFloat() * 0.12f)
-            val x = cx + cos(a) * r
-            val y = cy + sin(a) * r
-            canvas.drawCircle(x.toFloat(), y.toFloat(), 6f + rnd.nextFloat() * 8f, paint)
+            // Используем углы золотого сечения для более естественного распределения
+            val goldenAngle = 2.399963 * i // 137.508 градусов в радианах
+            val r = min(width, height) * (0.15f + perlinNoise(i * 0.1f, 0f, user.auraSeed) * 0.1f)
+
+            val x = cx + cos(goldenAngle) * r
+            val y = cy + sin(goldenAngle) * r
+
+            // Размер символа зависит от фрактальной сложности
+            val size = 6f + mandelbrotIterations(
+                x.toDouble() / width * 2 - 1,
+                y.toDouble() / height * 2 - 1,
+                30
+            ).toFloat() / 30f * 8f
+
+            canvas.drawCircle(x.toFloat(), y.toFloat(), size, paint)
         }
 
         return bmp
     }
 
-    private fun drawPatternChoice(
+    // Основная функция рисования фрактальных паттернов
+    private fun drawFractalPattern(
         canvas: Canvas,
         shape: ShapeType,
         width: Int,
@@ -97,122 +105,406 @@ object PatternLibrary {
         val cy = height / 2f
         val baseColor = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
 
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            color = baseColor
-            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
-            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
-        }
-
         when (shape) {
             ShapeType.CIRCLE -> {
                 val rings = 3 + user.characteristics.energy.toInt() / 2
                 for (i in 0 until rings) {
                     val r = min(width, height) * (0.12f + i * 0.06f)
-                    canvas.drawCircle(cx, cy, r, paint)
+                    // Фрактальные круги
+                    drawFractalRing(canvas, cx, cy, r, baseColor, user, intensity)
                 }
             }
             ShapeType.POLYGON, ShapeType.HEXAGON -> {
                 val sides = if (shape == ShapeType.HEXAGON) 6 else (3 + user.characteristics.charisma.toInt() / 3)
                 val layers = 2 + user.characteristics.energy.toInt() / 3
                 for (l in 0 until layers) {
-                    drawPolygon(canvas, cx.toDouble(), cy.toDouble(), sides, (60 + l * 20).toFloat() * intensity, paint)
+                    // Фрактальные многоугольники
+                    drawFractalPolygon(canvas, cx, cy, sides, (60 + l * 20).toFloat() * intensity,
+                        baseColor, user, intensity)
                 }
             }
-            ShapeType.STAR -> drawStar(canvas, cx.toDouble(), cy.toDouble(), 5 + user.characteristics.charisma.toInt() / 4, paint)
-            ShapeType.SPIRAL -> drawSpiral(canvas, cx.toDouble(), cy.toDouble(), (2 + user.characteristics.energy.toInt() / 2), paint)
-            ShapeType.PETAL -> drawPetal(canvas, cx.toDouble(), cy.toDouble(), 6 + user.characteristics.charisma.toInt() / 3, 80f * intensity, paint)
-            ShapeType.WAVE -> drawWave(canvas, cx.toDouble(), cy.toDouble(), 20 + user.characteristics.energy.toInt() * 3, min(width, height).toFloat() * 0.8f, paint)
-            ShapeType.CROSS -> drawCross(canvas, cx.toDouble(), cy.toDouble(), 40f + user.characteristics.energy.toInt() * 5, paint)
-            ShapeType.RINGS -> for (i in 0 until 5) {
-                val rr = 40f + i * 60f + rnd.nextFloat() * 30f
-                canvas.drawCircle(cx, cy, rr, paint)
+            ShapeType.STAR -> {
+                // Фрактальная звезда
+                drawFractalStar(canvas, cx, cy, 5 + user.characteristics.charisma.toInt() / 4,
+                    baseColor, user, intensity)
+            }
+            ShapeType.SPIRAL -> {
+                // Улучшенная фрактальная спираль
+                drawFractalSpiral(canvas, cx, cy, (2 + user.characteristics.energy.toInt() / 2),
+                    baseColor, user, intensity)
+            }
+            ShapeType.PETAL -> {
+                // Фрактальные лепестки
+                drawFractalPetal(canvas, cx, cy, 6 + user.characteristics.charisma.toInt() / 3,
+                    80f * intensity, baseColor, user, intensity)
+            }
+            ShapeType.WAVE -> {
+                // Фрактальные волны
+                drawFractalWave(canvas, cx, cy, 20 + user.characteristics.energy.toInt() * 3,
+                    min(width, height).toFloat() * 0.8f, baseColor, user, intensity)
+            }
+            ShapeType.CROSS -> {
+                // Фрактальный крест
+                drawFractalCross(canvas, cx, cy, 40f + user.characteristics.energy.toInt() * 5,
+                    baseColor, user, intensity)
+            }
+            ShapeType.RINGS -> {
+                for (i in 0 until 5) {
+                    val rr = 40f + i * 60f + rnd.nextFloat() * 30f
+                    drawFractalRing(canvas, cx, cy, rr, baseColor, user, intensity)
+                }
             }
             ShapeType.DOTS -> {
-                val count = 50 + user.characteristics.energy.toInt() * 10
-                val p = Paint(paint).apply { style = Paint.Style.FILL }
-                repeat(count) {
-                    val x = rnd.nextFloat() * width
-                    val y = rnd.nextFloat() * height
-                    canvas.drawCircle(x, y, 2f + rnd.nextFloat() * 6f, p)
-                }
+                // Фрактальное распределение точек (Julia set)
+                drawFractalDots(canvas, width, height, user, intensity)
             }
         }
     }
 
-    // --- вспомогательные функции для отрисовки ---
-    private fun drawPolygon(canvas: Canvas, cx: Double, cy: Double, sides: Int, r: Float, paint: Paint) {
-        if (sides < 3) return
+    // --- Фрактальные версии вспомогательных функций ---
+    private fun drawFractalRing(canvas: Canvas, cx: Float, cy: Float, radius: Float,
+                                baseColor: Int, user: UserData, intensity: Float) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
+        // Вместо обычного круга - фрактальный контур
+        val points = 200 + (user.characteristics.focus * 20).toInt()
+
         val path = Path()
-        for (i in 0 until sides) {
-            val angle = 2 * Math.PI * i / sides
-            val x = cx + r * cos(angle)
-            val y = cy + r * sin(angle)
-            if (i == 0) path.moveTo(x.toFloat(), y.toFloat()) else path.lineTo(x.toFloat(), y.toFloat())
+        for (i in 0..points) {
+            val angle = 2 * Math.PI * i / points
+
+            // Фрактальная вариация радиуса
+            val fractalVar = mandelbrotIterations(
+                cos(angle) * 0.2,
+                sin(angle) * 0.2,
+                50
+            ).toFloat() / 50f * (radius * 0.08f * intensity)
+
+            val r = radius + fractalVar
+            val x = cx + cos(angle).toFloat() * r
+            val y = cy + sin(angle).toFloat() * r
+
+            if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
         }
         path.close()
         canvas.drawPath(path, paint)
     }
 
-    private fun drawStar(canvas: Canvas, cx: Double, cy: Double, points: Int, paint: Paint) {
-        if (points < 2) return
+    private fun drawFractalPolygon(canvas: Canvas, cx: Float, cy: Float, sides: Int,
+                                   radius: Float, baseColor: Int, user: UserData, intensity: Float) {
+        if (sides < 3) return
+
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
         val path = Path()
-        val outerR = 40.0
-        val innerR = 20.0
-        for (i in 0 until points * 2) {
+        for (i in 0..sides) {
+            val angle = 2 * Math.PI * i / sides
+
+            // Фрактальное смещение каждой вершины
+            val fractalVarX = perlinNoise(cos(angle).toFloat(), sin(angle).toFloat(), user.auraSeed + i) *
+                    radius * 0.1f * intensity
+            val fractalVarY = perlinNoise(sin(angle).toFloat(), cos(angle).toFloat(), user.auraSeed + i + 1000) *
+                    radius * 0.1f * intensity
+
+            val x = cx + (cos(angle).toFloat() * radius) + fractalVarX
+            val y = cy + (sin(angle).toFloat() * radius) + fractalVarY
+
+            if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        }
+        path.close()
+        canvas.drawPath(path, paint)
+    }
+
+    private fun drawFractalStar(
+        canvas: Canvas, cx: Float, cy: Float, points: Int,
+        baseColor: Int, user: UserData, intensity: Float
+    ) {
+        if (points < 2) return
+
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
+        val path = Path()
+        val outerR = 40.0 * intensity
+        val innerR = 20.0 * intensity
+
+        for (i in 0..points * 2) {
             val r = if (i % 2 == 0) outerR else innerR
             val angle = Math.PI * i / points
-            val x = cx + r * cos(angle)
-            val y = cy + r * sin(angle)
+
+            // Фрактальное смещение точек звезды
+            val iterations = mandelbrotIterations(
+                cos(angle) * 0.3,
+                sin(angle) * 0.3,
+                30
+            )
+            val fractalVar = iterations.toFloat() / 30f * (r * 0.15f).toFloat()
+
+            val x = cx + (r + fractalVar) * cos(angle)
+            val y = cy + (r + fractalVar) * sin(angle)
+
             if (i == 0) path.moveTo(x.toFloat(), y.toFloat()) else path.lineTo(x.toFloat(), y.toFloat())
         }
         path.close()
         canvas.drawPath(path, paint)
     }
 
-    private fun drawSpiral(canvas: Canvas, cx: Double, cy: Double, complexity: Int, paint: Paint) {
+    private fun drawFractalSpiral(
+        canvas: Canvas, cx: Float, cy: Float, complexity: Int,
+        baseColor: Int, user: UserData, intensity: Float
+    ) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
         val path = Path()
         var angle = 0.0
         val step = 0.1
-        val maxRadius = 100.0 + complexity * 20
+        val maxRadius = (100.0 + complexity * 20) * intensity
+
         while (angle < Math.PI * complexity * 2) {
-            val r = maxRadius * angle / (Math.PI * complexity * 2)
+            val baseR = maxRadius * angle / (Math.PI * complexity * 2)
+
+            // Фрактальная вариация радиуса спирали
+            val fractalVar = mandelbrotIterations(
+                cos(angle) * 0.2,
+                sin(angle) * 0.2,
+                40
+            ).toFloat() / 40f * (baseR * 0.1f).toFloat()
+
+            val r = baseR + fractalVar
             val x = cx + r * cos(angle)
             val y = cy + r * sin(angle)
+
             if (angle == 0.0) path.moveTo(x.toFloat(), y.toFloat()) else path.lineTo(x.toFloat(), y.toFloat())
             angle += step
         }
         canvas.drawPath(path, paint)
     }
 
-    private fun drawPetal(canvas: Canvas, cx: Double, cy: Double, points: Int, r: Float, paint: Paint) {
+    private fun drawFractalPetal(
+        canvas: Canvas, cx: Float, cy: Float, points: Int,
+        radius: Float, baseColor: Int, user: UserData, intensity: Float
+    ) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
         val path = Path()
-        for (i in 0 until points) {
+        for (i in 0..points) {
             val angle = 2 * Math.PI * i / points
+
+            // Фрактальная деформация лепестков
+            val fractalVar = perlinNoise(
+                cos(angle).toFloat() * 0.5f,
+                sin(angle).toFloat() * 0.5f,
+                user.auraSeed + i
+            ) * radius * 0.15f
+
+            val r = radius + fractalVar
             val x = cx + r * cos(angle)
             val y = cy + r * sin(angle)
-            if (i == 0) path.moveTo(cx.toFloat(), cy.toFloat())
-            path.quadTo(x.toFloat(), y.toFloat(), cx.toFloat(), cy.toFloat())
+
+            if (i == 0) {
+                path.moveTo(cx.toFloat(), cy.toFloat())
+                path.quadTo(x.toFloat(), y.toFloat(), cx.toFloat(), cy.toFloat())
+            } else {
+                path.quadTo(x.toFloat(), y.toFloat(), cx.toFloat(), cy.toFloat())
+            }
         }
         path.close()
         canvas.drawPath(path, paint)
     }
 
-    private fun drawWave(canvas: Canvas, cx: Double, cy: Double, amplitude: Int, length: Float, paint: Paint) {
+    private fun drawFractalWave(
+        canvas: Canvas, cx: Float, cy: Float, amplitude: Int,
+        length: Float, baseColor: Int, user: UserData, intensity: Float
+    ) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
         val path = Path()
         val width = canvas.width
-        val points = 50
+        val points = 100 + (user.characteristics.focus * 10).toInt()
+
         for (i in 0..points) {
             val x = i * width / points.toFloat()
-            val y = cy + sin(i.toDouble() * 2 * Math.PI / points) * amplitude
+
+            // Основная волна
+            val baseY = sin(i.toDouble() * 2 * Math.PI / points * 5) * amplitude
+
+            // Фрактальный шум
+            val fractalNoise = perlinNoise(x * 0.01f, 0f, user.auraSeed) * amplitude * 0.5f
+
+            val y = cy + baseY + fractalNoise
+
             if (i == 0) path.moveTo(x, y.toFloat()) else path.lineTo(x, y.toFloat())
         }
         canvas.drawPath(path, paint)
     }
 
-    private fun drawCross(canvas: Canvas, cx: Double, cy: Double, r: Float, paint: Paint) {
-        canvas.drawLine((cx - r).toFloat(), cy.toFloat(), (cx + r).toFloat(), cy.toFloat(), paint)
-        canvas.drawLine(cx.toFloat(), (cy - r).toFloat(), cx.toFloat(), (cy + r).toFloat(), paint)
+    private fun drawFractalCross(
+        canvas: Canvas, cx: Float, cy: Float, length: Float,
+        baseColor: Int, user: UserData, intensity: Float
+    ) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = (2f + user.characteristics.energy * 0.3f) * intensity
+            color = baseColor
+            alpha = (80 + user.characteristics.mood.toInt() * 10).coerceAtMost(230)
+        }
+
+        // Горизонтальная линия с фрактальными вариациями
+        val hPath = Path()
+        for (x in (cx - length).toInt()..(cx + length).toInt() step 5) {
+            val fractalY = perlinNoise(x.toFloat() * 0.01f, 0f, user.auraSeed) * length * 0.05f
+            val y = cy + fractalY
+
+            if (x == (cx - length).toInt()) {
+                hPath.moveTo(x.toFloat(), y.toFloat())
+            } else {
+                hPath.lineTo(x.toFloat(), y.toFloat())
+            }
+        }
+        canvas.drawPath(hPath, paint)
+
+        // Вертикальная линия с фрактальными вариациями
+        val vPath = Path()
+        for (y in (cy - length).toInt()..(cy + length).toInt() step 5) {
+            val fractalX = perlinNoise(0f, y.toFloat() * 0.01f, user.auraSeed + 1000) * length * 0.05f
+            val x = cx + fractalX
+
+            if (y == (cy - length).toInt()) {
+                vPath.moveTo(x.toFloat(), y.toFloat())
+            } else {
+                vPath.lineTo(x.toFloat(), y.toFloat())
+            }
+        }
+        canvas.drawPath(vPath, paint)
     }
 
+    private fun drawFractalDots(canvas: Canvas, width: Int, height: Int, user: UserData, intensity: Float) {
+        val count = (50 + user.characteristics.energy.toInt() * 10) * intensity.toInt()
+        val rnd = AuraUtils.seededRandom(user.auraSeed)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            color = AuraUtils.getColorFromEnum(user.characteristics.fatigueVector, 0)
+        }
+
+        // Используем фрактал Джулии для распределения точек
+        val cReal = -0.4 + user.characteristics.mood * 0.05
+        val cImag = 0.6 + user.characteristics.energy * 0.05
+
+        repeat(count) {
+            val x = rnd.nextFloat() * width
+            val y = rnd.nextFloat() * height
+
+            // Проверяем, попадает ли точка во множество Джулии
+            val iterations = juliaIterations(
+                (x / width * 3 - 1.5).toDouble(),
+                (y / height * 3 - 1.5).toDouble(),
+                cReal,
+                cImag,
+                30
+            )
+
+            if (iterations < 30) {
+                paint.alpha = (30 + iterations * 7).coerceAtMost(200)
+                val size = 2f + (iterations.toFloat() / 30f) * 6f * intensity
+                canvas.drawCircle(x, y, size, paint)
+            }
+        }
+    }
+
+    private fun drawFractalGradient(canvas: Canvas, width: Int, height: Int,
+                                    color1: Int, color2: Int, user: UserData) {
+        val paint = Paint()
+
+        // Фрактальное заполнение пикселей
+        for (y in 0 until height step 2) {
+            for (x in 0 until width step 2) {
+                // Используем фрактальную функцию для определения цвета
+                val iterations = mandelbrotIterations(
+                    (x.toDouble() / width * 3 - 2.0),
+                    (y.toDouble() / height * 3 - 1.5),
+                    100
+                )
+
+                val interp = if (iterations < 100) {
+                    iterations.toFloat() / 100f
+                } else {
+                    val noise = perlinNoise(x * 0.01f, y * 0.01f, user.auraSeed)
+                    (noise + 1) / 2
+                }
+
+                val r = Color.red(color1) + (Color.red(color2) - Color.red(color1)) * interp
+                val g = Color.green(color1) + (Color.green(color2) - Color.green(color1)) * interp
+                val b = Color.blue(color1) + (Color.blue(color2) - Color.blue(color1)) * interp
+
+                paint.color = Color.rgb(r.toInt(), g.toInt(), b.toInt())
+                canvas.drawRect(x.toFloat(), y.toFloat(),
+                    (x + 2).toFloat(), (y + 2).toFloat(), paint)
+            }
+        }
+    }
+
+    // Вспомогательные фрактальные функции (добавляем в этот же объект)
+    private fun mandelbrotIterations(cr: Double, ci: Double, maxIter: Int): Int {
+        var zr = 0.0
+        var zi = 0.0
+        var i = 0
+
+        while (i < maxIter && zr * zr + zi * zi < 4.0) {
+            val temp = zr * zr - zi * zi + cr
+            zi = 2 * zr * zi + ci
+            zr = temp
+            i++
+        }
+
+        return i
+    }
+
+    private fun juliaIterations(zr: Double, zi: Double, cr: Double, ci: Double, maxIter: Int): Int {
+        var zr = zr
+        var zi = zi
+        var i = 0
+
+        while (i < maxIter && zr * zr + zi * zi < 4.0) {
+            val temp = zr * zr - zi * zi + cr
+            zi = 2 * zr * zi + ci
+            zr = temp
+            i++
+        }
+
+        return i
+    }
+
+    private fun perlinNoise(x: Float, y: Float, seed: Long): Float {
+        val rnd = Random(seed + (x * 1000).toLong() + (y * 1000).toLong())
+        return rnd.nextFloat() * 2 - 1
+    }
 }

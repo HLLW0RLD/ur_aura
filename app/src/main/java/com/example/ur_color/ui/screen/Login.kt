@@ -234,7 +234,7 @@ fun LoginScreen(
                         )
 
                         loginViewModel.saveUser(context, user) {
-                            navController.nav(Main)
+                            navController.nav(TabsHost)
                         }
                     }
                 }

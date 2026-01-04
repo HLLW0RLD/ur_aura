@@ -74,18 +74,6 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = startRoute!!.route()
                         ) {
-
-                            // перемещение в основном по табам, но можно и через стандартную навигацию
-                            animatedScreenComposable<Main>(
-                                navController = navController,
-                            ) { Main(it) }
-                            animatedScreenComposable<Profile>(
-                                navController = navController,
-                            ) { Profile(it) }
-                            animatedScreenComposable<Lab>(
-                                navController = navController,
-                            ) { Lab(it) }
-
                             // хост экран для табов
                             animatedScreenComposable<TabsHost>(navController) {
                                 TabsHostScreen()

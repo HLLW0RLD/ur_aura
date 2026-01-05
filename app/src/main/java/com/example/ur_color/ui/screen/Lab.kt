@@ -28,7 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.ur_color.R
 import com.example.ur_color.data.model.AuraItem
 import com.example.ur_color.data.model.AuraItemType
@@ -81,7 +83,7 @@ fun LabScreen(
         modifier = modifier
             .fillMaxSize(),
         contentPadding = PaddingValues(vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(auraSectionsState) { section ->
             Column(
@@ -189,7 +191,9 @@ fun SectionHeader(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            style = MaterialTheme.typography.labelMedium,
             color = AppColors.textPrimary
         )
         TextButton(
@@ -197,9 +201,8 @@ fun SectionHeader(
             modifier = Modifier.padding(end = 8.dp)
         ) {
             Text(
-                text = "lab_more",
+                text = stringResource(R.string.show_more),
                 color = AppColors.accentPrimary,
-                style = MaterialTheme.typography.labelMedium
             )
         }
     }

@@ -223,7 +223,7 @@ fun ProfileScreen(
                             borderColor = AppColors.surface,
                             closedTitleColor = AppColors.textPrimary,
                             borderWidth = 2f,
-                            height = 60f,
+                            height = 80f,
                             modifier = Modifier
                                 .padding(8.dp),
                         ) {

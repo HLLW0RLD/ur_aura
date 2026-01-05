@@ -90,4 +90,5 @@
     <string name="user_lvl_header">, %1$d уровень</string>
     <string name="profile_more">Больше</string>
     <string name="prrofile_other_info">Другая информация</string>
+    <string name="show_more">Больше</string>
 </resources>

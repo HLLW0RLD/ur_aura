@@ -314,7 +314,7 @@ val profileCards = listOf(
 
 val auraSections = listOf(
     AuraSection(
-        sectionTitle = "psychology_section_title",
+        sectionTitle = "Психология",
         rowConfig = AuraRowConfig(
             color = AuraColors.BURGUNDY,
             topIconRes = R.drawable.illusion,
@@ -337,34 +337,11 @@ val auraSections = listOf(
     ),
 
     AuraSection(
-        sectionTitle = "esoterics_section_title",
-        rowConfig = AuraRowConfig(
-            color = AuraColors.INDIGO,
-            topIconRes = R.drawable.magic_potion,
-            bottomIconRes = R.drawable.magic_sparkles
-        ),
-        items = listOf(
-            AuraItem(
-                id = "compatibility_names",
-                type = AuraItemType.COMPATIBILITY,
-                title = "Совместимость \nПо именам",
-                description = "По именам"
-            ),
-            AuraItem(
-                id = "compatibility_dates",
-                type = AuraItemType.COMPATIBILITY,
-                title = "Совместимость \nПо датам",
-                description = "По датам рождения"
-            )
-        )
-    ),
-
-    AuraSection(
-        sectionTitle = "esoterics_section_title",
+        sectionTitle = "Гороскоп",
         rowConfig = AuraRowConfig(
             color = AuraColors.BLUE,
             topIconRes = R.drawable.ball_crystal,
-            bottomIconRes = R.drawable.candle
+            bottomIconRes = R.drawable.ball_crystal
         ),
         items = listOf(
             AuraItem(
@@ -383,7 +360,30 @@ val auraSections = listOf(
     ),
 
     AuraSection(
-        sectionTitle = "esoterics_section_title",
+        sectionTitle = "Совместимость",
+        rowConfig = AuraRowConfig(
+            color = AuraColors.INDIGO,
+            topIconRes = R.drawable.magic_sparkles,
+            bottomIconRes = R.drawable.magic_potion
+        ),
+        items = listOf(
+            AuraItem(
+                id = "compatibility_names",
+                type = AuraItemType.COMPATIBILITY,
+                title = "Совместимость \nПо именам",
+                description = "По именам"
+            ),
+            AuraItem(
+                id = "compatibility_dates",
+                type = AuraItemType.COMPATIBILITY,
+                title = "Совместимость \nПо датам",
+                description = "По датам рождения"
+            )
+        )
+    ),
+
+    AuraSection(
+        sectionTitle = "Изотерика",
         rowConfig = AuraRowConfig(
             color = AuraColors.PLUM,
             topIconRes = R.drawable.witch_hat,
@@ -406,11 +406,11 @@ val auraSections = listOf(
     ),
 
     AuraSection(
-        sectionTitle = "courses_section_title",
+        sectionTitle = "Курсы",
         rowConfig = AuraRowConfig(
             color = AuraColors.GOLD,
             topIconRes = R.drawable.cauldron_potion,
-            bottomIconRes = R.drawable.magic_stick_sparckles
+            bottomIconRes = R.drawable.cauldron_potion
         ),
         items = listOf(
             AuraItem(
@@ -438,5 +438,5 @@ val auraSections = listOf(
                 description = "Числа судьбы"
             )
         )
-    )
+    ),
 )

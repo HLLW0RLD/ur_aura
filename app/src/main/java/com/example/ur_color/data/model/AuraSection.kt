@@ -17,8 +17,9 @@ data class AuraItem(
 
 data class AuraRowConfig(
     val color: AuraColors,  // или строка типа "#4B0082"
-    val topIconRes: Int,    // здесь ссылка для AsyncImage
-    val bottomIconRes: Int  // здесь ссылка для AsyncImage
+    val topIconRes: Int?,    // здесь ссылка для AsyncImage
+    val bottomIconRes: Int?, // здесь ссылка для AsyncImage
+    val centerIconRes: Int?  // здесь ссылка для AsyncImage
 )
 
 enum class AuraItemType {

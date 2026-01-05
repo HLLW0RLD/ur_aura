@@ -1104,8 +1104,10 @@ fun ExpandableFloatingBox(
     closedTitleColor: Color = AppColors.textPrimary,
     topIcon: Painter? = null,
     bottomIcon: Painter? = null,
+    centerIcon: Painter? = null,
     topIconColor: Color = AppColors.accentPrimary,
     bottomIconColor: Color = AppColors.accentPrimary,
+    centerIconColor: Color = AppColors.accentPrimary,
     borderWidth: Float = 0f,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
@@ -1237,6 +1239,18 @@ fun ExpandableFloatingBox(
                             .align(Alignment.BottomEnd)
                             .size(250.dp)
                             .offset(100.dp, 80.dp)
+//                                        .padding(bottom = 36.dp)
+                    )
+                }
+
+                if (centerIcon != null) {
+                    Icon(
+                        painter = centerIcon,
+                        contentDescription = "Active dot",
+                        tint = centerIconColor.copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(300.dp)
 //                                        .padding(bottom = 36.dp)
                     )
                 }

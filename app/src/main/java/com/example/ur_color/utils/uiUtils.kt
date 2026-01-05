@@ -318,6 +318,7 @@ val auraSections = listOf(
         rowConfig = AuraRowConfig(
             color = AuraColors.BURGUNDY,
             topIconRes = R.drawable.illusion,
+            centerIconRes = null,
             bottomIconRes = R.drawable.card_trick
         ),
         items = listOf(
@@ -341,6 +342,7 @@ val auraSections = listOf(
         rowConfig = AuraRowConfig(
             color = AuraColors.BLUE,
             topIconRes = R.drawable.ball_crystal,
+            centerIconRes = R.drawable.ball_crystal,
             bottomIconRes = R.drawable.ball_crystal
         ),
         items = listOf(
@@ -363,8 +365,9 @@ val auraSections = listOf(
         sectionTitle = "Совместимость",
         rowConfig = AuraRowConfig(
             color = AuraColors.INDIGO,
-            topIconRes = R.drawable.magic_sparkles,
-            bottomIconRes = R.drawable.magic_potion
+            topIconRes = null,
+            centerIconRes = R.drawable.magic_potion,
+            bottomIconRes = null
         ),
         items = listOf(
             AuraItem(
@@ -386,7 +389,8 @@ val auraSections = listOf(
         sectionTitle = "Изотерика",
         rowConfig = AuraRowConfig(
             color = AuraColors.PLUM,
-            topIconRes = R.drawable.witch_hat,
+            topIconRes = R.drawable.magic_hat,
+            centerIconRes = R.drawable.magic_hat,
             bottomIconRes = R.drawable.magic_hat
         ),
         items = listOf(
@@ -410,6 +414,7 @@ val auraSections = listOf(
         rowConfig = AuraRowConfig(
             color = AuraColors.GOLD,
             topIconRes = R.drawable.cauldron_potion,
+            centerIconRes = null,
             bottomIconRes = R.drawable.cauldron_potion
         ),
         items = listOf(

@@ -166,8 +166,9 @@ fun AuraExpandableRow(
                     expandWidth = 350f,
                     topIconColor = config.color.toColor(),
                     bottomIconColor = config.color.toColor(),
-                    topIcon = painterResource(config.topIconRes),
-                    bottomIcon = painterResource(config.bottomIconRes),
+                    topIcon = if (config.topIconRes != null) painterResource(config.topIconRes) else null,
+                    centerIcon = if (config.centerIconRes != null) painterResource(config.centerIconRes) else null,
+                    bottomIcon = if (config.bottomIconRes != null) painterResource(config.bottomIconRes) else null,
 
                     onConfirm = { onConfirm(i.type) }
                 ) {

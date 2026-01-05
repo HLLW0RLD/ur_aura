@@ -21,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +40,6 @@ import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.ui.theme.toColor
 import com.example.ur_color.utils.LocalNavController
-import com.example.ur_color.utils.auraSections
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,13 +75,15 @@ fun LabScreen(
 ) {
     val navController = LocalNavController.current
 
+    val auraSectionsState by labViewModel.auraSectionsState.collectAsState()
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize(),
         contentPadding = PaddingValues(vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        items(auraSections) { section ->
+        items(auraSectionsState) { section ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,6 +107,7 @@ fun LabScreen(
                             и парсим для экрана вместе AuraRowConfig(не пприходят с сервера)
                             по клику мы переходим на экран-контеййнер соответствующийй типу контента и запрашиваем его по айди контента(теста, совместимости )
 
+                            ежедднневные тесты не будут приходить если они пройдены
                             */
 
                             AuraItemType.PSYCHOLOGY_TEST ->

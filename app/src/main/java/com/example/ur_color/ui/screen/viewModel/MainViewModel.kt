@@ -3,11 +3,16 @@ package com.example.ur_color.ui.screen.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
+import com.example.ur_color.data.model.AuraSection
 import com.example.ur_color.data.model.Horoscope
+import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.repo.HoroscopeDate
 import com.example.ur_color.data.repo.HoroscopeRepository
+import com.example.ur_color.utils.auraSections
+import com.example.ur_color.utils.feedCards
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -23,6 +28,10 @@ class MainViewModel(
 
     private val _horoscopeState = MutableStateFlow<HoroscopeUiState>(HoroscopeUiState.Loading)
     val horoscopeState: StateFlow<HoroscopeUiState> = _horoscopeState
+
+    private val _feedCardsState = MutableStateFlow<List<SocialContent>>(feedCards)
+    val feedCardsState = _feedCardsState.asStateFlow()
+
 
     fun loadDailyHoroscope(sign: String, day: HoroscopeDate = HoroscopeDate.TODAY) {
         _horoscopeState.value = HoroscopeUiState.Loading

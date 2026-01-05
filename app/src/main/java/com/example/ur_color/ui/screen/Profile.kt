@@ -36,7 +36,6 @@ import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.ui.theme.toColor
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.animPic
-import com.example.ur_color.utils.profileCards
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,6 +73,8 @@ fun ProfileScreen(
 
     val level by profileViewModel.level.collectAsState()
     val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
+    val profileCardsState by profileViewModel.profileCardsState.collectAsState()
+
     val color = AppColors.backgroundDark
 
     LaunchedEffect(Unit) {
@@ -269,7 +270,7 @@ fun ProfileScreen(
                                     .copy(alpha = 0.2f)
                             )
                     ) {
-                        profileCards.forEach {
+                        profileCardsState.forEach {
                             FeedContentCard(
                                 modifier = Modifier
 //                                .heightIn(max = 400.dp)

@@ -118,7 +118,9 @@ fun MainScreen(
 
     var motivated by remember { mutableStateOf<String?>(null) }
     var card by remember { mutableStateOf<Card?>(null) }
+
     val horoscopeState by mainViewModel.horoscopeState.collectAsState()
+    val feedCardsState by mainViewModel.feedCardsState.collectAsState()
 
     LaunchedEffect(Unit) {
         mainViewModel.loadDailyHoroscope(sign = zodiacSign.value)
@@ -509,7 +511,7 @@ fun MainScreen(
                         )
                         .padding(vertical = 16.dp)
                 ) {
-                    feedCards.forEach {
+                    feedCardsState.forEach {
                         FeedContentCard(
                             modifier = Modifier
 //                                .heightIn(max = 400.dp)

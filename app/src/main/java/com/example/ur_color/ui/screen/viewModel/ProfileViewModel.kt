@@ -9,6 +9,7 @@ import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.repo.UserRepository
+import com.example.ur_color.utils.profileCards
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,9 @@ class ProfileViewModel(
 
     private val _isDailyTestAvailable = MutableStateFlow(true)
     val isDailyTestAvailable = _isDailyTestAvailable.asStateFlow()
+
+    private val _profileCardsState = MutableStateFlow(profileCards)
+    val profileCardsState = _profileCardsState.asStateFlow()
 
     private val _user = MutableStateFlow<UserData?>(null)
     val user = _user

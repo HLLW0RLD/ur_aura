@@ -28,16 +28,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ur_color.R
@@ -55,26 +62,68 @@ fun TabsHostScreen() {
         mutableStateOf(RootTab.MAIN)
     }
     val bottomBarState = remember { BottomBarState() }
+    val scrollThreshold = 24f
+    var accumulatedScroll by remember { mutableFloatStateOf(0f) }
 
     Box(Modifier.fillMaxSize()) {
 
-        AnimatedContent(
-            targetState = currentTab,
-            transitionSpec = {
-                if (targetState.index > initialState.index) {
-                    slideInHorizontally { it } togetherWith
-                            slideOutHorizontally { -it }
-                } else {
-                    slideInHorizontally { -it } togetherWith
-                            slideOutHorizontally { it }
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    if (source != NestedScrollSource.Drag) return Offset.Zero
+                    accumulatedScroll += available.y
+
+                    when {
+                        accumulatedScroll > scrollThreshold &&
+                                !bottomBarState.visible -> {
+                            bottomBarState.visible = true
+                            accumulatedScroll = 0f
+                        }
+
+                        accumulatedScroll < -scrollThreshold &&
+                                bottomBarState.visible -> {
+                            bottomBarState.visible = false
+                            accumulatedScroll = 0f
+                        }
+                    }
+
+                    return Offset.Zero
                 }
-            },
-            label = "Tabs"
-        ) { tab ->
-            when (tab) {
-                RootTab.MAIN -> Main(Main)
-                RootTab.LAB -> Lab(Lab)
-                RootTab.PROFILE -> Profile(Profile())
+
+                override suspend fun onPostFling(
+                    consumed: Velocity,
+                    available: Velocity
+                ): Velocity {
+                    // сбрасываем после fling
+                    accumulatedScroll = 0f
+                    return Velocity.Zero
+                }
+            }
+        }
+
+        Box(
+            Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection)
+        ) {
+            AnimatedContent(
+                targetState = currentTab,
+                transitionSpec = {
+                    if (targetState.index > initialState.index) {
+                        slideInHorizontally { it } togetherWith
+                                slideOutHorizontally { -it }
+                    } else {
+                        slideInHorizontally { -it } togetherWith
+                                slideOutHorizontally { it }
+                    }
+                },
+                label = "Tabs"
+            ) { tab ->
+                when (tab) {
+                    RootTab.MAIN -> Main(Main)
+                    RootTab.LAB -> Lab(Lab)
+                    RootTab.PROFILE -> Profile(Profile())
+                }
             }
         }
 

@@ -1102,6 +1102,10 @@ fun ExpandableFloatingBox(
     textColor: Color = AppColors.textPrimary,
     titleColor: Color = AppColors.textPrimary,
     closedTitleColor: Color = AppColors.textPrimary,
+    topIcon: Painter? = null,
+    bottomIcon: Painter? = null,
+    topIconColor: Color = AppColors.accentPrimary,
+    bottomIconColor: Color = AppColors.accentPrimary,
     borderWidth: Float = 0f,
     modifier: Modifier = Modifier,
     windowType: WindowType = WindowType.Regular,
@@ -1211,13 +1215,45 @@ fun ExpandableFloatingBox(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+                if (topIcon != null) {
+                    Icon(
+                        painter = topIcon,
+                        contentDescription = "Active dot",
+                        tint = topIconColor.copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .size(250.dp)
+                            .offset(-(100).dp, -(60).dp)
+//                                        .padding(bottom = 36.dp)
+                    )
+                }
+
+                if (bottomIcon != null) {
+                    Icon(
+                        painter = bottomIcon,
+                        contentDescription = "Active dot",
+                        tint = bottomIconColor.copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(250.dp)
+                            .offset(100.dp, 80.dp)
+//                                        .padding(bottom = 36.dp)
+                    )
+                }
+
                 Text(
                     textAlign = TextAlign.Center,
                     text = closedTitle,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    color = closedTitleColor
+                    color = closedTitleColor,
+                    modifier = Modifier
+                        .background(
+                            color = backgroundColor,
+                            shape = RoundedCornerShape(25.dp)
+                        )
+                        .padding(vertical = 6.dp, horizontal = 8.dp)
                 )
             }
         }

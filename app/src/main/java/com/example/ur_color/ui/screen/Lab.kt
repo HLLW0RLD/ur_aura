@@ -1,32 +1,46 @@
 package com.example.ur_color.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.R
+import com.example.ur_color.data.model.AuraItem
+import com.example.ur_color.data.model.AuraItemType
+import com.example.ur_color.data.model.AuraRowConfig
 import com.example.ur_color.ui.CustomAppBar
-import com.example.ur_color.ui.DynamicDoubleColumn
-import com.example.ur_color.ui.ExpandableBox
 import com.example.ur_color.ui.ExpandableFloatingBox
+import com.example.ur_color.ui.screen.viewModel.LabViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
+import com.example.ur_color.ui.theme.toColor
 import com.example.ur_color.utils.LocalNavController
+import com.example.ur_color.utils.auraSections
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 data object Lab: Screen
@@ -39,8 +53,10 @@ fun Lab(Lab: Lab) {
             val navController = LocalNavController.current
 
             CustomAppBar(
-                title = stringResource(R.string.profile_lab),
+                title = stringResource(R.string.bottom_menu_lab),
                 isCentered = true,
+                showOptions = true,
+                optionsIcon = painterResource(R.drawable.magic_stick_sparckles),
                 backgroundColor = AppColors.background,
             )
         }
@@ -53,130 +69,135 @@ fun Lab(Lab: Lab) {
 
 @Composable
 fun LabScreen(
-    modifier : Modifier = Modifier
+    modifier : Modifier = Modifier,
+    labViewModel: LabViewModel = koinViewModel()
 ) {
     val navController = LocalNavController.current
 
-    val tabTitles = listOf("Психология", "Изотерика")
-    var selectedTab by remember { mutableStateOf(0) }
-
-    val s = stringResource(R.string.profile_daily_test_done)
-
-    Column(
-        modifier = modifier.fillMaxSize()
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        TabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = AppColors.background,
-            contentColor = AppColors.accentPrimary
-        ) {
-            tabTitles.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = { Text(title) }
+        items(auraSections) { section ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(AppColors.backgroundDark.copy(alpha = 0.2f))
+            ) {
+                SectionHeader(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    title = section.sectionTitle,
+                    onMoreClick = { }
+                )
+
+                AuraExpandableRow(
+                    config = section.rowConfig,
+                    items = section.items,
+                    onConfirm = {
+                        when (it) {
+                            /*
+
+                            получаем json список AuraSection с заполненными заголовками, описанием, типом и айдишником у каждого AuraItem
+                            и парсим для экрана вместе AuraRowConfig(не пприходят с сервера)
+                            по клику мы переходим на экран-контеййнер соответствующийй типу контента и запрашиваем его по айди контента(теста, совместимости )
+
+                            */
+
+                            AuraItemType.PSYCHOLOGY_TEST ->
+                                navController.nav(DailyTest/*(PSYCHOLOGY_DAILY_TEST, "1212-asdf-234")*/)    // это общий контейнер для вопросов который принимает
+                                                                                                                     // тип и айди чтобы отправить их длля полученнния контента
+
+                            AuraItemType.COMPATIBILITY -> {
+//                                navController.nav(CompatibilityScreen)
+                            }
+
+                            AuraItemType.HOROSCOPE -> {
+//                                navController.nav(HoroscopeScreen)
+                            }
+
+                            AuraItemType.DIVINATION -> {
+//                                navController.nav(DivinationScreen)
+                            }
+
+                            AuraItemType.COURSE -> {
+//                                navController.nav(CourseListScreen)
+                            }
+                        }
+                    }
                 )
             }
         }
-        Spacer(Modifier.height(16.dp))
-        when (selectedTab) {
-            0 -> PsychologyTabContent()
-            1 -> EsotericsTabContent()
+
+        item {
+            Spacer(Modifier.size(36.dp))
         }
     }
 }
 
 @Composable
-fun PsychologyTabContent() {
-    val navController = LocalNavController.current
-
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
+fun AuraExpandableRow(
+    config: AuraRowConfig,
+    items: List<AuraItem>,
+    onConfirm: (AuraItemType) -> Unit
+) {
+    LazyRow(
+        contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        ExpandableFloatingBox(
-            closedTitle = stringResource(R.string.profile_daily_tests),
-            expandedTitle = stringResource(R.string.profile_daily_tests),
-            canShowFull = false,
-            expandHeight = 250f,
-            height = 100f,
-            onConfirm = {
-                navController.nav(DailyTest)
-//                            if (isDailyTestAvailable) {
-//                                navController.nav(DailyTest)
-//                            } else {
-//
-//                                context.toast(s)
-//                            }
+        itemsIndexed(items) { index, i ->
+            Box(
+                modifier = Modifier.width(350.dp)
+            ) {
+                ExpandableFloatingBox(
+                    closedTitle = i.title,
+                    expandedTitle = i.title,
+                    canShowFull = false,
+                    expandHeight = 250f,
+                    height = 200f,
+                    width = 250f,
+                    expandWidth = 350f,
+                    topIconColor = config.color.toColor(),
+                    bottomIconColor = config.color.toColor(),
+                    topIcon = painterResource(config.topIconRes),
+                    bottomIcon = painterResource(config.bottomIconRes),
+
+                    onConfirm = { onConfirm(i.type) }
+                ) {
+                    Text(i.description)
+                }
             }
-        ) {
-            Text(stringResource(R.string.daily_tests_description))
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        ExpandableFloatingBox(
-            closedTitle = stringResource(R.string.profile_personal_tests),
-            expandedTitle = stringResource(R.string.profile_personal_tests),
-            canShowFull = false,
-            expandHeight = 250f,
-            height = 100f,
-            onConfirm = { /* действие */ }
-        ) {
-            Text(stringResource(R.string.personal_tests_description))
         }
     }
 }
 
 @Composable
-fun EsotericsTabContent() {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
+fun SectionHeader(
+    title: String,
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        ExpandableFloatingBox(
-            closedTitle = "Совместимость",
-            expandedTitle = "Совместимость",
-            canShowFull = false,
-            expandHeight = 250f,
-            height = 100f,
-            onConfirm = { /* действие */ }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = AppColors.textPrimary
+        )
+        TextButton(
+            onClick = onMoreClick,
+            modifier = Modifier.padding(end = 8.dp)
         ) {
-            Text("Совместимость по именам")
-        }
-        Spacer(Modifier.height(16.dp))
-
-        ExpandableFloatingBox(
-            closedTitle = "Гороскоп",
-            expandedTitle = "Гороскоп",
-            canShowFull = false,
-            expandHeight = 250f,
-            height = 100f,
-            onConfirm = { /* действие */ }
-        ) {
-            Text("Расширенный гороскоп")
-        }
-        Spacer(Modifier.height(16.dp))
-
-        ExpandableFloatingBox(
-            closedTitle = "Гадания",
-            expandedTitle = "Гадания",
-            canShowFull = false,
-            expandHeight = 250f,
-            height = 100f,
-            onConfirm = { /* действие */ }
-        ) {
-            Text("Гадания по темам")
-        }
-        Spacer(Modifier.height(16.dp))
-
-        ExpandableFloatingBox(
-            closedTitle = "Магия",
-            expandedTitle = "Магия",
-            canShowFull = false,
-            expandHeight = 250f,
-            height = 100f,
-            onConfirm = { /* действие */ }
-        ) {
-            Text("Число дня")
+            Text(
+                text = "lab_more",
+                color = AppColors.accentPrimary,
+                style = MaterialTheme.typography.labelMedium
+            )
         }
     }
 }
+

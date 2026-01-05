@@ -3,9 +3,14 @@ package com.example.ur_color.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.ur_color.R
+import com.example.ur_color.data.model.AuraItem
+import com.example.ur_color.data.model.AuraItemType
+import com.example.ur_color.data.model.AuraRowConfig
+import com.example.ur_color.data.model.AuraSection
 import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.model.User
+import com.example.ur_color.ui.theme.AuraColors
 
 enum class WindowType { Slim, Regular, Full }
 
@@ -304,5 +309,134 @@ val profileCards = listOf(
         text = "Иногда образ точнее слов. Состояние можно почувствовать, но сложно объяснить.",
         author = demoUsers[0],
         image = "https://picsum.photos/seed/post03/900/600"
+    )
+)
+
+val auraSections = listOf(
+    AuraSection(
+        sectionTitle = "psychology_section_title",
+        rowConfig = AuraRowConfig(
+            color = AuraColors.BURGUNDY,
+            topIconRes = R.drawable.illusion,
+            bottomIconRes = R.drawable.card_trick
+        ),
+        items = listOf(
+            AuraItem(
+                id = "daily_tests",
+                type = AuraItemType.PSYCHOLOGY_TEST,
+                title = "Дневные тесты",
+                description = "Ежедневная диагностика состояния"
+            ),
+            AuraItem(
+                id = "personal_tests",
+                type = AuraItemType.PSYCHOLOGY_TEST,
+                title = "Персональные тесты",
+                description = "Глубокий анализ личности"
+            )
+        )
+    ),
+
+    AuraSection(
+        sectionTitle = "esoterics_section_title",
+        rowConfig = AuraRowConfig(
+            color = AuraColors.INDIGO,
+            topIconRes = R.drawable.magic_potion,
+            bottomIconRes = R.drawable.magic_sparkles
+        ),
+        items = listOf(
+            AuraItem(
+                id = "compatibility_names",
+                type = AuraItemType.COMPATIBILITY,
+                title = "Совместимость \nПо именам",
+                description = "По именам"
+            ),
+            AuraItem(
+                id = "compatibility_dates",
+                type = AuraItemType.COMPATIBILITY,
+                title = "Совместимость \nПо датам",
+                description = "По датам рождения"
+            )
+        )
+    ),
+
+    AuraSection(
+        sectionTitle = "esoterics_section_title",
+        rowConfig = AuraRowConfig(
+            color = AuraColors.BLUE,
+            topIconRes = R.drawable.ball_crystal,
+            bottomIconRes = R.drawable.candle
+        ),
+        items = listOf(
+            AuraItem(
+                id = "horoscope_extended",
+                type = AuraItemType.HOROSCOPE,
+                title = "Гороскоп\nНа неделю",
+                description = "Расширенный гороскоп"
+            ),
+            AuraItem(
+                id = "horoscope_year",
+                type = AuraItemType.HOROSCOPE,
+                title = "Гороскоп\nНа месяц",
+                description = "Расширенный гороскоп"
+            )
+        )
+    ),
+
+    AuraSection(
+        sectionTitle = "esoterics_section_title",
+        rowConfig = AuraRowConfig(
+            color = AuraColors.PLUM,
+            topIconRes = R.drawable.witch_hat,
+            bottomIconRes = R.drawable.magic_hat
+        ),
+        items = listOf(
+            AuraItem(
+                id = "divination_topics",
+                type = AuraItemType.DIVINATION,
+                title = "Гадания",
+                description = "Гадания по темам"
+            ),
+            AuraItem(
+                id = "divination_situations",
+                type = AuraItemType.DIVINATION,
+                title = "Гадания",
+                description = "Гадания по ситуациям"
+            )
+        )
+    ),
+
+    AuraSection(
+        sectionTitle = "courses_section_title",
+        rowConfig = AuraRowConfig(
+            color = AuraColors.GOLD,
+            topIconRes = R.drawable.cauldron_potion,
+            bottomIconRes = R.drawable.magic_stick_sparckles
+        ),
+        items = listOf(
+            AuraItem(
+                id = "master_classes",
+                type = AuraItemType.COURSE,
+                title = "Мастер-классы",
+                description = "Экспертные сессии"
+            ),
+            AuraItem(
+                id = "aura_base",
+                type = AuraItemType.COURSE,
+                title = "Аура: база",
+                description = "Основы работы с аурой"
+            ),
+            AuraItem(
+                id = "tarot_course",
+                type = AuraItemType.COURSE,
+                title = "Таро",
+                description = "Классическое Таро"
+            ),
+            AuraItem(
+                id = "numerology_course",
+                type = AuraItemType.COURSE,
+                title = "Нумерология",
+                description = "Числа судьбы"
+            )
+        )
     )
 )

@@ -6,6 +6,7 @@ import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.repo.UserRepository
+import com.example.ur_color.utils.logDebug
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -39,6 +40,7 @@ class EditProfileViewModel(
 
     fun update(context: Context) {
         viewModelScope.launch {
+            logDebug("about ${about.value}")
             PersonalDataManager.updateUser(context, about.value, avatar.value)
         }
     }

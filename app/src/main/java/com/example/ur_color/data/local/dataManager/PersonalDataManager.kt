@@ -6,28 +6,35 @@ import com.example.ur_color.data.local.storage.AuraStorage
 //import com.example.ur_color.data.local.HistoryStorage
 import com.example.ur_color.data.local.storage.UserStorage
 import com.example.ur_color.data.model.user.UserData
+import com.example.ur_color.utils.logDebug
 import com.example.ur_color.utils.logError
 
 object PersonalDataManager {
 
-    suspend fun updateUser(context: Context, about: String? = null, avatar: String? = null) {
+    suspend fun updateUser(
+        context: Context,
+        about: String? = null,
+        avatar: String? = null
+    ) {
         val u = UserStorage.load(context)
         when {
             about != null && avatar != null -> {
-                u?.copy(about = about, avatarUri = avatar)
-                u?.let {
+                val current = u?.copy(about = about, avatarUri = avatar)
+                current?.let {
                     UserStorage.save(context, it)
                 }
             }
             about != null -> {
-                u?.copy(about = about)
-                u?.let {
+                val current = u?.copy(about = about)
+                logDebug("manager u ${u?.about}")
+                current?.let {
+                    logDebug("manager about ${about}")
                     UserStorage.save(context, it)
                 }
             }
             avatar != null -> {
-                u?.copy(avatarUri = avatar)
-                u?.let {
+                val current = u?.copy(avatarUri = avatar)
+                current?.let {
                     UserStorage.save(context, it)
                 }
             }

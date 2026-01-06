@@ -11,7 +11,7 @@ data class UserData(
     val firstName: String,
     val lastName: String,
     val middleName: String?,
-    val about: String? = "Default about text, cant change. sorry",
+    val about: String? = null,
     val birthDate: String,
     val birthTime: String?,
     val birthPlace: String,

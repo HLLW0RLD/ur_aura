@@ -102,7 +102,7 @@ fun EditProfileScreen(
     val avatar by editProfileViewModel.avatar.collectAsState()
     val about by editProfileViewModel.about.collectAsState()
 
-    var aboutText by remember { mutableStateOf("") }
+    var aboutText by remember { mutableStateOf(about) }
 
     Column(
 
@@ -157,10 +157,11 @@ fun EditProfileScreen(
             )
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
-                value = aboutText,
+                value = aboutText ?: "",
                 onValueChange = {
-                    editProfileViewModel.setAbout(it)
-                                },
+                    aboutText = it
+                    editProfileViewModel.setAbout(aboutText ?: "")
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 120.dp),

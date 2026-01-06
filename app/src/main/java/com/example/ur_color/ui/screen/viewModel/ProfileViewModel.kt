@@ -29,10 +29,10 @@ class ProfileViewModel(
     val profileCardsState = _profileCardsState.asStateFlow()
 
     private val _user = MutableStateFlow<UserData?>(null)
-    val user = _user
+    val user = _user.asStateFlow()
 
     private val _aura = MutableStateFlow<Bitmap?>(null)
-    val aura= _aura
+    val aura= _aura.asStateFlow()
 
     private val _level = MutableStateFlow<Float>(1f)
     val level = _level

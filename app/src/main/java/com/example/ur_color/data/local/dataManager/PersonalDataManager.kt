@@ -10,6 +10,30 @@ import com.example.ur_color.utils.logError
 
 object PersonalDataManager {
 
+    suspend fun updateUser(context: Context, about: String? = null, avatar: String? = null) {
+        val u = UserStorage.load(context)
+        when {
+            about != null && avatar != null -> {
+                u?.copy(about = about, avatarUri = avatar)
+                u?.let {
+                    UserStorage.save(context, it)
+                }
+            }
+            about != null -> {
+                u?.copy(about = about)
+                u?.let {
+                    UserStorage.save(context, it)
+                }
+            }
+            avatar != null -> {
+                u?.copy(avatarUri = avatar)
+                u?.let {
+                    UserStorage.save(context, it)
+                }
+            }
+        }
+    }
+
     suspend fun getUser(context: Context): UserData? {
         return UserStorage.load(context)
     }

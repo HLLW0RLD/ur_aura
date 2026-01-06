@@ -26,6 +26,7 @@ import com.example.ur_color.ui.screen.Login
 import com.example.ur_color.ui.screen.Main
 import com.example.ur_color.ui.screen.Profile
 import com.example.ur_color.ui.screen.DailyTest
+import com.example.ur_color.ui.screen.EditProfile
 import com.example.ur_color.ui.screen.TabsHost
 import com.example.ur_color.ui.screen.TabsHostScreen
 import com.example.ur_color.ui.screen.LocalBottomBarState
@@ -91,6 +92,9 @@ class MainActivity : ComponentActivity() {
                             animatedScreenComposable<Settings>(
                                 navController = navController,
                             ) { Settings(it) }
+                            animatedScreenComposable<EditProfile>(
+                                navController = navController,
+                            ) { EditProfile(it) }
                         }
                     }
                 }

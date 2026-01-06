@@ -49,7 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 data object Lab: Screen
 
 @Composable
-fun Lab(Lab: Lab) {
+fun Lab(lab: Lab) {
     AppScaffold(
         showBottomBar = true,
         topBar = {

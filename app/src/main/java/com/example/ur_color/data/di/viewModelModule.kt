@@ -7,6 +7,7 @@ import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.screen.viewModel.DailyTestViewModel
+import com.example.ur_color.ui.screen.viewModel.EditProfileViewModel
 import com.example.ur_color.ui.screen.viewModel.LabViewModel
 import com.example.ur_color.ui.screen.viewModel.SettingsViewModel
 import org.koin.core.module.dsl.viewModel
@@ -19,6 +20,7 @@ val viewModelModule = module {
     viewModel { LoginViewModel() }
     viewModel { MainViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
+    viewModel { EditProfileViewModel(get()) }
     viewModel { AuraDetailsViewModel() }
     viewModel { DailyTestViewModel(get()) }
     viewModel { SettingsViewModel() }

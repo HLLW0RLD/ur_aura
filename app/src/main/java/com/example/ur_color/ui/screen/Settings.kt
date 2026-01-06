@@ -97,6 +97,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            var expandedProfile by remember { mutableStateOf(false) }
             Text(
                 text = stringResource(R.string.settings_palette_profile),
                 color = AppColors.textPrimary,
@@ -104,10 +105,32 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-
+                        expandedProfile = !expandedProfile
                     }
                     .padding(8.dp)
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            AnimatedVisibility(visible = expandedProfile) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        stringResource(R.string.profile_edit),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = AppColors.textPrimary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                scope.launch {
+                                    navController.nav(EditProfile)
+                                }
+                            }
+                            .padding(8.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

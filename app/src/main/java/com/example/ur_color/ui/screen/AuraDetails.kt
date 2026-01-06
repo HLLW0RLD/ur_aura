@@ -70,7 +70,6 @@ fun AuraDetails(auraDetails : AuraDetails) {
                 onBackClick = {
                     navController.popBack()
                 },
-                optionsIcon = painterResource(R.drawable.arrow_down),
                 showDivider = true,
                 isCentered = true,
                 backgroundColor = AppColors.background,

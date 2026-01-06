@@ -347,6 +347,12 @@ val auraSections = listOf(
         ),
         items = listOf(
             AuraItem(
+                id = "horoscope_day",
+                type = AuraItemType.HOROSCOPE,
+                title = "Гороскоп\nНа день",
+                description = "Расширенный гороскоп"
+            ),
+            AuraItem(
                 id = "horoscope_extended",
                 type = AuraItemType.HOROSCOPE,
                 title = "Гороскоп\nНа неделю",
@@ -381,6 +387,12 @@ val auraSections = listOf(
                 type = AuraItemType.COMPATIBILITY,
                 title = "Совместимость \nПо датам",
                 description = "По датам рождения"
+            ),
+            AuraItem(
+                id = "compatibility_horoscope",
+                type = AuraItemType.COMPATIBILITY,
+                title = "Совместимость \nПо гороскопу",
+                description = "По гороскопу"
             )
         )
     ),
@@ -394,6 +406,12 @@ val auraSections = listOf(
             bottomIconRes = R.drawable.magic_hat
         ),
         items = listOf(
+            AuraItem(
+                id = "divination_topics",
+                type = AuraItemType.DIVINATION,
+                title = "Карта дня",
+                description = "Карта дня"
+            ),
             AuraItem(
                 id = "divination_topics",
                 type = AuraItemType.DIVINATION,

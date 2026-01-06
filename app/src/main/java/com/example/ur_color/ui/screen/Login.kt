@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +58,9 @@ fun Login(login : Login) {
         },
     ) {
         LoginScreen(
-            modifier = Modifier.padding(it)
+            modifier = Modifier
+                .imePadding()
+                .padding(it)
         )
     }
 }
@@ -80,11 +84,14 @@ fun LoginScreen(
     var birthPlace by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("Мужской") }
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
-            .imePadding()
             .fillMaxSize()
-            .background(AppColors.background),
+            .background(AppColors.background)
+            .verticalScroll(scrollState)
+            .imePadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 

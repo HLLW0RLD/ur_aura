@@ -1,6 +1,13 @@
 package com.example.ur_color.ui.screen.viewModel
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Base64
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
@@ -10,6 +17,7 @@ import com.example.ur_color.utils.logDebug
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 class EditProfileViewModel(
     private val userRepository: UserRepository
@@ -26,7 +34,11 @@ class EditProfileViewModel(
 
     fun init(context: Context) {
         viewModelScope.launch {
-            _user.value = userRepository.getUser(context)
+            val loadedUser = userRepository.getUser(context)
+            logDebug("${loadedUser?.avatarUri}")
+            _user.value = loadedUser
+            _about.value = loadedUser?.about
+            _avatar.value = loadedUser?.avatarUri
         }
     }
 
@@ -40,8 +52,31 @@ class EditProfileViewModel(
 
     fun update(context: Context) {
         viewModelScope.launch {
-            logDebug("about ${about.value}")
             PersonalDataManager.updateUser(context, about.value, avatar.value)
         }
+    }
+
+    // ддля оттправккки на бэк
+    private fun uriToBitmap(
+        context: Context,
+        uri: Uri
+    ): Bitmap {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val source = ImageDecoder.createSource(context.contentResolver, uri)
+            ImageDecoder.decodeBitmap(source)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        }
+    }
+
+    private fun bitmapToBase64(
+        bitmap: Bitmap,
+        quality: Int = 85
+    ): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        val bytes = outputStream.toByteArray()
+        return Base64.encodeToString(bytes, Base64.NO_WRAP)
     }
 }

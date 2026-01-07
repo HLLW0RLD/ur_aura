@@ -39,9 +39,6 @@ object DailyTestOperator {
             val newValue = (oldValue + avgDelta).coerceIn(1f, 100f)
 
             updated = updateUserValue(updated, type, newValue)
-            logDebug("type $type oldValue ${oldValue}")
-            logDebug("type $type avgDelta ${avgDelta}")
-            logDebug("type $type newValue ${newValue}")
         }
 
         PersonalDataManager.saveUser(context, updated)

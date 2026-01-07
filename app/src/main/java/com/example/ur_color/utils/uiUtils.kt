@@ -1,5 +1,8 @@
 package com.example.ur_color.utils
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.ur_color.R
@@ -11,10 +14,6 @@ import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.model.User
 import com.example.ur_color.ui.theme.AuraColors
-
-enum class WindowType { Slim, Regular, Full }
-
-enum class IconPosition { START, END }
 
 fun lerp(start: Color, stop: Color, fraction: Float): Color {
     val f = fraction.coerceIn(0f, 1f)
@@ -30,7 +29,6 @@ class TwoColumnScopeImpl : TwoColumnScope {
     val leftColumn = mutableListOf<@Composable () -> Unit>()
     val rightColumn = mutableListOf<@Composable () -> Unit>()
     private var toggle = false
-
     override fun left(content: @Composable () -> Unit) {
         leftColumn.add(content)
     }
@@ -43,12 +41,17 @@ class TwoColumnScopeImpl : TwoColumnScope {
         if (toggle) rightColumn.add(content) else leftColumn.add(content)
         toggle = !toggle
     }
+
 }
+
 interface TwoColumnScope {
     fun left(content: @Composable () -> Unit)
     fun right(content: @Composable () -> Unit)
     fun item(content: @Composable () -> Unit)
 }
+
+enum class WindowType { Slim, Regular, Full }
+enum class IconPosition { START, END }
 
 
 

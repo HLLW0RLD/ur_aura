@@ -4,9 +4,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,8 +22,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.example.ur_color.R
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.ui.CustomAppBar
@@ -118,20 +119,20 @@ fun ProfileScreen(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                             ,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Top
                         ) {
                             val avatarPainter = if (u.avatarUri != null) {
-                                rememberAsyncImagePainter(u.avatarUri)
+                                u.avatarUri
                             } else {
-                                rememberAsyncImagePainter("https://picsum.photos/seed/abstract02/600/600")
+                                "https://picsum.photos/seed/abstract02/600/600"
                             }
 
-                            Image(
-                                painter = avatarPainter,
+                            AsyncImage(
+                                model = avatarPainter,
                                 contentDescription = "",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .size(96.dp)
+                                    .size(130.dp)
                                     .clip(CircleShape)
                             )
 
@@ -155,10 +156,20 @@ fun ProfileScreen(
                                     ),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
+                                var expanded by remember { mutableStateOf(false) }
                                 Text(
                                     color = AppColors.textPrimary,
                                     text = u.about ?: "Default about text, cant change.",
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = if (expanded) Int.MAX_VALUE else 3,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        ) {
+                                            expanded = !expanded
+                                        }
                                 )
 
                                 // dropdown with full user info
@@ -224,8 +235,6 @@ fun ProfileScreen(
                             closedTitleColor = AppColors.textPrimary,
                             borderWidth = 2f,
                             height = 80f,
-                            modifier = Modifier
-                                .padding(8.dp),
                         ) {
                             Column(
                                 verticalArrangement = Arrangement.Top

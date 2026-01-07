@@ -26,9 +26,7 @@ object PersonalDataManager {
             }
             about != null -> {
                 val current = u?.copy(about = about)
-                logDebug("manager u ${u?.about}")
                 current?.let {
-                    logDebug("manager about ${about}")
                     UserStorage.save(context, it)
                 }
             }

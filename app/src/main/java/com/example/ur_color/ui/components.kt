@@ -480,7 +480,6 @@ fun AutoScrollHorizontalPager(
         }
     }
 }
-
 @Composable
 private fun PagerDotsIndicator(
     pageCount: Int,
@@ -948,9 +947,8 @@ fun ExpandableGradientGraphBox(
         }
     }
 }
-
 @Composable
-fun GradientGraphBox(
+private fun GradientGraphBox(
     values: List<Float>,
     modifier: Modifier = Modifier,
     barSpacingDp: Int = 6,

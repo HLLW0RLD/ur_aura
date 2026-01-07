@@ -211,6 +211,42 @@ fun MainScreen(
             }
         }
 
+        val vectorMetrics = listOf(
+            user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
+            user?.characteristics?.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
+            user?.characteristics?.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
+
+            user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
+            user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
+            user?.characteristics?.focusVector to stringResource(R.string.metric_focus),
+
+            user?.characteristics?.charismaVector to stringResource(R.string.metric_charisma),
+            user?.characteristics?.socialVector to stringResource(R.string.metric_social),
+            user?.characteristics?.communicationVector to stringResource(R.string.metric_communication),
+
+            user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
+            user?.characteristics?.anxietyVector to stringResource(R.string.metric_anxiety),
+            user?.characteristics?.fatigueVector to stringResource(R.string.metric_fatigue),
+        )
+
+        val metrics = listOf(
+            user?.characteristics?.energy,
+            user?.characteristics?.physicalEnergy,
+            user?.characteristics?.sleepQuality,
+
+            user?.characteristics?.mood,
+            user?.characteristics?.motivation,
+            user?.characteristics?.focus,
+
+            user?.characteristics?.charisma,
+            user?.characteristics?.socialEnergy,
+            user?.characteristics?.communication,
+
+            user?.characteristics?.stress,
+            user?.characteristics?.anxiety,
+            user?.characteristics?.fatigue,
+        )
+
         val cornerDp = lerp(24.dp, 12.dp, progress)
         val borderAlpha = 1f - progress
         Surface(
@@ -277,42 +313,6 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.size(16.dp))
 
-                val vectorMetrics = listOf(
-                    user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
-                    user?.characteristics?.physicalEnergyVector to stringResource(R.string.metric_physical_energy),
-                    user?.characteristics?.sleepQualityVector to stringResource(R.string.metric_sleep_quality),
-
-                    user?.characteristics?.moodVector to stringResource(R.string.metric_mood),
-                    user?.characteristics?.motivationVector to stringResource(R.string.metric_motivation),
-                    user?.characteristics?.focusVector to stringResource(R.string.metric_focus),
-
-                    user?.characteristics?.charismaVector to stringResource(R.string.metric_charisma),
-                    user?.characteristics?.socialVector to stringResource(R.string.metric_social),
-                    user?.characteristics?.communicationVector to stringResource(R.string.metric_communication),
-
-                    user?.characteristics?.stressVector to stringResource(R.string.metric_stress),
-                    user?.characteristics?.anxietyVector to stringResource(R.string.metric_anxiety),
-                    user?.characteristics?.fatigueVector to stringResource(R.string.metric_fatigue),
-                )
-
-                val metrics = listOf(
-                    user?.characteristics?.energy,
-                    user?.characteristics?.physicalEnergy,
-                    user?.characteristics?.sleepQuality,
-
-                    user?.characteristics?.mood,
-                    user?.characteristics?.motivation,
-                    user?.characteristics?.focus,
-
-                    user?.characteristics?.charisma,
-                    user?.characteristics?.socialEnergy,
-                    user?.characteristics?.communication,
-
-                    user?.characteristics?.stress,
-                    user?.characteristics?.anxiety,
-                    user?.characteristics?.fatigue,
-                )
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -359,7 +359,7 @@ fun MainScreen(
                     Box {
                         var autoScroll by rememberSaveable { mutableStateOf(true) }
                         AutoScrollHorizontalPager(
-                            pageCount = 8,
+                             pageCount = 8,
                             autoScroll = autoScroll,
                             isInfinite = true,
                             modifier = Modifier

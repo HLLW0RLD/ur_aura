@@ -1,5 +1,9 @@
 package com.example.ur_color.ui.screen
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -102,7 +108,21 @@ fun EditProfileScreen(
     val avatar by editProfileViewModel.avatar.collectAsState()
     val about by editProfileViewModel.about.collectAsState()
 
-    var aboutText by remember { mutableStateOf(about) }
+    var aboutText = about
+    var avatarUri = about
+
+    val photoPickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                editProfileViewModel.setAvatar(it.toString())
+            }
+        }
 
     Column(
 
@@ -110,15 +130,16 @@ fun EditProfileScreen(
         Box(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             if (!avatar.isNullOrEmpty()) {
                 AsyncImage(
                     model = avatar,
                     contentDescription = "Аватар",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(220.dp)
                         .clip(CircleShape)
                         .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 )
@@ -134,11 +155,11 @@ fun EditProfileScreen(
             FloatingActionButton(
                 onClick = {
                     // Логика выбора изображения
-                    editProfileViewModel.setAvatar("https://example.com/new-avatar.jpg")
+//                    editProfileViewModel.setAvatar("https://picsum.photos/seed/abstract02/600/600")
+                    photoPickerLauncher.launch("image/*")
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .offset(x = 8.dp)
             ) {
                 Icon(painter = painterResource(R.drawable.magic_sparkles), "Изменить аватар")
             }
@@ -146,9 +167,10 @@ fun EditProfileScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Поле "О себе"
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Text(
                 text = "О себе",
@@ -166,7 +188,7 @@ fun EditProfileScreen(
                     .fillMaxWidth()
                     .heightIn(min = 120.dp),
                 placeholder = { Text("Расскажите о себе...") },
-                maxLines = 5,
+                maxLines = 10,
                 shape = MaterialTheme.shapes.medium,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,

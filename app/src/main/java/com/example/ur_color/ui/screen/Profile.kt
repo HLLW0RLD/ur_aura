@@ -106,20 +106,20 @@ fun ProfileScreen(
 
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 item {
-                    Spacer(Modifier.height(8.dp))
                     Column(
                         modifier = Modifier
                             .clip(RoundedCornerShape(25.dp))
                             .background(color.copy(alpha = 0.2f))
+                            .padding(vertical = 16.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
-                            ,
+                                .padding(horizontal = 16.dp),
                             verticalAlignment = Alignment.Top
                         ) {
                             val avatarPainter = if (u.avatarUri != null) {
@@ -175,7 +175,7 @@ fun ProfileScreen(
                                         text = u.about.orEmpty(),
                                         color = AppColors.textPrimary,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        maxLines = if (expanded) Int.MAX_VALUE else 3,
+                                        maxLines = if (expanded) Int.MAX_VALUE else 5,
                                         overflow = TextOverflow.Ellipsis,
                                         onTextLayout = { textLayoutResult ->
                                             isOverflowing = textLayoutResult.hasVisualOverflow
@@ -288,7 +288,6 @@ fun ProfileScreen(
                             }
                         }
                     }
-                    Spacer(Modifier.height(12.dp))
                 }
 
                 item {
@@ -310,6 +309,10 @@ fun ProfileScreen(
                             )
                         }
                     }
+                }
+
+                item {
+                    Spacer(Modifier.height(24.dp))
                 }
             }
         } ?: run {

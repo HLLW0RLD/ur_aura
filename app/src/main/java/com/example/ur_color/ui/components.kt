@@ -72,6 +72,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
@@ -1531,13 +1532,41 @@ fun FeedContentCard(
             when (content) {
                 is SocialContent.Post -> {
                     if (!content.text.isNullOrBlank()) {
-                        Text(
-                            text = content.text,
-                            fontSize = 14.sp,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier,
-                            color = AppColors.textPrimary
-                        )
+                        var expanded by remember { mutableStateOf(false) }
+                        var isOverflowing by remember { mutableStateOf(false) }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateContentSize()
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    expanded = !expanded
+                                }
+                        ) {
+                            Text(
+                                text = content.text,
+                                color = AppColors.textPrimary,
+                                style = MaterialTheme.typography.bodyMedium,
+                                maxLines = if (expanded) Int.MAX_VALUE else 5,
+                                fontSize = 14.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                onTextLayout = { textLayoutResult ->
+                                    isOverflowing = textLayoutResult.hasVisualOverflow
+                                }
+                            )
+
+                            if (isOverflowing || expanded) {
+                                Spacer(Modifier.height(4.dp))
+
+                                Text(
+                                    text = if (expanded) "скрыть" else "ещё",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = AppColors.accentPrimary,
+                                )
+                            }
+                        }
                     }
                 }
 

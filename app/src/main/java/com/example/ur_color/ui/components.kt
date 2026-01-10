@@ -909,10 +909,11 @@ fun ExpandableGradientGraphBox(
     textColor: Color = AppColors.textPrimary
 ) {
 
+    val corners = if (!expanded) 50.dp else 25.dp
     Box(
         modifier = modifier
             .background(
-                shape = RoundedCornerShape(50.dp),
+                shape = RoundedCornerShape(corners),
                 color = backgroundColor
             )
             .clickable(

@@ -275,67 +275,6 @@ val feedCards = listOf(
         cta = "Записаться"
     )
 )
-val profileCards = listOf(
-    SocialContent.Post(
-        id = "p1",
-        text = "Начал отвечать на ежедневные вопросы и неожиданно понял, как редко я вообще останавливаюсь и слушаю себя.",
-        author = demoUsers[0],
-        image = null
-    ),
-
-    SocialContent.Post(
-        id = "p2",
-        text = "Иногда тишина говорит больше, чем любые формулировки. \nОсобенно когда честно отвечаешь себе.\n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
-                "",
-        author = demoUsers[0],
-        image = "https://picsum.photos/seed/post01/900/600"
-    ),
-
-    SocialContent.Post(
-        id = "p3",
-        text = "Принятие — это не согласие и не оправдание. Скорее, это признание того, что сейчас именно так.",
-        author = demoUsers[0],
-        image = null
-    ),
-
-    SocialContent.Post(
-        id = "p4",
-        text = "Поймал себя на мысли, что путь — это не движение вперёд, а разрешение иногда не торопиться.",
-        author = demoUsers[0],
-        image = null
-    ),
-
-    SocialContent.Post(
-        id = "p5",
-        text = "Записывать ощущения после тестов оказалось важнее, чем я думал. Мысли становятся чётче, когда им дают форму.",
-        author = demoUsers[0],
-        image = "https://picsum.photos/seed/post02/900/600"
-    ),
-
-    SocialContent.Post(
-        id = "p6",
-        text = "Чем больше наблюдаю за собой, тем меньше хочется давать быстрые оценки — себе и другим.",
-        author = demoUsers[0],
-        image = null
-    ),
-
-    SocialContent.Post(
-        id = "p7",
-        text = "Иногда образ точнее слов. Состояние можно почувствовать, но сложно объяснить.",
-        author = demoUsers[0],
-        image = "https://picsum.photos/seed/post03/900/600"
-    )
-)
 
 val auraSections = listOf(
     AuraSection(

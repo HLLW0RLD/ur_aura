@@ -4,22 +4,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.model.User
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.toUser
 import com.example.ur_color.data.repo.PostRepository
 import com.example.ur_color.data.repo.UserRepository
-import com.example.ur_color.utils.profileCards
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,7 +28,7 @@ class ProfileViewModel(
     private val _isDailyTestAvailable = MutableStateFlow(true)
     val isDailyTestAvailable = _isDailyTestAvailable.asStateFlow()
 
-    private val _profileCardsState = MutableStateFlow(profileCards)
+    private val _profileCardsState = MutableStateFlow<List<SocialContent.Post>?>(null)
     val profileCardsState = _profileCardsState.asStateFlow()
 
     private val _user = MutableStateFlow<UserData?>(null)

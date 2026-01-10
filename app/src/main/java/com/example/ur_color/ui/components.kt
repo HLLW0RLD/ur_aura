@@ -912,7 +912,7 @@ fun ExpandableGradientGraphBox(
     Box(
         modifier = modifier
             .background(
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(50.dp),
                 color = backgroundColor
             )
             .clickable(
@@ -945,7 +945,12 @@ fun ExpandableGradientGraphBox(
             Box {
                 Text(
                     modifier = Modifier
-                        .align(Alignment.TopEnd),
+                        .align(Alignment.TopEnd)
+                        .background(
+                            shape = RoundedCornerShape(50.dp),
+                            color = backgroundColor
+                        )
+                        .padding(horizontal = 6.dp),
                     textAlign = TextAlign.Center,
                     text = indicator.toInt().toString(),
                     color = AppColors.accentPrimary,

@@ -62,7 +62,6 @@ import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.FeedContentCard
 import com.example.ur_color.utils.WindowType
-import com.example.ur_color.utils.feedCards
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel

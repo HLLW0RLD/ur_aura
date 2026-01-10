@@ -83,7 +83,7 @@ fun LabScreen(
         modifier = modifier
             .fillMaxSize(),
         contentPadding = PaddingValues(vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(auraSectionsState) { section ->
             Column(

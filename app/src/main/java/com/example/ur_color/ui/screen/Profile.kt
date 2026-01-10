@@ -2,6 +2,7 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.background
@@ -156,21 +157,41 @@ fun ProfileScreen(
                                     ),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
+
                                 var expanded by remember { mutableStateOf(false) }
-                                Text(
-                                    color = AppColors.textPrimary,
-                                    text = u.about ?: "Default about text, cant change.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    maxLines = if (expanded) Int.MAX_VALUE else 3,
-                                    overflow = TextOverflow.Ellipsis,
+                                var isOverflowing by remember { mutableStateOf(false) }
+                                Column(
                                     modifier = Modifier
+                                        .fillMaxWidth()
+                                        .animateContentSize()
                                         .clickable(
                                             indication = null,
                                             interactionSource = remember { MutableInteractionSource() }
                                         ) {
                                             expanded = !expanded
                                         }
-                                )
+                                ) {
+                                    Text(
+                                        text = u.about.orEmpty(),
+                                        color = AppColors.textPrimary,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        maxLines = if (expanded) Int.MAX_VALUE else 3,
+                                        overflow = TextOverflow.Ellipsis,
+                                        onTextLayout = { textLayoutResult ->
+                                            isOverflowing = textLayoutResult.hasVisualOverflow
+                                        }
+                                    )
+
+                                    if (isOverflowing || expanded) {
+                                        Spacer(Modifier.height(4.dp))
+
+                                        Text(
+                                            text = if (expanded) "скрыть" else "ещё",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = AppColors.accentPrimary,
+                                        )
+                                    }
+                                }
 
                                 // dropdown with full user info
                                 // ${calculateAge(u.birthDate)}

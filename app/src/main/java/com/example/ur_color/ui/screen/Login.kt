@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -22,24 +21,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.R
 import com.example.ur_color.data.model.user.CharacteristicData
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
+import com.example.ur_color.ui.AuraDatePickerField
+import com.example.ur_color.ui.AuraDateTimePickerField
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
-import com.example.ur_color.utils.formatDateInput
-import com.example.ur_color.utils.formatTimeInput
+import com.example.ur_color.utils.logDebug
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -79,8 +77,8 @@ fun LoginScreen(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var middleName by remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf(TextFieldValue("")) }
-    var birthTime by remember { mutableStateOf(TextFieldValue("")) }
+    var birthDate by remember { mutableStateOf("") }
+    var birthTime by remember { mutableStateOf("") }
     var birthPlace by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("Мужской") }
 
@@ -148,34 +146,48 @@ fun LoginScreen(
                     .imePadding()
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
-                value = birthDate,
-                onValueChange = { input -> birthDate = formatDateInput(birthDate, input) },
-                label = { Text(stringResource(R.string.field_birth_date)) },
+//            OutlinedTextField(
+//                colors = TextFieldDefaults.colors(
+//                    focusedTextColor = AppColors.textPrimary,
+//                    unfocusedTextColor = AppColors.textPrimary,
+//                    focusedContainerColor = AppColors.background,
+//                    unfocusedContainerColor = AppColors.background,
+//                    focusedLabelColor = AppColors.accentPrimary,
+//                    unfocusedLabelColor = AppColors.accentPrimary,
+//                ),
+//                value = birthDate,
+//                onValueChange = { input ->
+////                    birthDate = formatDateInput(birthDate, input)
+////
+//////                    logDebug(input)
+////                    logDebug(birthDate)
+//
+//                                },
+//                label = { Text(stringResource(R.string.field_birth_date)) },
+//                modifier = Modifier
+//                    .imePadding()
+//                    .fillMaxWidth()
+//            )
+            AuraDatePickerField(
+                label = stringResource(R.string.field_birth_date),
+                date = birthDate,
+                color = AppColors.textPrimary,
+                onDateChanged = { input ->
+                    logDebug(input)
+                    birthDate = input
+                },
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
-                value = birthTime,
-                onValueChange = { input -> birthTime = formatTimeInput(birthTime, input)},
-                label = { Text(stringResource(R.string.field_birth_time)) },
+            AuraDateTimePickerField(
+                label = stringResource(R.string.field_birth_time),
+                time = birthTime,
+                color = AppColors.textPrimary,
+                onTimeChanged = { input ->
+                    logDebug(input)
+                    birthTime = input
+                },
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
@@ -218,11 +230,11 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    if (firstName.isNotBlank() && lastName.isNotBlank() && birthDate.text.length == 10) {
+                    if (firstName.isNotBlank() && lastName.isNotBlank() && birthDate.length == 10) {
                         val fullName = "$lastName $firstName ${middleName.ifBlank { "" }}".trim()
 
                         // 1) парсим день/месяц для знака зодиака
-                        val parts = birthDate.text.split("/")
+                        val parts = birthDate.split(".")
                         val day = parts.getOrNull(0)?.toIntOrNull() ?: 1
                         val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
                         val zodiac = calculateZodiac(day, month)
@@ -232,8 +244,8 @@ fun LoginScreen(
                             firstName = firstName,
                             lastName = lastName,
                             middleName = middleName.ifBlank { null },
-                            birthDate = birthDate.text,
-                            birthTime = birthTime.text,
+                            birthDate = birthDate,
+                            birthTime = birthTime,
                             birthPlace = birthPlace,
                             gender = gender,
                             zodiacSign = zodiac.nameRu,

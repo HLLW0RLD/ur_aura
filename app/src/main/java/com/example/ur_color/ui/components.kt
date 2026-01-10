@@ -78,10 +78,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -115,7 +118,7 @@ import kotlin.Int.Companion.MAX_VALUE
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AuraPickerField(
+fun AuraDatePickerField(
     label: String,
     date: String,
     color: Color? = null,
@@ -158,32 +161,140 @@ fun AuraPickerField(
         )
     }
 }
-
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AuraDropdownItem(
-    text: String? = null,
-    icon: Painter? = null,
-    placeholder: String = "Выберите вариант",
-    iconPosition: IconPosition = IconPosition.START
+private fun ReturnAuraPickerDialog(
+    initialDate: String? = null,
+    color: Color? = null,
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (icon != null && iconPosition == IconPosition.START) {
-            Icon(icon, contentDescription = null, tint = AppColors.textPrimary)
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-        Text(
-            text = text ?: placeholder,
-            color = if (text != null) AppColors.textPrimary else AppColors.textSecondary,
-            modifier = Modifier.weight(1f)
-        )
-        if (icon != null && iconPosition == IconPosition.END) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(icon, contentDescription = null, tint = AppColors.icon)
+    val initialMillis = remember(initialDate) {
+        initialDate?.let { dateString ->
+            try {
+                SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    .parse(dateString)?.time
+            } catch (e: Exception) {
+                null
+            }
         }
     }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialMillis
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            AuraTextButton(color = color, text = "OK") {
+                datePickerState.selectedDateMillis?.let { millis ->
+                    val selectedDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                        .format(Date(millis))
+                    onDateSelected(selectedDate)
+                }
+                onDismiss()
+            }
+        },
+        dismissButton = {
+            AuraTextButton(text = "Отмена", color = color) { onDismiss }
+        },
+        colors = DatePickerDefaults.colors(
+            containerColor = color ?: AppColors.accentPrimary,
+        ),
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AuraDateTimePickerField(
+    label: String,
+    time: String,
+    color: Color? = null,
+    onTimeChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        AuraOutlinedTextField(
+            color = color,
+            value = time,
+            onValueChange = {},
+            readOnly = true,
+            label = label,
+        )
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0f)
+                .clickable { showTimePicker = true }
+        )
+    }
+
+    if (showTimePicker) {
+        AuraTimePickerDialog(
+            initialTime = time,
+            color = color,
+            onTimeSelected = {
+                showTimePicker = false
+                onTimeChanged(it)
+            },
+            onDismiss = { showTimePicker = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AuraTimePickerDialog(
+    initialTime: String,
+    color: Color? = null,
+    onTimeSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val (hour, minute) = remember(initialTime) {
+        try {
+            val parts = initialTime?.split(":")
+            parts?.let {
+                it[0].toInt() to it[1].toInt()
+            } ?: (0 to 0)
+        } catch (e: Exception) {
+            0 to 0
+        }
+    }
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = hour,
+        initialMinute = minute,
+        is24Hour = true
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            AuraTextButton(text = "OK", color = color) {
+                val formatted = String.format(
+                    "%02d:%02d",
+                    timePickerState.hour,
+                    timePickerState.minute
+                )
+
+                onTimeSelected(formatted)
+            }
+        },
+        dismissButton = {
+            AuraTextButton(text = "Отмена", color = color) { onDismiss() }
+        },
+        text = {
+            TimePicker(state = timePickerState)
+        },
+        containerColor = color ?: AppColors.accentPrimary
+    )
 }
 
 @Composable
@@ -237,51 +348,30 @@ fun AuraDropdown(
         }
     }
 }
-
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReturnAuraPickerDialog(
-    initialDate: String? = null,
-    color: Color? = null,
-    onDateSelected: (String) -> Unit,
-    onDismiss: () -> Unit
+private fun AuraDropdownItem(
+    text: String? = null,
+    icon: Painter? = null,
+    placeholder: String = "Выберите вариант",
+    iconPosition: IconPosition = IconPosition.START
 ) {
-    val initialMillis = remember(initialDate) {
-        initialDate?.let { dateString ->
-            try {
-                SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                    .parse(dateString)?.time
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialMillis
-    )
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            AuraTextButton(color = color, text = "OK") {
-                datePickerState.selectedDateMillis?.let { millis ->
-                    val selectedDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                        .format(Date(millis))
-                    onDateSelected(selectedDate)
-                }
-                onDismiss()
-            }
-        },
-        dismissButton = {
-            AuraTextButton(text = "Отмена", color = color) { onDismiss }
-        },
-        colors = DatePickerDefaults.colors(
-            containerColor = color ?: AppColors.accentPrimary,
-        ),
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        DatePicker(state = datePickerState)
+        if (icon != null && iconPosition == IconPosition.START) {
+            Icon(icon, contentDescription = null, tint = AppColors.textPrimary)
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+        Text(
+            text = text ?: placeholder,
+            color = if (text != null) AppColors.textPrimary else AppColors.textSecondary,
+            modifier = Modifier.weight(1f)
+        )
+        if (icon != null && iconPosition == IconPosition.END) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(icon, contentDescription = null, tint = AppColors.icon)
+        }
     }
 }
 

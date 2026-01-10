@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ur_color.data.di.apiModule
 import com.example.ur_color.data.di.appModule
+import com.example.ur_color.data.di.dbModule
 import com.example.ur_color.data.di.repoModule
 import com.example.ur_color.data.di.viewModelModule
 import com.example.ur_color.data.local.dataManager.AppDataManager
@@ -28,6 +29,7 @@ class App : Application() {
             modules(
                 appModule,
                 apiModule,
+                dbModule,
                 repoModule,
                 viewModelModule
             )

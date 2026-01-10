@@ -3,6 +3,7 @@ package com.example.ur_color.data.di
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ur_color.ui.screen.viewModel.AuraDetailsViewModel
+import com.example.ur_color.ui.screen.viewModel.CreatePostViewModel
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
@@ -19,11 +20,11 @@ val viewModelModule = module {
 
     viewModel { LoginViewModel() }
     viewModel { MainViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
     viewModel { EditProfileViewModel(get()) }
     viewModel { AuraDetailsViewModel() }
     viewModel { DailyTestViewModel(get()) }
     viewModel { SettingsViewModel() }
     viewModel { LabViewModel() }
-
+    viewModel { CreatePostViewModel(get()) }
 }

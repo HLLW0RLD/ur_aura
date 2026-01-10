@@ -28,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.ur_color.R
 import com.example.ur_color.data.model.user.UserData
+import com.example.ur_color.data.model.user.toUser
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.FeedContentCard
+import com.example.ur_color.ui.screen.bottomSheet.CreatePostBottomSheet
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
@@ -78,6 +80,8 @@ fun ProfileScreen(
     val profileCardsState by profileViewModel.profileCardsState.collectAsState()
 
     val color = AppColors.backgroundDark
+
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         profileViewModel.checkDailyTestAvailability(context)
@@ -245,45 +249,75 @@ fun ProfileScreen(
                             }
                         }
 
-                        ExpandableFloatingBox(
-                            closedTitle = stringResource(R.string.profile_more),
-                            expandedTitle = stringResource(R.string.prrofile_other_info),
-                            canShowFull = true,
-                            expandHeight = 200f,
-                            backgroundColor = AppColors.surface,
-                            expandBackgroundColor = AppColors.surface,
-                            borderColor = AppColors.surface,
-                            closedTitleColor = AppColors.textPrimary,
-                            borderWidth = 2f,
-                            height = 80f,
+                        Row(
+                            modifier = Modifier
+                                .padding(end = 12.dp),
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.Absolute.Center
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.Top
+                            ExpandableFloatingBox(
+                                closedTitle = stringResource(R.string.profile_more),
+                                expandedTitle = stringResource(R.string.prrofile_other_info),
+                                canShowFull = true,
+                                expandHeight = 200f,
+                                backgroundColor = AppColors.surface,
+                                expandBackgroundColor = AppColors.surface,
+                                borderColor = AppColors.surface,
+                                closedTitleColor = AppColors.textPrimary,
+                                borderWidth = 2f,
+                                height = 80f,
+                                modifier = Modifier
+                                    .weight(2.5f)
                             ) {
+                                Column(
+                                    verticalArrangement = Arrangement.Top
+                                ) {
 
-                                Spacer(Modifier.height(4.dp))
-                                Text(
-                                    color = AppColors.textAuto(color),
-                                    text = stringResource(R.string.profile_aura_details) + " (premium)",
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        color = AppColors.textAuto(color),
+                                        text = stringResource(R.string.profile_aura_details) + " (premium)",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                navController.nav(AuraDetails())
+                                            }
+                                            .padding(8.dp),
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        color = AppColors.textAuto(color),
+                                        text = stringResource(R.string.profile_life_goals) + " (premium)",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                navController.nav(AuraDetails())
+                                            }
+                                            .padding(8.dp),
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .size(80.dp)
+                                    .background(
+                                        color = AppColors.accentPrimary,
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
+                                    .clickable {
+                                        showBottomSheet = true
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            navController.nav(AuraDetails())
-                                        }
-                                        .padding(8.dp),
-                                )
-                                Spacer(Modifier.height(4.dp))
-                                Text(
-                                    color = AppColors.textAuto(color),
-                                    text = stringResource(R.string.profile_life_goals) + " (premium)",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            navController.nav(AuraDetails())
-                                        }
-                                        .padding(8.dp),
+                                        .size(36.dp),
+                                    painter = painterResource(R.drawable.card_trick),
+                                    contentDescription = ""
                                 )
                             }
                         }
@@ -298,6 +332,7 @@ fun ProfileScreen(
                                 color
                                     .copy(alpha = 0.2f)
                             )
+                            .padding(vertical = 12.dp)
                     ) {
                         profileCardsState.forEach {
                             FeedContentCard(
@@ -317,6 +352,13 @@ fun ProfileScreen(
             }
         } ?: run {
             Text(stringResource(R.string.profile_no_user), style = MaterialTheme.typography.bodyMedium)
+        }
+
+        if (showBottomSheet) {
+            CreatePostBottomSheet(
+                currentUser = user.toUser(),
+                onDismiss = { showBottomSheet = false },
+            )
         }
     }
 }

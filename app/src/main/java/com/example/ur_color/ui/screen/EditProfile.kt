@@ -65,6 +65,7 @@ fun EditProfile(editProfile: EditProfile) {
                 optionsIcon = painterResource(R.drawable.magic_sparkles),
                 onOptionsClick = {
                     editProfileViewModel.update(context)
+                    navController.popBack()
                 },
                 onBackClick = {
                     navController.popBack()

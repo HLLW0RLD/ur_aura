@@ -7,7 +7,7 @@ import com.example.ur_color.data.model.ModType
 import com.example.ur_color.data.model.Question
 import com.example.ur_color.utils.questionTemplates
 
-private const val VECTOR_SMOOTH_FACTOR = 0.2f
+private const val VECTOR_SMOOTH_FACTOR = 0.3f
 class LocalDailyTestService {
 
     val questionMods = generateBaseQuestions().shuffled()

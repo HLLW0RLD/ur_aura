@@ -334,7 +334,7 @@ fun ProfileScreen(
                             )
                             .padding(vertical = 12.dp)
                     ) {
-                        profileCardsState.forEach {
+                        profileCardsState?.forEach {
                             FeedContentCard(
                                 modifier = Modifier
 //                                .heightIn(max = 400.dp)

@@ -63,6 +63,7 @@ import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.FeedContentCard
 import com.example.ur_color.utils.WindowType
 import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
+import com.example.ur_color.ui.screen.viewModel.LabViewModel
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
 import com.example.ur_color.ui.theme.AppColors
@@ -100,7 +101,8 @@ fun Main(main : Main) {
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
-    profileViewModel: ProfileViewModel = koinViewModel()
+    profileViewModel: ProfileViewModel = koinViewModel(),
+    labViewModel: LabViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -112,7 +114,7 @@ fun MainScreen(
 
     val user = profileViewModel.user.collectAsState().value
     val aura by profileViewModel.aura.collectAsState()
-    val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
+    val isDailyTestAvailable by labViewModel.isDailyTestAvailable.collectAsState()
     val zodiacSign = ZodiacSign.fromName(user?.zodiacSign ?: "") ?: ZodiacSign.GEMINI
 
     var motivated by remember { mutableStateOf<String?>(null) }
@@ -129,7 +131,7 @@ fun MainScreen(
     }
 
     LaunchedEffect(Unit) {
-        profileViewModel.checkDailyTestAvailability(context)
+        labViewModel.checkDailyTestAvailability(context)
         profileViewModel.init(context)
     }
 

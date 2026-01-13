@@ -159,7 +159,7 @@ fun AuraExpandableRow(
     onConfirm: (AuraItemType) -> Unit
 ) {
     LazyRow(
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
     ) {
         itemsIndexed(items) { index, i ->
             Box(

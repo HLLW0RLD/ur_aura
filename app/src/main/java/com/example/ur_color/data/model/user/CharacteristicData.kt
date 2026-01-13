@@ -5,12 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CharacteristicData(
 
-    // нужно создать отдельныйй дата класс под каждую хар-ку и него будет 3 параметра stat, vector и name
-    //
-    // CharacteristicData(val stats: List<Stat>)
-    // data class Stat(stat, vector, name)
-
-
     val energy: Float = 50f,
     val mood: Float = 50f,
     val stress: Float = 50f,
@@ -36,5 +30,5 @@ data class CharacteristicData(
     val communicationVector: List<Float> = List(10) { 50f },
     val socialVector: List<Float> = List(10) { 50f },
     val anxietyVector: List<Float> = List(10) { 50f },
-    val fatigueVector: List<Float> = List(10) { 05f }
+    val fatigueVector: List<Float> = List(10) { 50f }
 )

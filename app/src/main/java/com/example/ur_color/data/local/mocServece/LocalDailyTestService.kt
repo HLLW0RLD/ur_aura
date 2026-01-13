@@ -58,13 +58,13 @@ class LocalDailyTestService {
             ModCategory.NEGATIVE -> {
                 // Для негативных модов: если основной тоже негативный - положительный коэффициент,
                 // если основной позитивный - отрицательный (уменьшаем негатив)
-                if (main.category == ModCategory.NEGATIVE) 1f else -1f
+                if (main.category == ModCategory.NEGATIVE) -1f else 1f
             }
 
             else -> {
                 // Для позитивных модов: если основной негативный - отрицательный коэффициент
                 // (чтобы не усиливать позитивное при негативном основном)
-                if (main.category == ModCategory.NEGATIVE) -0.5f else 1f
+                if (main.category == ModCategory.NEGATIVE) 0.5f else -1f
             }
         }
     }

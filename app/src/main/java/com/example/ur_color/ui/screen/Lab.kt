@@ -21,11 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ import com.example.ur_color.data.model.AuraItemType
 import com.example.ur_color.data.model.AuraRowConfig
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.ExpandableFloatingBox
+import com.example.ur_color.ui.FloatingBox
 import com.example.ur_color.ui.screen.viewModel.LabViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
@@ -58,8 +61,8 @@ fun Lab(lab: Lab) {
             CustomAppBar(
                 title = stringResource(R.string.bottom_menu_lab),
                 isCentered = true,
-                showOptions = true,
-                optionsIcon = painterResource(R.drawable.magic_stick_sparckles),
+//                showOptions = true,
+//                optionsIcon = painterResource(R.drawable.magic_stick_sparckles),
                 backgroundColor = AppColors.background,
             )
         }
@@ -75,9 +78,15 @@ fun LabScreen(
     modifier : Modifier = Modifier,
     labViewModel: LabViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val navController = LocalNavController.current
 
     val auraSectionsState by labViewModel.auraSectionsState.collectAsState()
+    val isDailyTestAvailable by labViewModel.isDailyTestAvailable.collectAsState()
+
+    LaunchedEffect(Unit) {
+        labViewModel.checkDailyTestAvailability(context)
+    }
 
     LazyColumn(
         modifier = modifier
@@ -105,16 +114,16 @@ fun LabScreen(
                         when (it) {
                             /*
 
-                            получаем json список AuraSection с заполненными заголовками, описанием, типом и айдишником у каждого AuraItem
-                            и парсим для экрана вместе AuraRowConfig(не пприходят с сервера)
-                            по клику мы переходим на экран-контеййнер соответствующийй типу контента и запрашиваем его по айди контента(теста, совместимости )
+                            получаем json список AuraSection с заполненными заголовками, описанием, айдишником у каждого AuraItem
+                            и парсим для экрана вместе AuraRowConfig(не приходят с сервера)
+                            по клику мы переходим на экран-контейнер соответствующийй типу контента и запрашиваем его по айди контента(теста, совместимости )
 
                             ежедднневные тесты не будут приходить если они пройдены
                             */
 
                             AuraItemType.PSYCHOLOGY_TEST ->
-                                navController.nav(DailyTest/*(PSYCHOLOGY_DAILY_TEST, "1212-asdf-234")*/)    // это общий контейнер для вопросов который принимает
-                                                                                                                     // тип и айди чтобы отправить их длля полученнния контента
+                                navController.nav(DailyTest/*("1212-asdf-234")*/)    // это общий контейнер для вопросов который принимает
+                                                                                              // айди чтобы отправить его для полученнния контента
 
                             AuraItemType.COMPATIBILITY -> {
 //                                navController.nav(CompatibilityScreen)
@@ -150,30 +159,23 @@ fun AuraExpandableRow(
     onConfirm: (AuraItemType) -> Unit
 ) {
     LazyRow(
-        contentPadding = PaddingValues(bottom = 16.dp)
+        contentPadding = PaddingValues(16.dp)
     ) {
         itemsIndexed(items) { index, i ->
             Box(
                 modifier = Modifier.width(350.dp)
             ) {
-                ExpandableFloatingBox(
+                FloatingBox(
                     closedTitle = i.title,
-                    expandedTitle = i.title,
-                    canShowFull = false,
-                    expandHeight = 250f,
                     height = 200f,
                     width = 250f,
-                    expandWidth = 350f,
-                    topIconColor = config.color.toColor(),
-                    bottomIconColor = config.color.toColor(),
+                    centerIconColor = config.color.toColor(),
                     topIcon = if (config.topIconRes != null) painterResource(config.topIconRes) else null,
                     centerIcon = if (config.centerIconRes != null) painterResource(config.centerIconRes) else null,
                     bottomIcon = if (config.bottomIconRes != null) painterResource(config.bottomIconRes) else null,
-
-                    onConfirm = { onConfirm(i.type) }
-                ) {
-                    Text(i.description)
-                }
+                    onClick = { onConfirm(i.type) },
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }

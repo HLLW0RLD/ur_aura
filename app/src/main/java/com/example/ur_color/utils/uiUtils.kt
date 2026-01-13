@@ -64,6 +64,7 @@ val animPic = listOf(
     R.drawable.card_trick,
     R.drawable.cauldron_potion,
     R.drawable.magic_stick_sparckles,
+    R.drawable.wizard_hat,
     R.drawable.ball_crystal,
     R.drawable.candle,
     R.drawable.witch_hat,
@@ -282,7 +283,7 @@ val auraSections = listOf(
         rowConfig = AuraRowConfig(
             color = AuraColors.BURGUNDY,
             topIconRes = R.drawable.illusion,
-            centerIconRes = null,
+            centerIconRes = R.drawable.card_trick,
             bottomIconRes = R.drawable.card_trick
         ),
         items = listOf(
@@ -305,9 +306,9 @@ val auraSections = listOf(
         sectionTitle = "Гороскоп",
         rowConfig = AuraRowConfig(
             color = AuraColors.BLUE,
-            topIconRes = R.drawable.ball_crystal,
-            centerIconRes = R.drawable.ball_crystal,
-            bottomIconRes = R.drawable.ball_crystal
+            topIconRes = R.drawable.wizard_hat,
+            centerIconRes = R.drawable.wizard_hat,
+            bottomIconRes = R.drawable.wizard_hat
         ),
         items = listOf(
             AuraItem(
@@ -396,7 +397,7 @@ val auraSections = listOf(
         rowConfig = AuraRowConfig(
             color = AuraColors.GOLD,
             topIconRes = R.drawable.cauldron_potion,
-            centerIconRes = null,
+            centerIconRes = R.drawable.cauldron_potion,
             bottomIconRes = R.drawable.cauldron_potion
         ),
         items = listOf(

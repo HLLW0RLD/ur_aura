@@ -25,9 +25,6 @@ class ProfileViewModel(
     private val postRepository: PostRepository
 ) : BaseViewModel() {
 
-    private val _isDailyTestAvailable = MutableStateFlow(true)
-    val isDailyTestAvailable = _isDailyTestAvailable.asStateFlow()
-
     private val _profileCardsState = MutableStateFlow<List<SocialContent.Post>?>(null)
     val profileCardsState = _profileCardsState.asStateFlow()
 
@@ -49,38 +46,9 @@ class ProfileViewModel(
         }
     }
 
-    fun checkDailyTestAvailability(context: Context) {
-        viewModelScope.launch {
-
-            val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-            val lastDate = PersonalDataManager.loadDailyTestDate(context)
-
-            if (lastDate != today) {
-                _isDailyTestAvailable.value = true
-            } else {
-                _isDailyTestAvailable.value = false
-            }
-        }
-    }
-
     fun deleteUser(context: Context) {
         viewModelScope.launch {
             PersonalDataManager.delete(context)
-        }
-    }
-
-    fun createPost(text: String, image: String? = null) {
-        viewModelScope.launch {
-            val user = user.value
-            if (user != null) {
-                val post = SocialContent.Post(
-                    id = UUID.randomUUID().toString(),
-                    text = text,
-                    author = user.toUser(),
-                    image = image
-                )
-                postRepository.savePost(post)
-            }
         }
     }
 

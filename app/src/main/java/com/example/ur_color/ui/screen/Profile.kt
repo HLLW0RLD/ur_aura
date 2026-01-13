@@ -3,6 +3,7 @@ package com.example.ur_color.ui.screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.background
@@ -19,12 +20,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ur_color.R
 import com.example.ur_color.data.model.user.UserData
@@ -72,20 +76,12 @@ fun ProfileScreen(
 
     val navController = LocalNavController.current
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
 
     val level by profileViewModel.level.collectAsState()
-    val isDailyTestAvailable by profileViewModel.isDailyTestAvailable.collectAsState()
     val profileCardsState by profileViewModel.profileCardsState.collectAsState()
 
-    val color = AppColors.backgroundDark
-
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        profileViewModel.checkDailyTestAvailability(context)
-    }
+    val color = AppColors.backgroundDark
 
     LaunchedEffect(Unit) {
         profileViewModel.init(context)
@@ -334,14 +330,46 @@ fun ProfileScreen(
                             )
                             .padding(vertical = 12.dp)
                     ) {
-                        profileCardsState?.forEach {
-                            FeedContentCard(
-                                modifier = Modifier
+                        if (!profileCardsState.isNullOrEmpty()) {
+                            profileCardsState?.forEach {
+                                FeedContentCard(
+                                    modifier = Modifier
 //                                .heightIn(max = 400.dp)
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                content = it,
-                                onClick = { }
-                            )
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    content = it,
+                                    onClick = { }
+                                )
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = null
+                                    ) {
+                                        showBottomSheet = true
+                                    },
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(250.dp),
+                                    painter = painterResource(R.drawable.cauldron_potion),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(AppColors.accentPrimary)
+                                )
+                                Text(
+                                    color = AppColors.textAuto(color),
+                                    text = "Напишите первый  пост!",
+                                    fontSize = 24.sp,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+                                )
+                            }
                         }
                     }
                 }

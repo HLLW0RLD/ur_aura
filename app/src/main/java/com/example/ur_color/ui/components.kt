@@ -69,6 +69,8 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
@@ -87,6 +89,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
@@ -420,19 +423,21 @@ fun AuraRadioButton(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .then(modifier)
-            .padding(start = 4.dp)
-            .clickable {
+            .padding(vertical = 4.dp)
+            .clickable(
+                interactionSource = null,
+                indication = null
+            ) {
                 onClick()
             },
     ) {
-        RadioButton(
-            selected = selected,
-            onClick = { onClick() },
-            colors = RadioButtonDefaults.colors(
-                selectedColor = color ?: AppColors.accentPrimary,
-                unselectedColor = AppColors.surface
-            )
+        Icon(
+            painter = if (selected) painterResource(R.drawable.magic_stick_check) else painterResource(R.drawable.magic_stick_not_check),
+            contentDescription = null,
+            tint = if (selected) (color ?: AppColors.accentPrimary) else AppColors.surface,
+            modifier = Modifier.size(24.dp)
         )
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = text,
             color = if (selected) AppColors.textPrimary else AppColors.textSecondary
@@ -977,7 +982,7 @@ fun ExpandableGradientGraphBox(
                                     7 -> painterResource(R.drawable.candle)
                                     8 -> painterResource(R.drawable.witch_hat)
                                     9 -> painterResource(R.drawable.illusion_eye)
-                                    10 -> painterResource(R.drawable.magic_hat)
+                                    10 -> painterResource(R.drawable.wizard_hat)
                                     else -> painterResource(R.drawable.magic_hat)
                                 },
                                 contentDescription = "Active dot",
@@ -1122,67 +1127,99 @@ private fun GradientGraphBox(
 }
 
 @Composable
-fun ExpandableBox(
-    collapsedText: String,
+fun FloatingBox(
+    closedTitle: String,
+    height: Float? = null,
+    width: Float? = null,
+    backgroundColor: Color = AppColors.backgroundLight,
+    closedTitleColor: Color = AppColors.textPrimary,
+    borderColor: Color = AppColors.backgroundLight,
+    borderWidth: Float = 0f,
+    topIcon: Painter? = null,
+    bottomIcon: Painter? = null,
+    centerIcon: Painter? = null,
+    topIconColor: Color = AppColors.accentPrimary,
+    bottomIconColor: Color = AppColors.accentPrimary,
+    centerIconColor: Color = AppColors.accentPrimary,
     modifier: Modifier = Modifier,
-    content: (@Composable () -> Unit)? = null
+    onClick: () -> Unit = {},
 ) {
-    var collapsed by remember { mutableStateOf(true) }
-
-    Surface(
+    Box(
         modifier = modifier
-            .wrapContentHeight()
-            .background(AppColors.surface, RoundedCornerShape(10.dp))
-            .padding(3.dp)
-            .border(BorderStroke(3.dp, AppColors.background), RoundedCornerShape(10.dp)),
-        shape = RoundedCornerShape(10.dp),
-        tonalElevation = 2.dp,
-        shadowElevation = 4.dp,
+            .fillMaxSize()
+            .width(width?.dp ?: 130.dp)
+            .height(height?.dp ?: 80.dp)
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .border(
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(
+                    color = borderColor,
+                    width = borderWidth.dp
+                )
+            )
+            .clickable(
+                indication = null,
+                interactionSource = null
+            ) {
+                onClick()
+            },
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .clickable { collapsed = !collapsed }
-                .padding(12.dp)
-        ) {
-            Row(
+//        if (topIcon != null) {
+//            Icon(
+//                painter = topIcon,
+//                contentDescription = "Active dot",
+//                tint = topIconColor.copy(alpha = 0.5f),
+//                modifier = Modifier
+//                    .align(Alignment.TopStart)
+//                    .size(if (centerIcon != null) 150.dp else 250.dp)
+//                    .offset(-(100).dp, -(60).dp)
+////                                        .padding(bottom = 36.dp)
+//            )
+//        }
+//
+//        if (bottomIcon != null) {
+//            Icon(
+//                painter = bottomIcon,
+//                contentDescription = "Active dot",
+//                tint = bottomIconColor.copy(alpha = 0.5f),
+//                modifier = Modifier
+//                    .align(Alignment.BottomEnd)
+//                    .size(if (centerIcon != null) 150.dp else 250.dp)
+//                    .offset(100.dp, 80.dp)
+////                                        .padding(bottom = 36.dp)
+//            )
+//        }
+
+        if (centerIcon != null) {
+            Icon(
+                painter = centerIcon,
+                contentDescription = "Active dot",
+                tint = centerIconColor.copy(alpha = 0.5f),
                 modifier = Modifier
-                    .then(
-                        if (collapsed) {
-                            Modifier.fillMaxWidth()
-                        } else {
-                            Modifier.width(150.dp)
-                        }
-                    )
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = collapsedText, fontSize = 14.sp, color = Color(0xFF222222))
-                AnimatedVisibility(
-                    visible = !collapsed,
-                    enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
-                    exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
-                ) {
-                    Icon(
-                        tint = Color.Black,
-                        painter = painterResource(R.drawable.close_filled),
-                        contentDescription = "Закрыть",
-                        modifier = Modifier.clickable { collapsed = !collapsed }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            AnimatedVisibility(
-                visible = !collapsed,
-                enter = expandVertically(animationSpec = tween(300)) + fadeIn(tween(200)),
-                exit = shrinkVertically(animationSpec = tween(250)) + fadeOut(tween(180))
-            ) {
-                if (content != null) {
-                    content()
-                }
-            }
+                    .align(Alignment.Center)
+                    .size(170.dp)
+//                                        .padding(bottom = 36.dp)
+            )
         }
+
+        Text(
+            textAlign = TextAlign.Center,
+            text = closedTitle,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            color = closedTitleColor,
+            modifier = Modifier
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .padding(vertical = 2.dp, horizontal = 8.dp)
+        )
     }
 }
 

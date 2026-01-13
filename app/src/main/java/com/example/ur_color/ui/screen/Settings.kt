@@ -107,14 +107,14 @@ fun SettingsScreen(
                     .clickable {
                         expandedProfile = !expandedProfile
                     }
-                    .padding(8.dp)
+                    .padding(top = 4.dp, start = 4.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             AnimatedVisibility(visible = expandedProfile) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(start = 8.dp)
                 ) {
                     Text(
                         stringResource(R.string.profile_edit),
@@ -127,7 +127,7 @@ fun SettingsScreen(
                                     navController.nav(EditProfile)
                                 }
                             }
-                            .padding(8.dp)
+                            .padding(4.dp)
                     )
                 }
             }
@@ -142,11 +142,15 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expandedTheme = !expandedTheme }
-                    .padding(8.dp)
+                    .padding(top = 4.dp, start = 4.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             AnimatedVisibility(visible = expandedTheme) {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp)
+                ) {
                     AuraRadioButton(
                         selected = themeMode == ThemeMode.SYSTEM,
                         text = stringResource(R.string.settings_theme_system),
@@ -181,11 +185,15 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expandedPalette = !expandedPalette }
-                    .padding(8.dp)
+                    .padding(top = 4.dp, start = 4.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             AnimatedVisibility(visible = expandedPalette) {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp)
+                ) {
                     settingsViewModel.paletteItems.forEach { item ->
                         AuraRadioButton(
                             selected = palette == item.palette,
@@ -211,14 +219,14 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expandedAccount = !expandedAccount }
-                    .padding(8.dp)
+                    .padding(top = 4.dp, start = 4.dp)
             )
-
+            Spacer(modifier = Modifier.height(8.dp))
             AnimatedVisibility(visible = expandedAccount) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(start = 8.dp)
                 ) {
                     Text(
                         stringResource(R.string.profile_logout),
@@ -232,7 +240,7 @@ fun SettingsScreen(
                                     navController.nav(Login, true)
                                 }
                             }
-                            .padding(8.dp)
+                            .padding(4.dp)
                     )
                     Text(
                         stringResource(R.string.profile_delete),
@@ -243,7 +251,7 @@ fun SettingsScreen(
                             .clickable {
 
                             }
-                            .padding(8.dp)
+                            .padding(4.dp)
                     )
                 }
             }

@@ -164,12 +164,6 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .animateContentSize()
-                                        .clickable(
-                                            indication = null,
-                                            interactionSource = remember { MutableInteractionSource() }
-                                        ) {
-                                            expanded = !expanded
-                                        }
                                 ) {
                                     Text(
                                         text = u.about.orEmpty(),
@@ -189,6 +183,14 @@ fun ProfileScreen(
                                             text = if (expanded) "скрыть" else "ещё",
                                             style = MaterialTheme.typography.labelMedium,
                                             color = AppColors.accentPrimary,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable(
+                                                    indication = null,
+                                                    interactionSource = remember { MutableInteractionSource() }
+                                                ) {
+                                                    expanded = !expanded
+                                                }
                                         )
                                     }
                                 }

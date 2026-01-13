@@ -46,7 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Serializable
-data object DailyTest : Screen
+data class DailyTest(val testId: String = "0") : Screen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -68,9 +68,16 @@ fun DailyTest(dailyTest : DailyTest) {
             )
         },
     ) {
-        DailyTestScreen(
-            modifier = Modifier.padding(it)
-        )
+        when(dailyTest.testId) {
+            "0" -> {
+                DailyTestScreen(
+                    modifier = Modifier.padding(it)
+                )
+            }
+            else -> {
+                // другие экраны тестов
+            }
+        }
     }
 }
 

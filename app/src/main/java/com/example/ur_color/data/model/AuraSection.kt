@@ -27,5 +27,5 @@ enum class AuraItemType {
     COMPATIBILITY,
     HOROSCOPE,
     DIVINATION,
-    COURSE
+    COURSE,
 }

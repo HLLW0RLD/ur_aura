@@ -38,7 +38,6 @@ import com.example.ur_color.data.model.AuraItem
 import com.example.ur_color.data.model.AuraItemType
 import com.example.ur_color.data.model.AuraRowConfig
 import com.example.ur_color.ui.CustomAppBar
-import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.FloatingBox
 import com.example.ur_color.ui.screen.viewModel.LabViewModel
 import com.example.ur_color.ui.theme.AppColors
@@ -111,19 +110,13 @@ fun LabScreen(
                     config = section.rowConfig,
                     items = section.items,
                     onConfirm = {
-                        when (it) {
-                            /*
+                        when (it.type) {
 
-                            получаем json список AuraSection с заполненными заголовками, описанием, айдишником у каждого AuraItem
-                            и парсим для экрана вместе AuraRowConfig(не приходят с сервера)
-                            по клику мы переходим на экран-контейнер соответствующийй типу контента и запрашиваем его по айди контента(теста, совместимости )
-
-                            ежедднневные тесты не будут приходить если они пройдены
-                            */
-
-                            AuraItemType.PSYCHOLOGY_TEST ->
-                                navController.nav(DailyTest/*("1212-asdf-234")*/)    // это общий контейнер для вопросов который принимает
-                                                                                              // айди чтобы отправить его для полученнния контента
+                            AuraItemType.PSYCHOLOGY_TEST -> {
+                                if (isDailyTestAvailable) {
+                                    navController.nav(DailyTest(it.id))
+                                }
+                            }
 
                             AuraItemType.COMPATIBILITY -> {
 //                                navController.nav(CompatibilityScreen)
@@ -156,7 +149,7 @@ fun LabScreen(
 fun AuraExpandableRow(
     config: AuraRowConfig,
     items: List<AuraItem>,
-    onConfirm: (AuraItemType) -> Unit
+    onConfirm: (AuraItem) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -173,7 +166,7 @@ fun AuraExpandableRow(
                     topIcon = if (config.topIconRes != null) painterResource(config.topIconRes) else null,
                     centerIcon = if (config.centerIconRes != null) painterResource(config.centerIconRes) else null,
                     bottomIcon = if (config.bottomIconRes != null) painterResource(config.bottomIconRes) else null,
-                    onClick = { onConfirm(i.type) },
+                    onClick = { onConfirm(i) },
                     modifier = Modifier.padding(8.dp)
                 )
             }

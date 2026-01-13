@@ -1151,7 +1151,8 @@ fun FloatingBox(
             .height(height?.dp ?: 80.dp)
             .background(
                 color = backgroundColor,
-                shape = RoundedCornerShape(20.dp))
+                shape = RoundedCornerShape(20.dp)
+            )
             .clip(RoundedCornerShape(20.dp))
             .border(
                 shape = RoundedCornerShape(20.dp),
@@ -1581,12 +1582,6 @@ fun FeedContentCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .animateContentSize()
-                                .clickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ) {
-                                    expanded = !expanded
-                                }
                         ) {
                             Text(
                                 text = content.text,
@@ -1607,6 +1602,14 @@ fun FeedContentCard(
                                     text = if (expanded) "скрыть" else "ещё",
                                     style = MaterialTheme.typography.labelMedium,
                                     color = AppColors.accentPrimary,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        ) {
+                                            expanded = !expanded
+                                        }
                                 )
                             }
                         }

@@ -749,8 +749,8 @@ fun SwipeCard(
     width: Dp = 370.dp,
     shadowElevation: Dp = 8.dp,
     fontSize: TextUnit = 20.sp,
-    minLines: Int = 2,
-    maxLines: Int = 2,
+    minLines: Int = 1,
+    maxLines: Int = 4,
 ) {
     Card(
         modifier = modifier,
@@ -781,7 +781,7 @@ fun SwipeCard(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .height(60.dp)
+//                    .height(60.dp)
                     .padding(horizontal = 16.dp)
             )
 

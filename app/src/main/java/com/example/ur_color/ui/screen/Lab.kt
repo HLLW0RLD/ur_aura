@@ -44,6 +44,7 @@ import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.ui.theme.toColor
 import com.example.ur_color.utils.LocalNavController
+import com.example.ur_color.utils.toast
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -115,6 +116,8 @@ fun LabScreen(
                             AuraItemType.PSYCHOLOGY_TEST -> {
                                 if (isDailyTestAvailable) {
                                     navController.nav(DailyTest(it.id))
+                                } else {
+                                    toast(context, context.getString(R.string.test_done))
                                 }
                             }
 

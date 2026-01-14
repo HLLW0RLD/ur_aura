@@ -109,6 +109,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.ur_color.data.model.User
+import com.example.ur_color.utils.AutoScrollPagerScope
 import com.example.ur_color.utils.IconPosition
 import com.example.ur_color.utils.TwoColumnScope
 import com.example.ur_color.utils.TwoColumnScopeImpl
@@ -498,16 +499,38 @@ fun AuraOutlinedTextField(
 
 @Composable
 fun AutoScrollHorizontalPager(
-    pageCount: Int,
     autoScroll: Boolean = true,
     isInfinite: Boolean = true,
     showIndicator: Boolean = true,
     intervalMs: Long = 3_000L,
     pageSpacing: Dp = 16.dp,
     modifier: Modifier = Modifier,
-    content: @Composable (page: Int) -> Unit
+    content: AutoScrollPagerScope.() -> Unit
 ) {
+    val scope = AutoScrollPagerScope().apply(content)
+    val items = scope.build()
 
+    AutoScrollHorizontalPagerComposable(
+        items = items,
+        autoScroll = autoScroll,
+        isInfinite = isInfinite,
+        showIndicator = showIndicator,
+        intervalMs = intervalMs,
+        pageSpacing = pageSpacing,
+        modifier = modifier,
+    )
+}
+@Composable
+private fun AutoScrollHorizontalPagerComposable(
+    items: List<@Composable () -> Unit>,
+    autoScroll: Boolean = true,
+    isInfinite: Boolean = true,
+    showIndicator: Boolean = true,
+    intervalMs: Long = 3_000L,
+    pageSpacing: Dp = 16.dp,
+    modifier: Modifier = Modifier,
+) {
+    val pageCount = items.size
     val virtualCount = if (isInfinite) Int.MAX_VALUE else pageCount
     val startPage = if (isInfinite) virtualCount / 2 else 0
 
@@ -523,54 +546,35 @@ fun AutoScrollHorizontalPager(
 
     if (autoScroll) {
         LaunchedEffect(Unit) {
-            delay(intervalMs)
-            pagerState.animateScrollToPage(
-                page = pagerState.currentPage + 1,
-                animationSpec = pagerAnimationSpec
-            )
-        }
-
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.isScrollInProgress }
-                .filter { !it }
-                .drop(1)
-                .collectLatest {
-                    delay(intervalMs)
-                    pagerState.animateScrollToPage(
-                        page = pagerState.currentPage + 1,
-                        animationSpec = pagerAnimationSpec
-                    )
-                }
+            while (true) {
+                delay(intervalMs)
+                pagerState.animateScrollToPage(
+                    page = pagerState.currentPage + 1,
+                    animationSpec = pagerAnimationSpec
+                )
+            }
         }
     }
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         HorizontalPager(
             state = pagerState,
             pageSpacing = pageSpacing,
             overscrollEffect = rememberOverscrollEffect()
         ) { page ->
-            val realPage =
-                if (isInfinite) page % pageCount
-                else page
-
-            content(realPage)
+            val realIndex = if (isInfinite) page % pageCount else page
+            items[realIndex]()
         }
 
-        if (showIndicator) {
+        if (showIndicator && items.isNotEmpty()) {
             PagerDotsIndicator(
                 activeImages = animPic,
                 pageCount = pageCount,
                 currentPage = pagerState.currentPage % pageCount,
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .align(Alignment.BottomCenter)
-//                    .padding(bottom = 12.dp)
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

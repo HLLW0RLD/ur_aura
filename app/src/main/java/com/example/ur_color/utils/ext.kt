@@ -48,8 +48,8 @@ val LocalNavController =
 //  UI / UX
 /*==============================================================================================*/
 
-fun Context.toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(this, message, duration).show()
+fun toast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(context, message, duration).show()
 }
 
 fun String?.parseBirthHour(): Int {

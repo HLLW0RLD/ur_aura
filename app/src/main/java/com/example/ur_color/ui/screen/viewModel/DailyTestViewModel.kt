@@ -27,11 +27,8 @@ class DailyTestViewModel(
     @RequiresApi(Build.VERSION_CODES.O)
     private val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun init(context: Context) {
         viewModelScope.launch {
-            PersonalDataManager.saveDailyTestDate(context, today)
-
             _user.value = userRepository.getUser(context)
             _level.value = userRepository.getLvl(context)
             _aura.value = userRepository.getAura(context)
@@ -45,11 +42,13 @@ class DailyTestViewModel(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun updateAfterTest(context: Context) {
         viewModelScope.launch {
             val data = _user.value ?: return@launch
             DailyTestOperator.applyDailyResult(context, data, _aura.value)
             PersonalDataManager.updateLevel(context, 0.2f)
+            PersonalDataManager.saveDailyTestDate(context, today)
             // дать ачивку за первый тест
         }
     }

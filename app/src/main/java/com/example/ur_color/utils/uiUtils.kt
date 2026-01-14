@@ -25,6 +25,16 @@ fun lerp(start: Color, stop: Color, fraction: Float): Color {
     )
 }
 
+class AutoScrollPagerScope {
+    private val items = mutableListOf<@Composable () -> Unit>()
+
+    fun item(content: @Composable () -> Unit) {
+        items.add(content)
+    }
+
+    fun build(): List<@Composable () -> Unit> = items.toList()
+}
+
 class TwoColumnScopeImpl : TwoColumnScope {
     val leftColumn = mutableListOf<@Composable () -> Unit>()
     val rightColumn = mutableListOf<@Composable () -> Unit>()
@@ -264,7 +274,7 @@ val auraSections = listOf(
         ),
         items = listOf(
             AuraItem(
-                id = "daily_tests",
+                id = "0",
                 type = AuraItemType.PSYCHOLOGY_TEST,
                 title = "Дневные тесты",
                 description = "Ежедневная диагностика состояния"
@@ -378,16 +388,16 @@ val auraSections = listOf(
         ),
         items = listOf(
             AuraItem(
-                id = "master_classes",
-                type = AuraItemType.COURSE,
-                title = "Мастер-классы",
-                description = "Экспертные сессии"
-            ),
-            AuraItem(
                 id = "aura_base",
                 type = AuraItemType.COURSE,
                 title = "Аура: база",
                 description = "Основы работы с аурой"
+            ),
+            AuraItem(
+                id = "master_classes",
+                type = AuraItemType.COURSE,
+                title = "Мастер-классы",
+                description = "Экспертные сессии"
             ),
             AuraItem(
                 id = "tarot_course",

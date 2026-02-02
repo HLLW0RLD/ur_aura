@@ -252,7 +252,7 @@ fun LoginScreen(
                             characteristics = CharacteristicData()
                         )
 
-                        loginViewModel.saveUser(context, user) {
+                        loginViewModel.saveUser(user) {
                             navController.nav(TabsHost)
                         }
                     }

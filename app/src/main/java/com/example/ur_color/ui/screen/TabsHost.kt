@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -123,6 +124,7 @@ fun TabsHostScreen() {
                 when (tab) {
                     RootTab.MAIN -> Main(Main)
                     RootTab.LAB -> Lab(Lab)
+                    RootTab.BAZAR -> Bazar(Bazar)
                     RootTab.PROFILE -> Profile(Profile())
                 }
             }
@@ -192,17 +194,16 @@ fun AppBottomNavigation(
             }
         )
 
-//        таб с "Ярмаркой" где находитсся контент создаваемый пользователями
-//        BottomNavItem(
-//            modifier = Modifier
-//                .weight(1f),
-//            icon = R.drawable.Ярмарка,
-//            text = Ярмарка,
-//            selected = currentTab == RootTab.Ярмарка,
-//            onClick = {
-//                onTabSelected(RootTab.Ярмарка)
-//            }
-//        )
+        BottomNavItem(
+            modifier = Modifier
+                .weight(1f),
+            icon = R.drawable.cauldron_potion,
+            text = stringResource(R.string.bottom_menu_bazar),
+            selected = currentTab == RootTab.BAZAR,
+            onClick = {
+                onTabSelected(RootTab.BAZAR)
+            }
+        )
 
         BottomNavItem(
             modifier = Modifier
@@ -237,6 +238,8 @@ fun BottomNavItem(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
+            modifier = Modifier
+                .size(28.dp),
             painter = painterResource(icon),
             contentDescription = null,
             tint = if (selected)
@@ -259,5 +262,6 @@ fun BottomNavItem(
 enum class RootTab(val index: Int) {
     MAIN(0),
     LAB(1),
-    PROFILE(2)
+    BAZAR(2),
+    PROFILE(3)
 }

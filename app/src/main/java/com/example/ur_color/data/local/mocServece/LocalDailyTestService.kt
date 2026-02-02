@@ -1,10 +1,10 @@
 package com.example.ur_color.data.local.mocServece
 
-import com.example.ur_color.data.model.Mod
-import com.example.ur_color.data.model.ModCategory
-import com.example.ur_color.data.model.ModFactors
-import com.example.ur_color.data.model.ModType
-import com.example.ur_color.data.model.Question
+import com.example.ur_color.data.model.question.Mod
+import com.example.ur_color.data.model.question.ModCategory
+import com.example.ur_color.data.model.question.ModFactors
+import com.example.ur_color.data.model.question.ModType
+import com.example.ur_color.data.model.question.Question
 import com.example.ur_color.utils.questionTemplates
 
 private const val VECTOR_SMOOTH_FACTOR = 0.3f

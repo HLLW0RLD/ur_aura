@@ -115,10 +115,6 @@ fun AuraDetailsScreen(
     val progress = ((collapsedY - offsetY.value) / (collapsedY - expandedY)).coerceIn(0f, 1f)
     val canScroll = progress >= 0.999f
 
-    LaunchedEffect(Unit) {
-        profileViewModel.init(context)
-    }
-
     fun animateToExpanded() {
         scope.launch {
             offsetY.animateTo(expandedY, animationSpec = spring(stiffness = Spring.StiffnessMedium))

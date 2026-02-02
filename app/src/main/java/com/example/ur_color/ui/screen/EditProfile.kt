@@ -64,7 +64,7 @@ fun EditProfile(editProfile: EditProfile) {
                 // если во вьюмодели поля пользователя такие же или не пустые то сохраняем
                 optionsIcon = painterResource(R.drawable.magic_sparkles),
                 onOptionsClick = {
-                    editProfileViewModel.update(context)
+                    editProfileViewModel.update()
                     navController.popBack()
                 },
                 onBackClick = {
@@ -89,10 +89,6 @@ fun EditProfileScreen(
     val navController = LocalNavController.current
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(Unit) {
-        editProfileViewModel.init(context)
-    }
 
     val user by editProfileViewModel.user.collectAsState()
     val avatar by editProfileViewModel.avatar.collectAsState()

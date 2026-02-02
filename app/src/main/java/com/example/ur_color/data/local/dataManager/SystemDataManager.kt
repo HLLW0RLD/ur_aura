@@ -1,6 +1,7 @@
 package com.example.ur_color.data.local.dataManager
 
 import android.content.Context
+import com.example.ur_color.App
 import com.example.ur_color.data.local.storage.SystemStorage
 import com.example.ur_color.ui.theme.ThemeMode
 import com.example.ur_color.ui.theme.ThemePalette
@@ -16,25 +17,25 @@ object SystemDataManager {
     private val _palette = MutableStateFlow(ThemePalette.PINK)
     val palette: StateFlow<ThemePalette> = _palette
 
-    suspend fun initialize(context: Context) {
+    suspend fun initialize() {
         if (initialized) return
-        _theme.value = SystemStorage.loadTheme(context)
-        _palette.value = SystemStorage.loadPalette(context)
+        _theme.value = SystemStorage.loadTheme()
+        _palette.value = SystemStorage.loadPalette()
         initialized = true
     }
 
-    suspend fun saveTheme(context: Context, theme: ThemeMode) {
-        SystemStorage.saveTheme(context, theme)
+    suspend fun saveTheme(theme: ThemeMode) {
+        SystemStorage.saveTheme(theme)
         _theme.value = theme
     }
 
-    suspend fun savePalette(context: Context, palette: ThemePalette) {
-        SystemStorage.savePalette(context, palette)
+    suspend fun savePalette(palette: ThemePalette) {
+        SystemStorage.savePalette(palette)
         _palette.value = palette
     }
 
-    suspend fun clear(context: Context) {
-        SystemStorage.clear(context)
+    suspend fun clear() {
+        SystemStorage.clear()
         _theme.value = ThemeMode.SYSTEM
         _palette.value = ThemePalette.PINK
         initialized = false

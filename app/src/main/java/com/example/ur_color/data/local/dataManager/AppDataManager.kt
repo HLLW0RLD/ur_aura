@@ -6,12 +6,12 @@ import kotlinx.coroutines.withContext
 
 object AppDataManager {
 
-    suspend fun initialize(context: Context) = withContext(Dispatchers.IO) {
-        SystemDataManager.initialize(context)
+    suspend fun initialize() = withContext(Dispatchers.IO) {
+        SystemDataManager.initialize()
     }
 
-    suspend fun clearAll(context: Context) = withContext(Dispatchers.IO) {
-        SystemDataManager.clear(context)
-        PersonalDataManager.delete(context)
+    suspend fun clearAll() = withContext(Dispatchers.IO) {
+        SystemDataManager.clear()
+        PersonalDataManager.delete()
     }
 }

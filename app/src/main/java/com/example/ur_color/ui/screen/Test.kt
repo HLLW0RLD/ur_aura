@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.IntOffset
 import com.example.ur_color.R
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.SwipeCard
+import com.example.ur_color.ui.screen.viewModel.CustomTestViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
@@ -46,36 +47,41 @@ import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Serializable
-data class DailyTest(val testId: String = "0") : Screen
+data class Test(
+    val testId: String,
+    val name: String = "Ежедневные тесты"
+) : Screen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun DailyTest(dailyTest : DailyTest) {
+fun Test(test : Test) {
     AppScaffold(
         showBottomBar = false,
         topBar = {
             val navController = LocalNavController.current
 
             CustomAppBar(
-                title = stringResource(R.string.profile_daily_tests),
+                title = test.name,
                 showBack = true,
                 onBackClick = {
                     navController.popBack()
                 },
                 showDivider = true,
-                isCentered = false,
+                isCentered = true,
                 backgroundColor = AppColors.background,
             )
         },
     ) {
-        when(dailyTest.testId) {
+        when(test.testId) {
             "0" -> {
                 DailyTestScreen(
                     modifier = Modifier.padding(it)
                 )
             }
             else -> {
-                // другие экраны тестов
+                CustomTestScreen(
+                    modifier = Modifier.padding(it)
+                )
             }
         }
     }
@@ -83,8 +89,8 @@ fun DailyTest(dailyTest : DailyTest) {
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun DailyTestScreen(
-    dailyTestViewModel: DailyTestViewModel = koinViewModel(),
+fun CustomTestScreen(
+    customTestViewModel: CustomTestViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -97,12 +103,8 @@ fun DailyTestScreen(
 
     LaunchedEffect(currentIndex) {
         if (currentIndex >= questions.size) {
-            dailyTestViewModel.updateAfterTest(context)
+//            customTestViewModel.updateAfterTest(context)
         }
-    }
-
-    LaunchedEffect(Unit) {
-        dailyTestViewModel.init(context)
     }
 
     Box(
@@ -164,7 +166,7 @@ fun DailyTestScreen(
             val handleSwipeRight = {
                 scope.launch {
                     offsetX.animateTo(1000f, tween(250))
-                    dailyTestViewModel.consumeAnswer(context, question, true)
+//                    customTestViewModel.consumeAnswer(context, question, true)
                     currentIndex++
                     offsetX.snapTo(0f)
                 }
@@ -173,7 +175,139 @@ fun DailyTestScreen(
             val handleSwipeLeft = {
                 scope.launch {
                     offsetX.animateTo(-1000f, tween(250))
-                    dailyTestViewModel.consumeAnswer(context, question, false)
+//                    customTestViewModel.consumeAnswer(context, question, false)
+                    currentIndex++
+                    offsetX.snapTo(0f)
+                }
+            }
+
+            SwipeCard(
+                centerText = "${questions.size - currentIndex}",
+                centerImg = painterResource(R.drawable.magic_sparkles),
+                text = question.text,
+                onSwipeLeft = { handleSwipeLeft() },
+                onSwipeRight = { handleSwipeRight() },
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .graphicsLayer(rotationZ = offsetX.value / 30)
+                    .clip(RoundedCornerShape(24.dp))
+                    .shadow(8.dp, RoundedCornerShape(24.dp))
+                    .pointerInput(currentIndex) {
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { _, dragAmount ->
+                                scope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                            },
+                            onDragEnd = {
+                                scope.launch {
+                                    when {
+                                        offsetX.value > 250f -> handleSwipeRight()
+                                        offsetX.value < -250f -> handleSwipeLeft()
+                                        else -> offsetX.animateTo(0f, tween(200))
+                                    }
+                                }
+                            }
+                        )
+                    },
+                textColor = AppColors.textPrimary
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
+fun DailyTestScreen(
+    dailyTestViewModel: DailyTestViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val anavController = LocalNavController.current
+
+    val questions = remember { LocalDailyTestService().questionMods.toMutableStateList() }
+    var currentIndex by remember { mutableStateOf(0) }
+    val offsetX = remember { Animatable(0f) }
+
+    LaunchedEffect(currentIndex) {
+        if (currentIndex >= questions.size) {
+            dailyTestViewModel.updateAfterTest()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        dailyTestViewModel.init()
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(AppColors.background)
+    ) {
+
+        if (questions.isEmpty()) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.all_test_done),
+                color = AppColors.textPrimary,
+            )
+        } else {
+            if (currentIndex >= questions.size) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(R.string.all_test_done),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AppColors.textPrimary,
+                )
+                return@Box
+            }
+
+            if (currentIndex + 1 < questions.size) {
+                val nextCardAlpha by animateFloatAsState(
+                    targetValue = 1f,
+                    animationSpec = tween(800, easing = LinearOutSlowInEasing),
+                    label = "nextCardAlpha"
+                )
+                val nextCardScale by animateFloatAsState(
+                    targetValue = 0.96f,
+                    animationSpec = tween(800, easing = LinearOutSlowInEasing),
+                    label = "nextCardScale"
+                )
+                val nextCardTranslateY by animateFloatAsState(
+                    targetValue = 20f,
+                    animationSpec = tween(800, easing = LinearOutSlowInEasing),
+                    label = "nextCardTranslateY"
+                )
+
+                SwipeCard(
+                    text = questions[currentIndex + 1].text,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .graphicsLayer(
+                            scaleX = nextCardScale,
+                            scaleY = nextCardScale,
+                            translationY = nextCardTranslateY,
+                            alpha = nextCardAlpha
+                        ),
+                    textColor = AppColors.textSecondary
+                )
+            }
+
+            val question = questions[currentIndex]
+
+            val handleSwipeRight = {
+                scope.launch {
+                    offsetX.animateTo(1000f, tween(250))
+                    dailyTestViewModel.consumeAnswer(question, true)
+                    currentIndex++
+                    offsetX.snapTo(0f)
+                }
+            }
+
+            val handleSwipeLeft = {
+                scope.launch {
+                    offsetX.animateTo(-1000f, tween(250))
+                    dailyTestViewModel.consumeAnswer(question, false)
                     currentIndex++
                     offsetX.snapTo(0f)
                 }

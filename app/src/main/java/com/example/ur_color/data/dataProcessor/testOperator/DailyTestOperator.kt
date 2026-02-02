@@ -1,13 +1,11 @@
 package com.example.ur_color.data.dataProcessor.testOperator
 
-import android.content.Context
 import android.graphics.Bitmap
 import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.ModType
-import com.example.ur_color.data.model.Question
+import com.example.ur_color.data.model.question.ModType
+import com.example.ur_color.data.model.question.Question
 import com.example.ur_color.data.model.user.UserData
-import com.example.ur_color.utils.logDebug
 import kotlin.collections.iterator
 
 object DailyTestOperator {
@@ -25,7 +23,7 @@ object DailyTestOperator {
         }
     }
 
-    suspend fun applyDailyResult(context: Context, user: UserData?, aura: Bitmap?) {
+    suspend fun applyDailyResult(user: UserData?, aura: Bitmap?) {
         if (user == null) return
         var updated = user!!
 
@@ -41,10 +39,10 @@ object DailyTestOperator {
             updated = updateUserValue(updated, type, newValue)
         }
 
-        PersonalDataManager.saveUser(context, updated)
+        PersonalDataManager.saveUser(updated)
 
         val aura = AuraGenerator.updateDynamicAura(aura, updated)
-        if (aura != null) PersonalDataManager.saveAura(context, aura)
+        if (aura != null) PersonalDataManager.saveAura(aura)
 
         resetDaily()
     }

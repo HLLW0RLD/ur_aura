@@ -43,11 +43,11 @@ object PatternLibrary {
     fun archetypeLayer(width: Int, height: Int, user: UserData): Bitmap {
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        val rnd = AuraUtils.seededRandom(user.auraSeed + (user.personalityType?.hashCode() ?: 0))
-        val chosen = when (user.personalityType?.lowercase()) {
-            "explorer" -> ShapeType.SPIRAL
-            "thinker" -> ShapeType.POLYGON
-            "artist" -> ShapeType.PETAL
+        val rnd = AuraUtils.seededRandom(user.auraSeed + (user.auraSeed?.hashCode() ?: 0))
+        val chosen = when (user.auraSeed) {
+            0L-> ShapeType.SPIRAL
+            1L -> ShapeType.POLYGON
+            2L -> ShapeType.PETAL
             else -> ShapeType.RINGS
         }
 

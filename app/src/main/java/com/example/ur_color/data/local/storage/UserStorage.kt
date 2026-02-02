@@ -5,12 +5,15 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.ur_color.App
 import com.example.ur_color.data.model.user.UserData
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
 object UserStorage {
+    val context = App.instance
+
     private const val USER_PREFERENCES = "user_prefs"
     private val Context.dataStore by preferencesDataStore(name = USER_PREFERENCES)
 
@@ -22,13 +25,13 @@ object UserStorage {
     private val gson = Gson()
 
     //USER
-    suspend fun save(context: Context, user: UserData) {
+    suspend fun save(user: UserData) {
         context.dataStore.edit { prefs ->
             prefs[USER_KEY] = gson.toJson(user)
         }
     }
 
-    suspend fun delete(context: Context) {
+    suspend fun delete() {
         context.dataStore.edit { prefs ->
             prefs.remove(USER_KEY)
             prefs.remove(DAILY_TEST_KEY)
@@ -37,43 +40,43 @@ object UserStorage {
         }
     }
 
-    suspend fun load(context: Context): UserData? {
+    suspend fun load(): UserData? {
         val json = context.dataStore.data.first()[USER_KEY] ?: return null
         return gson.fromJson(json, UserData::class.java)
     }
 
     // DAILY TEST
-    suspend fun saveDailyTestDate(context: Context, date: String) {
+    suspend fun saveDailyTestDate(date: String) {
         context.dataStore.edit { prefs ->
             prefs[DAILY_TEST_KEY] = date
         }
     }
 
-    suspend fun loadDailyTestDate(context: Context): String? {
+    suspend fun loadDailyTestDate(): String? {
         return context.dataStore.data.first()[DAILY_TEST_KEY]
     }
 
     // USER LVL
-    suspend fun saveLvl(context: Context, lvl: Float) {
+    suspend fun saveLvl(lvl: Float) {
         context.dataStore.edit { prefs ->
             prefs[USER_LVL_KEY] = lvl
         }
     }
 
-    suspend fun loadLvl(context: Context): Float? {
+    suspend fun loadLvl(): Float? {
         return context.dataStore.data.first()[USER_LVL_KEY]
     }
 
     // USER ACHIEVEMENTS
-    suspend fun saveAchievementId(context: Context, achievementId: String) {
-        val current = loadAchievements(context) ?: emptyList()
+    suspend fun saveAchievementId(achievementId: String) {
+        val current = loadAchievements() ?: emptyList()
         if (achievementId !in current) {
             val updated = current + achievementId
-            saveAchievements(context, updated)
+            saveAchievements(updated)
         }
     }
 
-    suspend fun loadAchievements(context: Context): List<String>? {
+    suspend fun loadAchievements(): List<String>? {
         val json = context.dataStore.data.first()[USER_ACHIEVEMENTS_KEY]
         return if (json.isNullOrBlank()) {
             emptyList()
@@ -86,7 +89,7 @@ object UserStorage {
         }
     }
 
-    private suspend fun saveAchievements(context: Context, achievements: List<String>) {
+    private suspend fun saveAchievements(achievements: List<String>) {
         context.dataStore.edit { prefs ->
             prefs[USER_ACHIEVEMENTS_KEY] = Json.encodeToString(achievements)
         }

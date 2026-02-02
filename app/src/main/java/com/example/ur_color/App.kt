@@ -1,6 +1,7 @@
 package com.example.ur_color
 
 import android.app.Application
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ur_color.data.di.apiModule
@@ -20,8 +21,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        _instance  = this
+
         CoroutineScope(Dispatchers.Default).launch {
-            AppDataManager.initialize(this@App)
+            AppDataManager.initialize()
         }
 
         startKoin {
@@ -34,5 +37,11 @@ class App : Application() {
                 viewModelModule
             )
         }
+    }
+
+    companion object {
+        private var _instance: App? = null
+        val instance: App
+        get() = _instance!!
     }
 }

@@ -58,12 +58,9 @@ import com.example.ur_color.R
 import com.example.ur_color.data.local.mocServece.LocalMotivationService
 import com.example.ur_color.data.model.user.ZodiacSign
 import com.example.ur_color.ui.AutoScrollHorizontalPager
-import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.ExpandableGradientGraphBox
 import com.example.ur_color.ui.FeedContentCard
 import com.example.ur_color.ui.FloatingBox
-import com.example.ur_color.utils.WindowType
-import com.example.ur_color.ui.screen.viewModel.HoroscopeUiState
 import com.example.ur_color.ui.screen.viewModel.LabViewModel
 import com.example.ur_color.ui.screen.viewModel.MainViewModel
 import com.example.ur_color.ui.screen.viewModel.ProfileViewModel
@@ -132,8 +129,7 @@ fun MainScreen(
     }
 
     LaunchedEffect(Unit) {
-        labViewModel.checkDailyTestAvailability(context)
-        profileViewModel.init(context)
+        labViewModel.checkDailyTestAvailability()
     }
 
     val density = LocalDensity.current
@@ -242,7 +238,7 @@ fun MainScreen(
                             .background(AppColors.black)
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                             .clickable {
-                                navController.nav(DailyTest())
+                                navController.nav(Test("0"))
                             }
                     )
                 }

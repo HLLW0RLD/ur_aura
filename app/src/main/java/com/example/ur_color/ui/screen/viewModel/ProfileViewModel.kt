@@ -37,18 +37,18 @@ class ProfileViewModel(
     private val _level = MutableStateFlow<Float>(1f)
     val level = _level
 
-    fun init(context: Context) {
+    init {
         viewModelScope.launch {
-            _user.value = userRepository.getUser(context)
-            _level.value = userRepository.getLvl(context)
-            _aura.value = userRepository.getAura(context)
+            _user.value = userRepository.getUser()
+            _level.value = userRepository.getLvl()
+            _aura.value = userRepository.getAura()
             getPostsByUser(_user.value?.id)
         }
     }
 
-    fun deleteUser(context: Context) {
+    fun deleteUser() {
         viewModelScope.launch {
-            PersonalDataManager.delete(context)
+            PersonalDataManager.delete()
         }
     }
 

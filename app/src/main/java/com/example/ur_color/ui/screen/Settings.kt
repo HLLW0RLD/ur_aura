@@ -155,21 +155,21 @@ fun SettingsScreen(
                         selected = themeMode == ThemeMode.SYSTEM,
                         text = stringResource(R.string.settings_theme_system),
                         onClick = {
-                            scope.launch { SystemDataManager.saveTheme(context, ThemeMode.SYSTEM) }
+                            scope.launch { SystemDataManager.saveTheme(ThemeMode.SYSTEM) }
                         }
                     )
                     AuraRadioButton(
                         selected = themeMode == ThemeMode.LIGHT,
                         text = stringResource(R.string.settings_theme_light),
                         onClick = {
-                            scope.launch { SystemDataManager.saveTheme(context, ThemeMode.LIGHT) }
+                            scope.launch { SystemDataManager.saveTheme(ThemeMode.LIGHT) }
                         }
                     )
                     AuraRadioButton(
                         selected = themeMode == ThemeMode.DARK,
                         text = stringResource(R.string.settings_theme_dark),
                         onClick = {
-                            scope.launch { SystemDataManager.saveTheme(context, ThemeMode.DARK) }
+                            scope.launch { SystemDataManager.saveTheme(ThemeMode.DARK) }
                         }
                     )
                 }
@@ -201,7 +201,7 @@ fun SettingsScreen(
                             color = item.color,
                             onClick = {
                                 scope.launch {
-                                    SystemDataManager.savePalette(context, item.palette)
+                                    SystemDataManager.savePalette(item.palette)
                                 }
                             }
                         )
@@ -236,7 +236,7 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .clickable {
                                 scope.launch {
-                                    profileViewModel.deleteUser(context)
+                                    profileViewModel.deleteUser()
                                     navController.nav(Login, true)
                                 }
                             }

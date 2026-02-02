@@ -1,5 +1,7 @@
 package com.example.ur_color.ui.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 data object Lab: Screen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Lab(lab: Lab) {
     AppScaffold(
@@ -73,6 +76,7 @@ fun Lab(lab: Lab) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LabScreen(
     modifier : Modifier = Modifier,
@@ -85,7 +89,7 @@ fun LabScreen(
     val isDailyTestAvailable by labViewModel.isDailyTestAvailable.collectAsState()
 
     LaunchedEffect(Unit) {
-        labViewModel.checkDailyTestAvailability(context)
+        labViewModel.checkDailyTestAvailability()
     }
 
     LazyColumn(
@@ -110,12 +114,12 @@ fun LabScreen(
                 AuraExpandableRow(
                     config = section.rowConfig,
                     items = section.items,
-                    onConfirm = {
-                        when (it.type) {
+                    onConfirm = { auraItem ->
+                        when (auraItem.type) {
 
                             AuraItemType.PSYCHOLOGY_TEST -> {
                                 if (isDailyTestAvailable) {
-                                    navController.nav(DailyTest(it.id))
+                                    navController.nav(Test("0"))
                                 } else {
                                     toast(context, context.getString(R.string.test_done))
                                 }

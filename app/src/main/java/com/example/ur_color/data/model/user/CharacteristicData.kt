@@ -1,5 +1,6 @@
 package com.example.ur_color.data.model.user
 
+import android.content.ClipDescription
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,5 +31,13 @@ data class CharacteristicData(
     val communicationVector: List<Float> = List(10) { 50f },
     val socialVector: List<Float> = List(10) { 50f },
     val anxietyVector: List<Float> = List(10) { 50f },
-    val fatigueVector: List<Float> = List(10) { 50f }
+    val fatigueVector: List<Float> = List(10) { 50f },
+
+    val custom: List<String> = listOf()
+)
+
+data class CustomCharacteristic(
+    val name: String = "",
+    val description: String = "",
+    val value:  Float = 0f
 )

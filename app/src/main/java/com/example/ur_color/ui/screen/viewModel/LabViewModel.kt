@@ -1,6 +1,8 @@
 package com.example.ur_color.ui.screen.viewModel
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.R
 import com.example.ur_color.data.local.base.BaseViewModel
@@ -24,11 +26,12 @@ class LabViewModel : BaseViewModel()  {
     val isDailyTestAvailable = _isDailyTestAvailable.asStateFlow()
 
 
-    fun checkDailyTestAvailability(context: Context) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun checkDailyTestAvailability() {
         viewModelScope.launch {
 
             val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-            val lastDate = PersonalDataManager.loadDailyTestDate(context)
+            val lastDate = PersonalDataManager.loadDailyTestDate()
 
             if (lastDate != today) {
                 _isDailyTestAvailable.value = true

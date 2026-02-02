@@ -15,12 +15,12 @@ import kotlinx.coroutines.withContext
 class LoginViewModel() : BaseViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun saveUser(context: Context, user: UserData, onSuccess: () -> Unit) {
+    fun saveUser(user: UserData, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.Default) {
 
             val bitmap = AuraGenerator.generateBaseAura(user)
-            PersonalDataManager.saveUser(context, user)
-            PersonalDataManager.saveAura(context, bitmap)
+            PersonalDataManager.saveUser(user)
+            PersonalDataManager.saveAura(bitmap)
 
             withContext(Dispatchers.Main) {
                 onSuccess()

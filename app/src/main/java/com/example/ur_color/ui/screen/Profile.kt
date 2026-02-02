@@ -83,9 +83,6 @@ fun ProfileScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val color = AppColors.backgroundDark
 
-    LaunchedEffect(Unit) {
-        profileViewModel.init(context)
-    }
 
     Column(
         modifier = modifier

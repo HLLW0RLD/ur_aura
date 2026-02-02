@@ -9,6 +9,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Base64
 import androidx.lifecycle.viewModelScope
+import com.example.ur_color.App
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.UserData
@@ -22,6 +23,7 @@ import java.io.ByteArrayOutputStream
 class EditProfileViewModel(
     private val userRepository: UserRepository
 ): BaseViewModel() {
+    val context = App.instance
 
     private val _user = MutableStateFlow<UserData?>(null)
     val user = _user.asStateFlow()
@@ -32,9 +34,9 @@ class EditProfileViewModel(
     private val _about = MutableStateFlow<String?>(null)
     val about = _about.asStateFlow()
 
-    fun init(context: Context) {
+    init {
         viewModelScope.launch {
-            val loadedUser = userRepository.getUser(context)
+            val loadedUser = userRepository.getUser()
             logDebug("${loadedUser?.avatarUri}")
             _user.value = loadedUser
             _about.value = loadedUser?.about
@@ -50,15 +52,14 @@ class EditProfileViewModel(
         _avatar.value = avatar
     }
 
-    fun update(context: Context) {
+    fun update() {
         viewModelScope.launch {
-            PersonalDataManager.updateUser(context, about.value, avatar.value)
+            PersonalDataManager.updateUser(about.value, avatar.value)
         }
     }
 
     // ддля оттправккки на бэк
     private fun uriToBitmap(
-        context: Context,
         uri: Uri
     ): Bitmap {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

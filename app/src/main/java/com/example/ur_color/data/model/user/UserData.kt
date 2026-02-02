@@ -24,7 +24,6 @@ data class UserData(
     val birthTimestamp: Long = 0L,
     val characteristics: CharacteristicData,
     val userLevel: Int = 1,
-    val personalityType: String? = null,
 
     val achievements: List<Achievement> = listOf()
 )  {

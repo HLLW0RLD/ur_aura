@@ -9,52 +9,52 @@ import okhttp3.Cache
 
 class UserRepository {
 
-    suspend fun getUser(context: Context, useCache: Boolean = false): UserData? {
+    suspend fun getUser(useCache: Boolean = false): UserData? {
         return if (useCache) {
-            PersonalDataManager.getUser(context)
+            PersonalDataManager.getUser()
         } else {
             // api
             var user: UserData? = null
             try {
                 // api
-                user = PersonalDataManager.getUser(context)
+                user = PersonalDataManager.getUser()
             } catch (e: Exception) {
-                user = PersonalDataManager.getUser(context)
+                user = PersonalDataManager.getUser()
                 logError(e)
             }
-            PersonalDataManager.saveUser(context, user)
+            PersonalDataManager.saveUser(user)
             user
         }
     }
 
-    suspend fun getAura(context: Context, useCache: Boolean = false): Bitmap? {
+    suspend fun getAura(useCache: Boolean = false): Bitmap? {
         return if (useCache) {
-            PersonalDataManager.getAura(context)
+            PersonalDataManager.getAura()
         } else {
             var aura: Bitmap? = null
             try {
                 // api
-                aura = PersonalDataManager.getAura(context)
+                aura = PersonalDataManager.getAura()
             } catch (e: Exception) {
-                aura = PersonalDataManager.getAura(context)
+                aura = PersonalDataManager.getAura()
                 logError(e)
             }
-            PersonalDataManager.saveAura(context, aura)
+            PersonalDataManager.saveAura(aura)
             aura
         }
     }
 
-    suspend fun getLvl(context: Context, useCache: Boolean = false): Float {
+    suspend fun getLvl(useCache: Boolean = false): Float {
         return if (useCache) {
-            PersonalDataManager.getLvl(context)
+            PersonalDataManager.getLvl()
         } else {
             // api
             var lvl: Float? = 1f
             try {
                 // api
-                lvl = PersonalDataManager.getLvl(context)
+                lvl = PersonalDataManager.getLvl()
             } catch (e: Exception) {
-                lvl = PersonalDataManager.getLvl(context)
+                lvl = PersonalDataManager.getLvl()
                 logError(e)
             }
             lvl

@@ -12,84 +12,83 @@ import com.example.ur_color.utils.logError
 object PersonalDataManager {
 
     suspend fun updateUser(
-        context: Context,
         about: String? = null,
         avatar: String? = null
     ) {
-        val u = UserStorage.load(context)
+        val u = UserStorage.load()
         when {
             about != null && avatar != null -> {
                 val current = u?.copy(about = about, avatarUri = avatar)
                 current?.let {
-                    UserStorage.save(context, it)
+                    UserStorage.save(it)
                 }
             }
             about != null -> {
                 val current = u?.copy(about = about)
                 current?.let {
-                    UserStorage.save(context, it)
+                    UserStorage.save(it)
                 }
             }
             avatar != null -> {
                 val current = u?.copy(avatarUri = avatar)
                 current?.let {
-                    UserStorage.save(context, it)
+                    UserStorage.save(it)
                 }
             }
         }
     }
 
-    suspend fun getUser(context: Context): UserData? {
-        return UserStorage.load(context)
+    suspend fun getUser(): UserData? {
+        return UserStorage.load()
     }
 
-    suspend fun getLvl(context: Context): Float {
-        return UserStorage.loadLvl(context)?.toFloat() ?: 1f
+    suspend fun getLvl(): Float {
+        return UserStorage.loadLvl()?.toFloat() ?: 1f
     }
 
-    suspend fun getAura(context: Context): Bitmap? {
-        return AuraStorage.load(context)
+    suspend fun getAura(): Bitmap? {
+        return AuraStorage.load()
     }
 
-    suspend fun saveUser(context: Context, user: UserData? = null) {
+    suspend fun saveUser(user: UserData? = null) {
         user?.let {
-            UserStorage.save(context, it)
+            UserStorage.save(it)
         }
     }
 
-    suspend fun saveAura(context: Context, aura: Bitmap? = null) {
+    suspend fun saveAura(aura: Bitmap? = null) {
         aura?.let {
-            AuraStorage.save(context, it)
+            AuraStorage.save(it)
         }
     }
 
-    suspend fun saveDailyTestDate(context: Context, date: String) {
-        date.let { UserStorage.saveDailyTestDate(context, it) }
+    suspend fun saveDailyTestDate(date: String) {
+        date.let { UserStorage.saveDailyTestDate(it) }
     }
 
-    suspend fun loadDailyTestDate(context: Context): String? {
-        return UserStorage.loadDailyTestDate(context)
+    suspend fun loadDailyTestDate(): String? {
+        return UserStorage.loadDailyTestDate()
     }
 
-    suspend fun updateLevel(context: Context, lvl: Float = 0.1f) {
+    suspend fun updateLevel(lvl: Float = 0.1f) {
         try {
-            val level = UserStorage.loadLvl(context)?.toFloat() ?: 1f
-            UserStorage.saveLvl(context, level + lvl)
+            val level = UserStorage.loadLvl()?.toFloat() ?: 1f
+            UserStorage.saveLvl(level + lvl)
         } catch (e: Exception) {
             logError(e.message)
         }
     }
 
-    suspend fun setAchievement(context: Context, achievement: String) {
-        UserStorage.saveAchievementId(context, achievement)
+    suspend fun setAchievement(achievement: String) {
+        UserStorage.saveAchievementId(achievement)
     }
 
-    suspend fun getAchievements(context: Context): List<String>? {
-        return UserStorage.loadAchievements(context)
+    suspend fun getAchievements(): List<String>? {
+        return UserStorage.loadAchievements()
     }
 
-    suspend fun delete(context: Context) {
-        UserStorage.delete(context)
-        AuraStorage.delete(context)
+    suspend fun delete() {
+        UserStorage.delete()
+        AuraStorage.delete()
     }
 }

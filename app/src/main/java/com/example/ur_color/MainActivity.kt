@@ -23,22 +23,19 @@ import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.ui.screen.AuraDetails
 import com.example.ur_color.ui.screen.BottomBarState
 import com.example.ur_color.ui.screen.Login
-import com.example.ur_color.ui.screen.Main
-import com.example.ur_color.ui.screen.Profile
-import com.example.ur_color.ui.screen.DailyTest
+import com.example.ur_color.ui.screen.Test
 import com.example.ur_color.ui.screen.EditProfile
 import com.example.ur_color.ui.screen.TabsHost
 import com.example.ur_color.ui.screen.TabsHostScreen
 import com.example.ur_color.ui.screen.LocalBottomBarState
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.Settings
-import com.example.ur_color.ui.screen.Lab
+import com.example.ur_color.ui.screen.TestConstructor
 import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
 
-const val SCREEN_DATA = "{json}"
 class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalAnimationApi::class)
@@ -57,7 +54,7 @@ class MainActivity : ComponentActivity() {
                 var isInitialized by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
-                    val user = PersonalDataManager.getUser(context = context)
+                    val user = PersonalDataManager.getUser()
                     startRoute = if (user != null) TabsHost else Login
                     isInitialized = true
                 }
@@ -83,9 +80,12 @@ class MainActivity : ComponentActivity() {
                             animatedScreenComposable<Login>(
                                 navController = navController,
                             ) { Login(it) }
-                            animatedScreenComposable<DailyTest>(
+                            animatedScreenComposable<Test>(
                                 navController = navController,
-                            ) { DailyTest(it) }
+                            ) { Test(it) }
+                            animatedScreenComposable<TestConstructor>(
+                                navController = navController,
+                            ) { TestConstructor(it) }
                             animatedScreenComposable<AuraDetails>(
                                 navController = navController,
                             ) { AuraDetails(it) }

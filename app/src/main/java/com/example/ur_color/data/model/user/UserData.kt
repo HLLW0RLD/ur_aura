@@ -11,6 +11,7 @@ import java.util.UUID
 @Serializable
 data class UserData(
     val id: String = UUID.randomUUID().toString(),
+    val nickName: String,
     val firstName: String,
     val lastName: String,
     val middleName: String?,
@@ -25,7 +26,7 @@ data class UserData(
     val characteristics: CharacteristicData,
     val userLevel: Int = 1,
 
-    val achievements: List<Achievement> = listOf()
+//    val achievements: List<Achievement> = listOf()
 )  {
     val auraSeed: Long = (firstName + lastName + birthPlace + zodiacSign).hashCode().toLong()
 }

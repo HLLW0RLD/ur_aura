@@ -22,7 +22,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel { LoginViewModel() }
-    viewModel { MainViewModel(get()) }
+    viewModel { MainViewModel() }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { EditProfileViewModel(get()) }
     viewModel { AuraDetailsViewModel() }

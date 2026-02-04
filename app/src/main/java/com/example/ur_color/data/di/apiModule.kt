@@ -1,7 +1,9 @@
 package com.example.ur_color.data.di
 
 import com.example.ur_color.data.remote.HoroscopeApi
+import com.example.ur_color.data.remote.UserApi
 import com.example.ur_color.data.repo.HoroscopeRepository
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -23,11 +25,11 @@ val apiModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl("https://horoscope-app-api.vercel.app/api/v1/") // ← замени на реальный базовый URL
+            .baseUrl("http://45.67.230.204/api/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    single { get<Retrofit>().create(HoroscopeApi::class.java) }
+    single { get<Retrofit>().create(UserApi::class.java) }
 }

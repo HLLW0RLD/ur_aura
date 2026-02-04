@@ -68,6 +68,7 @@ dependencies {
     // room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.retrofit2.kotlin.coroutines.adapter)
     kapt(libs.androidx.room.compiler)
 
     implementation(libs.androidx.core.ktx)

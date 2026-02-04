@@ -27,6 +27,7 @@ converterGson = "3.0.0"
 kotlinxCoroutinesAndroid = "1.10.2"
 loggingInterceptor = "5.0.0-alpha.16"
 room = "2.8.4"
+retrofit2KotlinCoroutinesAdapter = "0.9.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,7 @@ logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-intercep
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+retrofit2-kotlin-coroutines-adapter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlin-coroutines-adapter", version.ref = "retrofit2KotlinCoroutinesAdapter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

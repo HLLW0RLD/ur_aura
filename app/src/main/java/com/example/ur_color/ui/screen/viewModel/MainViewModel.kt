@@ -23,7 +23,7 @@ sealed class HoroscopeUiState {
 }
 
 class MainViewModel(
-    private val horoscopeRepository: HoroscopeRepository
+//    private val horoscopeRepository: HoroscopeRepository
 ) : BaseViewModel() {
 
     private val _horoscopeState = MutableStateFlow<HoroscopeUiState>(HoroscopeUiState.Loading)
@@ -36,17 +36,17 @@ class MainViewModel(
     fun loadDailyHoroscope(sign: String, day: HoroscopeDate = HoroscopeDate.TODAY) {
         _horoscopeState.value = HoroscopeUiState.Loading
 
-        viewModelScope.launch {
-            horoscopeRepository
-                .getDailyHoroscope(sign, day)
-                .fold(
-                    onSuccess = { horoscope ->
-                        _horoscopeState.value = HoroscopeUiState.Success(horoscope)
-                    },
-                    onFailure = { error ->
-                        _horoscopeState.value = HoroscopeUiState.Error(error.localizedMessage ?: "Unknown error")
-                    }
-                )
-        }
+//        viewModelScope.launch {
+//            horoscopeRepository
+//                .getDailyHoroscope(sign, day)
+//                .fold(
+//                    onSuccess = { horoscope ->
+//                        _horoscopeState.value = HoroscopeUiState.Success(horoscope)
+//                    },
+//                    onFailure = { error ->
+//                        _horoscopeState.value = HoroscopeUiState.Error(error.localizedMessage ?: "Unknown error")
+//                    }
+//                )
+//        }
     }
 }

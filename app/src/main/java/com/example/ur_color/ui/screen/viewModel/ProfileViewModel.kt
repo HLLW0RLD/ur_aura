@@ -15,9 +15,6 @@ import com.example.ur_color.data.repo.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 class ProfileViewModel(
@@ -39,6 +36,10 @@ class ProfileViewModel(
 
     init {
         viewModelScope.launch {
+
+            userRepository.register()
+
+
             _user.value = userRepository.getUser()
             _level.value = userRepository.getLvl()
             _aura.value = userRepository.getAura()

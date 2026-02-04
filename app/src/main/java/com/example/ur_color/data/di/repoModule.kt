@@ -6,7 +6,7 @@ import com.example.ur_color.data.repo.UserRepository
 import org.koin.dsl.module
 
 val repoModule = module {
-    single { HoroscopeRepository(get()) }
-    single { UserRepository() }
+//    single { HoroscopeRepository(get()) }
+    single { UserRepository(get()) }
     single { PostRepository(get()) }
 }

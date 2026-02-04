@@ -241,6 +241,7 @@ fun LoginScreen(
 
                         // 2) формируем модель
                         val user = UserData(
+                            nickName = firstName,
                             firstName = firstName,
                             lastName = lastName,
                             middleName = middleName.ifBlank { null },

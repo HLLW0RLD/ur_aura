@@ -4,10 +4,43 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.UserData
+import com.example.ur_color.data.remote.MockResponse
+import com.example.ur_color.data.remote.RegisterRequest
+import com.example.ur_color.data.remote.UserApi
+import com.example.ur_color.utils.logDebug
 import com.example.ur_color.utils.logError
+import com.example.ur_color.utils.logSuccess
+import com.example.ur_color.utils.toRequestBody
 import okhttp3.Cache
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class UserRepository {
+class UserRepository(
+    val api: UserApi
+) {
+
+    suspend fun login() {
+
+    }
+
+    fun register() {
+        val j = RegisterRequest(
+            email = "test@example.com",
+            password = "Test123",
+            firstName = "Test123",
+            lastName = "Test123",
+            birthDate = "1990-01-01",
+            birthPlace = "Москва",
+            gender = "male",
+            zodiacSign = "Aries"
+        )
+
+        val call = api.register(j)
+
+        logDebug(call)
+    }
 
     suspend fun getUser(useCache: Boolean = false): UserData? {
         return if (useCache) {

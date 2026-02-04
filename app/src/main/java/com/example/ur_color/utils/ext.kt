@@ -26,6 +26,12 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 import androidx.core.graphics.toColorInt
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import org.json.JSONObject
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 //  SYSTEM
 /*==============================================================================================*/
@@ -50,6 +56,17 @@ val LocalNavController =
 
 fun toast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(context, message, duration).show()
+}
+
+fun isValidEmail(email: String): Boolean {
+    var isValid = false
+    val expression = "^[a-zA-Z0-9+_.-]+@[a-z]+\\.+[a-z]+"
+    val pattern: Pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
+    val matcher: Matcher = pattern.matcher(email)
+    if (matcher.matches()) {
+        isValid = true
+    }
+    return isValid
 }
 
 fun String?.parseBirthHour(): Int {
@@ -164,6 +181,20 @@ fun calculateAge(birthDate: String): Int? {
         Period.between(date, today).years
     } catch (e: Exception) {
         null
+    }
+}
+
+fun JSONObject.toRequestBody(mediaType: String = "application/json; charset=utf-8"): RequestBody {
+    return RequestBody.create(
+        mediaType.toMediaTypeOrNull(),
+        this.toString()
+    )
+}
+
+fun JSONObject.toMap(): Map<String, Any?> = keys().asSequence().associateWith {
+    when (val value = this[it]) {
+        is JSONObject -> value.toMap()
+        else -> value
     }
 }
 

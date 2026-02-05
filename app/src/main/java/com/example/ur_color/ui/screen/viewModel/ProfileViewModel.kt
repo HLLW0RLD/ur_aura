@@ -37,7 +37,7 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
 
-            userRepository.register()
+//            userRepository.register()
 
 
             _user.value = userRepository.getUser()

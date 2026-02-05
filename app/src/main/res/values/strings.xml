@@ -36,6 +36,7 @@
     <string name="metric_anxiety">Тревога</string>
     <string name="metric_fatigue">Усталость</string>
 
+    <string name="field_nickname">Никнейм</string>
     <string name="field_last_name">Фамилия</string>
     <string name="field_first_name">Имя</string>
     <string name="field_middle_name_optional">Отчество (опционально)</string>
@@ -45,6 +46,8 @@
     <string name="gender_male">Мужской</string>
     <string name="gender_female">Женский</string>
     <string name="action_login">Войти</string>
+    <string name="action_register">Регистрация</string>
+    <string name="onboarding_description">Добро пожаловать в Aura. Откройте свою истинную сущность через энергию цвета и звезд.</string>
     <string name="error_fill_required_fields">Заполните обязательные поля</string>
 
     <string name="profile_title">Профиль</string>

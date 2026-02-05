@@ -22,12 +22,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.ui.screen.AuraDetails
 import com.example.ur_color.ui.screen.BottomBarState
-import com.example.ur_color.ui.screen.Login
+import com.example.ur_color.ui.screen.Registration
 import com.example.ur_color.ui.screen.Test
 import com.example.ur_color.ui.screen.EditProfile
 import com.example.ur_color.ui.screen.TabsHost
 import com.example.ur_color.ui.screen.TabsHostScreen
 import com.example.ur_color.ui.screen.LocalBottomBarState
+import com.example.ur_color.ui.screen.Login
+import com.example.ur_color.ui.screen.Onboarding
 import com.example.ur_color.ui.screen.Screen
 import com.example.ur_color.ui.screen.Settings
 import com.example.ur_color.ui.screen.TestConstructor
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     val user = PersonalDataManager.getUser()
-                    startRoute = if (user != null) TabsHost else Login
+                    startRoute = if (user != null) TabsHost else Onboarding
                     isInitialized = true
                 }
 
@@ -72,14 +74,23 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = startRoute!!.route()
                         ) {
+                            // вход в приложение
+                            animatedScreenComposable<Onboarding>(
+                                navController = navController,
+                            ) { Onboarding(it) }
+                            animatedScreenComposable<Login>(
+                                navController = navController,
+                            ) { Login(it) }
+                            animatedScreenComposable<Registration>(
+                                navController = navController,
+                            ) { Registration(it) }
+
                             // хост экран для табов
                             animatedScreenComposable<TabsHost>(navController) {
                                 TabsHostScreen()
                             }
 
-                            animatedScreenComposable<Login>(
-                                navController = navController,
-                            ) { Login(it) }
+                            // экраны внутри табов
                             animatedScreenComposable<Test>(
                                 navController = navController,
                             ) { Test(it) }

@@ -398,10 +398,12 @@ fun AuraTextButton(
             onClick()
         },
         enabled = enabled,
-
         border = border,
         contentPadding = contentPadding,
-        modifier = Modifier.then(modifier)
+        modifier = Modifier
+            .height(48.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .then(modifier)
     ) {
         Text(
             text = text,

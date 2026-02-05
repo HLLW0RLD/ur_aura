@@ -2,7 +2,6 @@ package com.example.ur_color.ui.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,7 +33,6 @@ import com.example.ur_color.ui.screen.viewModel.SettingsViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.ui.theme.ThemeMode
-import com.example.ur_color.ui.theme.ThemePalette
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -249,7 +246,8 @@ fun SettingsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                profileViewModel.deleteUser()
+                                navController.nav(Registration, true)
                             }
                             .padding(4.dp)
                     )

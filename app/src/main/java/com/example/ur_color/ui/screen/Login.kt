@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -57,14 +60,46 @@ fun LoginScreen(
             .fillMaxSize()
             .background(AppColors.background)
             .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.Center
     ) {
 
+        OutlinedTextField(
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = AppColors.textPrimary,
+                unfocusedTextColor = AppColors.textPrimary,
+                focusedContainerColor = AppColors.background,
+                unfocusedContainerColor = AppColors.background,
+                focusedLabelColor = AppColors.accentPrimary,
+                unfocusedLabelColor = AppColors.accentPrimary,
+            ),
+            value = loginViewModel.email,
+            onValueChange = { loginViewModel.email = it },
+            label = { Text("Email") },
+            modifier = Modifier
+                .imePadding()
+                .fillMaxWidth()
+        )
+        OutlinedTextField(
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = AppColors.textPrimary,
+                unfocusedTextColor = AppColors.textPrimary,
+                focusedContainerColor = AppColors.background,
+                unfocusedContainerColor = AppColors.background,
+                focusedLabelColor = AppColors.accentPrimary,
+                unfocusedLabelColor = AppColors.accentPrimary,
+            ),
+            value = loginViewModel.password,
+            onValueChange = { loginViewModel.password = it },
+            label = { Text("Password") },
+            modifier = Modifier
+                .imePadding()
+                .fillMaxWidth()
+        )
 
         AuraTextButton(
             text = stringResource(R.string.action_login),
-//            enabled = loginViewModel.isLoginValid,
-            enabled = true,
+            enabled = loginViewModel.isLoginValid,
+//            enabled = true,
             modifier = Modifier.fillMaxWidth(),
         ) {
             loginViewModel.login {

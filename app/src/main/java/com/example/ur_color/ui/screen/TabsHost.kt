@@ -5,6 +5,13 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -20,14 +27,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -39,7 +51,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -54,7 +69,7 @@ import com.example.ur_color.ui.theme.AppColors
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object TabsHost: Screen
+data object TabsHost : Screen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -153,111 +168,146 @@ fun AppBottomNavigation(
     onTabSelected: (RootTab) -> Unit
 ) {
 
-    Row(
+    Box(
         modifier = modifier
-            .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
-            .background(
-                color = AppColors.background.copy(alpha = 0.8f),
-                shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp)
-            )
-            .border(
-                shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp),
-                color = AppColors.surface,
-                width = 1.dp
-            )
-            .height(72.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
+            .height(92.dp)
     ) {
 
-        BottomNavItem(
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            color = AppColors.background,
+            shadowElevation = 8.dp,
             modifier = Modifier
-                .weight(1f),
-            icon = R.drawable.ball_crystal,
-            text = stringResource(R.string.bottom_menu_main),
-            selected = currentTab == RootTab.MAIN,
-            onClick = {
-                onTabSelected(RootTab.MAIN)
-            }
-        )
+                .fillMaxWidth()
+                .height(68.dp)
+                .align(Alignment.BottomCenter)
+        ) {
 
-        BottomNavItem(
-            modifier = Modifier
-                .weight(1f),
-            icon = R.drawable.card_trick,
-            text = stringResource(R.string.bottom_menu_lab),
-            selected = currentTab == RootTab.LAB,
-            onClick = {
-                onTabSelected(RootTab.LAB)
-            }
-        )
+        }
 
-        BottomNavItem(
+        Row(
             modifier = Modifier
-                .weight(1f),
-            icon = R.drawable.cauldron_potion,
-            text = stringResource(R.string.bottom_menu_bazar),
-            selected = currentTab == RootTab.BAZAR,
-            onClick = {
-                onTabSelected(RootTab.BAZAR)
-            }
-        )
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            val tabs = listOf(
+                RootTab.MAIN to R.drawable.ball_crystal,
+                RootTab.LAB to R.drawable.card_trick,
+                RootTab.BAZAR to R.drawable.cauldron_potion,
+                RootTab.PROFILE to R.drawable.illusion_eye
+            )
 
-        BottomNavItem(
-            modifier = Modifier
-                .weight(1f),
-            icon = R.drawable.illusion_eye,
-            text = stringResource(R.string.bottom_menu_profile),
-            selected = currentTab == RootTab.PROFILE,
-            onClick = {
-                onTabSelected(RootTab.PROFILE)
+            tabs.forEach { (tab, iconRes) ->
+                FloatingNavItem(
+                    tab = tab,
+                    iconRes = iconRes,
+                    label = when (tab) {
+                        RootTab.MAIN -> stringResource(R.string.bottom_menu_main)
+                        RootTab.LAB -> stringResource(R.string.bottom_menu_lab)
+                        RootTab.BAZAR -> stringResource(R.string.bottom_menu_bazar)
+                        RootTab.PROFILE -> stringResource(R.string.bottom_menu_profile)
+                    },
+                    isSelected = currentTab == tab,
+                    onClick = { onTabSelected(tab) }
+                )
             }
-        )
+        }
     }
 }
 
 @Composable
-fun BottomNavItem(
-    text: String,
-    @DrawableRes icon: Int,
-    selected: Boolean,
-    modifier: Modifier = Modifier,
+private fun FloatingNavItem(
+    tab: RootTab,
+    @DrawableRes iconRes: Int,
+    label: String,
+    isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier
+
+    val offsetY by animateDpAsState(
+        targetValue = if (isSelected) (-24).dp else 0.dp,
+        animationSpec = tween(
+            durationMillis = 300,
+            easing = FastOutSlowInEasing // Плавное начало и завершение
+        ),
+        label = "offsetY_$tab"
+    )
+
+    val iconScale by animateFloatAsState(
+        targetValue = if (isSelected) 1.15f else 1f,
+        animationSpec = tween(300, easing = FastOutSlowInEasing),
+        label = "iconScale_$tab"
+    )
+
+    val color = AppColors.accentPrimary
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .offset(y = offsetY)
+            .size(64.dp)
             .clickable(
-                indication = null,
+                indication = ripple(bounded = false, radius = 36.dp),
                 interactionSource = remember { MutableInteractionSource() }
             ) {
                 onClick()
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            }
     ) {
-        Icon(
+
+        Box(
             modifier = Modifier
-                .size(28.dp),
-            painter = painterResource(icon),
-            contentDescription = null,
-            tint = if (selected)
-                AppColors.accentPrimary
-            else
-                AppColors.textSecondary
+                .matchParentSize()
+                .clip(RoundedCornerShape(32.dp))
+                .background(
+                    color = if (isSelected) AppColors.accentPrimary else AppColors.background.copy(alpha = 0.6f)
+                )
+                .drawWithContent {
+                    drawContent()
+                    if (isSelected) {
+                        drawCircle(
+                            color = color.copy(alpha = 0.25f),
+                            radius = (size.width * 0.65f),
+                            center = center
+                        )
+                    }
+                }
         )
-        Text(
-            text = text,
-            color = if (selected)
-                AppColors.accentPrimary
-            else
-                AppColors.textSecondary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Thin
-        )
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(vertical = if (isSelected) 4.dp else 8.dp)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(if (isSelected) 30.dp else 24.dp)
+                    .graphicsLayer(scaleX = iconScale, scaleY = iconScale),
+                painter = painterResource(iconRes),
+                contentDescription = label,
+                tint = if (isSelected) Color.White else AppColors.textSecondary
+            )
+
+            if (!isSelected) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = label,
+                    color = AppColors.textSecondary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Thin,
+                    maxLines = 1
+                )
+            }
+        }
     }
 }
+
 
 enum class RootTab(val index: Int) {
     MAIN(0),

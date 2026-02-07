@@ -233,7 +233,7 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .clickable {
                                 scope.launch {
-                                    profileViewModel.deleteUser()
+//                                    profileViewModel.deleteUser()
                                     navController.nav(Login, true)
                                 }
                             }

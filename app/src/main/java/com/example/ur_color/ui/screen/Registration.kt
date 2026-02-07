@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.ur_color.R
 import com.example.ur_color.ui.AuraDatePickerField
 import com.example.ur_color.ui.AuraDateTimePickerField
+import com.example.ur_color.ui.AuraOutlinedTextField
 import com.example.ur_color.ui.AuraTextButton
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.RegistrationViewModel
@@ -80,18 +81,11 @@ fun RegistrationScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
+            AuraOutlinedTextField(
+                color = AppColors.textPrimary,
                 value = registrationViewModel.nickName,
                 onValueChange = { registrationViewModel.nickName = it },
-                label = { Text(stringResource(R.string.field_nickname)) },
+                label = stringResource(R.string.field_nickname),
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()

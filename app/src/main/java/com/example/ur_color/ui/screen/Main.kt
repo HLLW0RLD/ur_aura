@@ -90,7 +90,10 @@ fun Main(main : Main) {
             )
         },
     ) {
-        MainScreen()
+        MainScreen(
+            modifier = Modifier
+                .padding(it)
+        )
     }
 }
 
@@ -100,7 +103,8 @@ fun Main(main : Main) {
 fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     profileViewModel: ProfileViewModel = koinViewModel(),
-    labViewModel: LabViewModel = koinViewModel()
+    labViewModel: LabViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -187,542 +191,546 @@ fun MainScreen(
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(AppColors.background)
     ) {
-        aura?.let {
-            Box(
+//        aura?.let {
+//            Box(
+//                modifier = Modifier
+//                    .align(Alignment.Center)
+//                    .fillMaxWidth()
+//                    .height(1750.dp)
+//                    .padding(16.dp),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Image(
+//                    bitmap = it.asImageBitmap(),
+//                    contentDescription = "",
+//                    contentScale = ContentScale.Fit,
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .align(Alignment.Center)
+//                        .clip(RoundedCornerShape(24.dp))
+//                        .border(
+//                            shape = RoundedCornerShape(24.dp),
+//                            color = AppColors.divider,
+//                            width = 0.5.dp
+//                        )
+//                        .clickable(
+//                            indication = null,
+//                            interactionSource = null
+//                        ) {
+//                            navController.nav(AuraDetails())
+//                        }
+//                )
+//            }
+//        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    shape = RoundedCornerShape(
+                        topStart = (28.dp * (1 - progress)).coerceAtLeast(0.dp),
+                        topEnd = (28.dp * (1 - progress)).coerceAtLeast(0.dp)
+                    ),
+                    color = AppColors.background.copy(alpha = 0.95f)
+                )
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                color = AppColors.textSecondary,
+                text = motivated ?: stringResource(R.string.motivation_fallback),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .fillMaxWidth(0.75f)
+                    .padding(vertical = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+
+            HorizontalDivider(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .height(350.dp)
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop,
+                    .padding(horizontal = 24.dp),
+                thickness = 0.5.dp,
+                color = AppColors.textPrimary
+            )
+            if (isDailyTestAvailable) {
+                Text(
+                    text = stringResource(R.string.daily_test_new),
+                    color = AppColors.white,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center)
+                        .padding(12.dp)
                         .graphicsLayer {
                             translationY = -auraShiftDp.toPx()
                         }
-                        .clip(RoundedCornerShape(24.dp))
-                        .border(
-                            shape = RoundedCornerShape(24.dp),
-                            color = AppColors.divider,
-                            width = 0.5.dp
-                        )
-                        .clickable(
-                            indication = null,
-                            interactionSource = null
-                        ) {
-                            navController.nav(AuraDetails())
+                        .clip(RoundedCornerShape(50.dp))
+                        .background(AppColors.black)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .clickable {
+                            navController.nav(Test("0"))
                         }
                 )
-
-                if (isDailyTestAvailable) {
-                    Text(
-                        text = stringResource(R.string.daily_test_new),
-                        color = AppColors.white,
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.BottomEnd)
-                            .graphicsLayer {
-                                translationY = -auraShiftDp.toPx()
-                            }
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(AppColors.black)
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                            .clickable {
-                                navController.nav(Test("0"))
-                            }
-                    )
-                }
             }
-        }
 
-        val cornerDp = lerp(24.dp, 12.dp, progress)
-        val borderAlpha = 1f - progress
-        Surface(
-            modifier = Modifier
-                .offset { IntOffset(0, offsetY.value.roundToInt()) }
-                .fillMaxSize()
-                .border(
-                    width = 0.5.dp,
-                    color = AppColors.divider.copy(alpha = borderAlpha),
-                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
-                )
-                .pointerInput(canScroll) {
-                    detectVerticalDragGestures(
-                        onVerticalDrag = { change, dragAmount ->
-                            change.consume()
-                            scope.launch {
-                                val newOffset =
-                                    (offsetY.value + dragAmount).coerceIn(expandedY, collapsedY)
-                                if (!canScroll || dragAmount > 0) {
-                                    offsetY.snapTo(newOffset)
-                                }
-                            }
-                        },
-                        onDragEnd = {
-                            val middle = (collapsedY + expandedY) / 2f
-                            if (offsetY.value <= middle) animateToExpanded()
-                            else animateToCollapsed()
-                        }
-                    )
-                },
-            shape = RoundedCornerShape(
-                topStart = (28.dp * (1 - progress)).coerceAtLeast(0.dp),
-                topEnd = (28.dp * (1 - progress)).coerceAtLeast(0.dp)
-            ),
-            color = AppColors.background.copy(alpha = 0.95f * progress),
-            tonalElevation = 8.dp
-        ) {
+            Spacer(modifier = Modifier.size(16.dp))
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .then(if (canScroll) Modifier.verticalScroll(scrollState) else Modifier),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(
-                    color = AppColors.textSecondary,
-                    text = motivated ?: stringResource(R.string.motivation_fallback),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth(0.75f)
-                        .padding(vertical = 8.dp)
-                )
-
-                Spacer(modifier = Modifier.size(8.dp))
-
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                    thickness = 0.5.dp,
-                    color = AppColors.textPrimary
-                )
-
-                Spacer(modifier = Modifier.size(16.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(25.dp))
-                        .background(
-                            AppColors.backgroundDark
-                                .copy(alpha = 0.2f)
-                        )
-                        .padding(top = 16.dp, bottom = 8.dp)
-                ) {
-                    LazyRow(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .heightIn(max = 130.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        item { Spacer(modifier = Modifier.width(0.dp)) }
-
-                        items(
-                            count = vectorMetrics.size,
-                            key = { index -> "metric_$index" }
-                        ) { vector ->
-                            val metric = vectorMetrics[vector]
-                            val value = metric.first ?: listOf()
-                            val label = metric.second
-
-                            var exp by rememberSaveable { mutableStateOf(false) }
-
-                            ExpandableGradientGraphBox(
-                                label = label,
-                                indicator = metrics[vector] ?: 0f,
-                                values = value,
-                                vector = vector,
-                                expanded = exp,
-                                onToggleExpanded = { exp = !exp },
-                            )
-                        }
-
-                        item { Spacer(modifier = Modifier.width(8.dp)) }
-                    }
-
-                    Spacer(modifier = Modifier.size(16.dp))
-
-                    Box {
-                        var autoScroll by rememberSaveable { mutableStateOf(true) }
-                        AutoScrollHorizontalPager(
-                            autoScroll = autoScroll,
-                            isInfinite = true,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = stringResource(
-                                        R.string.card_today_title,
-                                        user?.firstName ?: "",
-                                        card?.name
-                                            ?: stringResource(R.string.error_oops)
-                                    ),
-                                ) {
-                                    // навигация на экран карты дня
-                                }
-//                                {
-//                                    Column(
-//                                        Modifier
-//                                            .fillMaxWidth(),
-//                                        horizontalAlignment = Alignment.Start
-//                                    ) {
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = card?.name
-//                                                ?: stringResource(R.string.error_oops),
-//                                            style = MaterialTheme.typography.titleLarge
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = "Стихия: ${card?.element}, Номер: ${card?.number}"
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = card?.fullMeaning
-//                                                ?: stringResource(R.string.error_oops),
-//                                            style = MaterialTheme.typography.bodyLarge
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = stringResource(
-//                                                R.string.card_advice,
-//                                                card?.advice
-//                                                    ?: stringResource(R.string.error_oops)
-//                                            ),
-//                                            style = MaterialTheme.typography.bodyMedium
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = stringResource(
-//                                                R.string.card_keywords,
-//                                                card?.keywords?.joinToString(", ") ?: ""
-//                                            )
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = stringResource(
-//                                                R.string.card_compatible,
-//                                                card?.compatibleWith?.joinToString(", ") ?: ""
-//                                            )
-//                                        )
-//                                    }
-//                                }
-                            }
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = stringResource(
-                                        R.string.horoscope_for_user,
-                                        user?.firstName ?: ""
-                                    ),
-                                ) {
-                                    // навигация на экран горосккопа дня
-                                }
-//                                {
-//                                    when (val uiState = horoscopeState) {
-//                                        is HoroscopeUiState.Success -> {
-//                                            val horoscope = uiState.horoscope
-//                                            Column(
-//                                                Modifier
-//                                                    .fillMaxWidth()
-//                                            ) {
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = horoscope.horoscope,
-//                                                    style = MaterialTheme.typography.bodyLarge
-//                                                )
-//                                            }
-//                                        }
-//
-//                                        is HoroscopeUiState.Loading -> {
-//                                            Column(
-//                                                Modifier
-//                                                    .fillMaxWidth()
-//                                            ) {
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = stringResource(R.string.loading_horoscope),
-//                                                    style = MaterialTheme.typography.bodyLarge
-//                                                )
-//                                                CircularProgressIndicator()
-//                                            }
-//                                        }
-//
-//                                        is HoroscopeUiState.Error -> {
-//                                            Column(
-//                                                Modifier
-//                                                    .fillMaxWidth()
-//                                            ) {
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = stringResource(R.string.error_try_later),
-//                                                    style = MaterialTheme.typography.bodyLarge
-//                                                )
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = uiState.message
-//                                                )
-//                                            }
-//                                        }
-//                                    }
-//                                }
-                            }
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = "Аура! как понять?",
-                                ) {
-                                    // навигация на экран мастер классов
-                                }
-                            }
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = "Проверим кто вам подходит?",
-                                ) {
-                                    // навигация на экран мастер классов
-                                }
-                            }
-
-                            // дублируюттся
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = stringResource(
-                                        R.string.card_today_title,
-                                        user?.firstName ?: "",
-                                        card?.name
-                                            ?: stringResource(R.string.error_oops)
-                                    ),
-                                ) {
-                                    // навигация на экран карты дня
-                                }
-//                                {
-//                                    Column(
-//                                        Modifier
-//                                            .fillMaxWidth(),
-//                                        horizontalAlignment = Alignment.Start
-//                                    ) {
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = card?.name
-//                                                ?: stringResource(R.string.error_oops),
-//                                            style = MaterialTheme.typography.titleLarge
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = "Стихия: ${card?.element}, Номер: ${card?.number}"
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = card?.fullMeaning
-//                                                ?: stringResource(R.string.error_oops),
-//                                            style = MaterialTheme.typography.bodyLarge
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = stringResource(
-//                                                R.string.card_advice,
-//                                                card?.advice
-//                                                    ?: stringResource(R.string.error_oops)
-//                                            ),
-//                                            style = MaterialTheme.typography.bodyMedium
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = stringResource(
-//                                                R.string.card_keywords,
-//                                                card?.keywords?.joinToString(", ") ?: ""
-//                                            )
-//                                        )
-//                                        Spacer(Modifier.height(8.dp))
-//                                        Text(
-//                                            color = AppColors.textPrimary,
-//                                            text = stringResource(
-//                                                R.string.card_compatible,
-//                                                card?.compatibleWith?.joinToString(", ") ?: ""
-//                                            )
-//                                        )
-//                                    }
-//                                }
-                            }
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = stringResource(
-                                        R.string.horoscope_for_user,
-                                        user?.firstName ?: ""
-                                    ),
-                                ) {
-                                    // навигация на экран горосккопа дня
-                                }
-//                                {
-//                                    when (val uiState = horoscopeState) {
-//                                        is HoroscopeUiState.Success -> {
-//                                            val horoscope = uiState.horoscope
-//                                            Column(
-//                                                Modifier
-//                                                    .fillMaxWidth()
-//                                            ) {
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = horoscope.horoscope,
-//                                                    style = MaterialTheme.typography.bodyLarge
-//                                                )
-//                                            }
-//                                        }
-//
-//                                        is HoroscopeUiState.Loading -> {
-//                                            Column(
-//                                                Modifier
-//                                                    .fillMaxWidth()
-//                                            ) {
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = stringResource(R.string.loading_horoscope),
-//                                                    style = MaterialTheme.typography.bodyLarge
-//                                                )
-//                                                CircularProgressIndicator()
-//                                            }
-//                                        }
-//
-//                                        is HoroscopeUiState.Error -> {
-//                                            Column(
-//                                                Modifier
-//                                                    .fillMaxWidth()
-//                                            ) {
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = stringResource(R.string.error_try_later),
-//                                                    style = MaterialTheme.typography.bodyLarge
-//                                                )
-//                                                Text(
-//                                                    color = AppColors.textPrimary,
-//                                                    text = uiState.message
-//                                                )
-//                                            }
-//                                        }
-//                                    }
-//                                }
-                            }
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = "Аура! как понять?",
-                                ) {
-                                    // навигация на экран мастер классов
-                                }
-                            }
-                            item {
-                                FloatingBox(
-                                    modifier = Modifier
-                                        .padding(6.dp),
-                                    height = 200f,
-                                    width = 1f,
-                                    closedTitle = "Проверим кто вам подходит?",
-                                ) {
-                                    // навигация на экран мастер классов
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(25.dp))
-                        .background(
-                            AppColors.backgroundDark
-                                .copy(alpha = 0.2f)
-                        )
-                        .padding(vertical = 16.dp)
-                ) {
-                    feedCardsState.forEach {
-                        FeedContentCard(
-                            modifier = Modifier
-//                                .heightIn(max = 400.dp)
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            content = it,
-                            onClick = { }
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(120.dp))
-            }
-        }
-
-        AnimatedVisibility(
-            visible = progress >= 0.95f,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-        ) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
                     .fillMaxWidth()
-                    .padding(end = 16.dp, bottom = 100.dp),
-                contentAlignment = Alignment.BottomEnd
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(
+                        AppColors.backgroundDark
+                            .copy(alpha = 0.2f)
+                    )
+                    .padding(top = 16.dp, bottom = 8.dp)
             ) {
-                FloatingActionButton(
-                    onClick = {
-                        scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
-                    },
-                    containerColor = AppColors.accentPrimary.copy(alpha = 0.5f),
-                    contentColor = Color.White
+                LazyRow(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .heightIn(max = 130.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_up),
-                        contentDescription = "Добавить"
+                    item { Spacer(modifier = Modifier.width(0.dp)) }
+
+                    items(
+                        count = vectorMetrics.size,
+                        key = { index -> "metric_$index" }
+                    ) { vector ->
+                        val metric = vectorMetrics[vector]
+                        val value = metric.first ?: listOf()
+                        val label = metric.second
+
+                        var exp by rememberSaveable { mutableStateOf(false) }
+
+                        ExpandableGradientGraphBox(
+                            label = label,
+                            indicator = metrics[vector] ?: 0f,
+                            values = value,
+                            vector = vector,
+                            expanded = exp,
+                            onToggleExpanded = { exp = !exp },
+                        )
+                    }
+
+                    item { Spacer(modifier = Modifier.width(8.dp)) }
+                }
+
+                Spacer(modifier = Modifier.size(16.dp))
+
+                Box {
+                    var autoScroll by rememberSaveable { mutableStateOf(true) }
+                    AutoScrollHorizontalPager(
+                        autoScroll = autoScroll,
+                        isInfinite = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = stringResource(
+                                    R.string.card_today_title,
+                                    user?.firstName ?: "",
+                                    card?.name
+                                        ?: stringResource(R.string.error_oops)
+                                ),
+                            ) {
+                                // навигация на экран карты дня
+                            }
+//                                {
+//                                    Column(
+//                                        Modifier
+//                                            .fillMaxWidth(),
+//                                        horizontalAlignment = Alignment.Start
+//                                    ) {
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = card?.name
+//                                                ?: stringResource(R.string.error_oops),
+//                                            style = MaterialTheme.typography.titleLarge
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = "Стихия: ${card?.element}, Номер: ${card?.number}"
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = card?.fullMeaning
+//                                                ?: stringResource(R.string.error_oops),
+//                                            style = MaterialTheme.typography.bodyLarge
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = stringResource(
+//                                                R.string.card_advice,
+//                                                card?.advice
+//                                                    ?: stringResource(R.string.error_oops)
+//                                            ),
+//                                            style = MaterialTheme.typography.bodyMedium
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = stringResource(
+//                                                R.string.card_keywords,
+//                                                card?.keywords?.joinToString(", ") ?: ""
+//                                            )
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = stringResource(
+//                                                R.string.card_compatible,
+//                                                card?.compatibleWith?.joinToString(", ") ?: ""
+//                                            )
+//                                        )
+//                                    }
+//                                }
+                        }
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = stringResource(
+                                    R.string.horoscope_for_user,
+                                    user?.firstName ?: ""
+                                ),
+                            ) {
+                                // навигация на экран горосккопа дня
+                            }
+//                                {
+//                                    when (val uiState = horoscopeState) {
+//                                        is HoroscopeUiState.Success -> {
+//                                            val horoscope = uiState.horoscope
+//                                            Column(
+//                                                Modifier
+//                                                    .fillMaxWidth()
+//                                            ) {
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = horoscope.horoscope,
+//                                                    style = MaterialTheme.typography.bodyLarge
+//                                                )
+//                                            }
+//                                        }
+//
+//                                        is HoroscopeUiState.Loading -> {
+//                                            Column(
+//                                                Modifier
+//                                                    .fillMaxWidth()
+//                                            ) {
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = stringResource(R.string.loading_horoscope),
+//                                                    style = MaterialTheme.typography.bodyLarge
+//                                                )
+//                                                CircularProgressIndicator()
+//                                            }
+//                                        }
+//
+//                                        is HoroscopeUiState.Error -> {
+//                                            Column(
+//                                                Modifier
+//                                                    .fillMaxWidth()
+//                                            ) {
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = stringResource(R.string.error_try_later),
+//                                                    style = MaterialTheme.typography.bodyLarge
+//                                                )
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = uiState.message
+//                                                )
+//                                            }
+//                                        }
+//                                    }
+//                                }
+                        }
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = "Аура! как понять?",
+                            ) {
+                                // навигация на экран мастер классов
+                            }
+                        }
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = "Проверим кто вам подходит?",
+                            ) {
+                                // навигация на экран мастер классов
+                            }
+                        }
+
+                        // дублируюттся
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = stringResource(
+                                    R.string.card_today_title,
+                                    user?.firstName ?: "",
+                                    card?.name
+                                        ?: stringResource(R.string.error_oops)
+                                ),
+                            ) {
+                                // навигация на экран карты дня
+                            }
+//                                {
+//                                    Column(
+//                                        Modifier
+//                                            .fillMaxWidth(),
+//                                        horizontalAlignment = Alignment.Start
+//                                    ) {
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = card?.name
+//                                                ?: stringResource(R.string.error_oops),
+//                                            style = MaterialTheme.typography.titleLarge
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = "Стихия: ${card?.element}, Номер: ${card?.number}"
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = card?.fullMeaning
+//                                                ?: stringResource(R.string.error_oops),
+//                                            style = MaterialTheme.typography.bodyLarge
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = stringResource(
+//                                                R.string.card_advice,
+//                                                card?.advice
+//                                                    ?: stringResource(R.string.error_oops)
+//                                            ),
+//                                            style = MaterialTheme.typography.bodyMedium
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = stringResource(
+//                                                R.string.card_keywords,
+//                                                card?.keywords?.joinToString(", ") ?: ""
+//                                            )
+//                                        )
+//                                        Spacer(Modifier.height(8.dp))
+//                                        Text(
+//                                            color = AppColors.textPrimary,
+//                                            text = stringResource(
+//                                                R.string.card_compatible,
+//                                                card?.compatibleWith?.joinToString(", ") ?: ""
+//                                            )
+//                                        )
+//                                    }
+//                                }
+                        }
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = stringResource(
+                                    R.string.horoscope_for_user,
+                                    user?.firstName ?: ""
+                                ),
+                            ) {
+                                // навигация на экран горосккопа дня
+                            }
+//                                {
+//                                    when (val uiState = horoscopeState) {
+//                                        is HoroscopeUiState.Success -> {
+//                                            val horoscope = uiState.horoscope
+//                                            Column(
+//                                                Modifier
+//                                                    .fillMaxWidth()
+//                                            ) {
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = horoscope.horoscope,
+//                                                    style = MaterialTheme.typography.bodyLarge
+//                                                )
+//                                            }
+//                                        }
+//
+//                                        is HoroscopeUiState.Loading -> {
+//                                            Column(
+//                                                Modifier
+//                                                    .fillMaxWidth()
+//                                            ) {
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = stringResource(R.string.loading_horoscope),
+//                                                    style = MaterialTheme.typography.bodyLarge
+//                                                )
+//                                                CircularProgressIndicator()
+//                                            }
+//                                        }
+//
+//                                        is HoroscopeUiState.Error -> {
+//                                            Column(
+//                                                Modifier
+//                                                    .fillMaxWidth()
+//                                            ) {
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = stringResource(R.string.error_try_later),
+//                                                    style = MaterialTheme.typography.bodyLarge
+//                                                )
+//                                                Text(
+//                                                    color = AppColors.textPrimary,
+//                                                    text = uiState.message
+//                                                )
+//                                            }
+//                                        }
+//                                    }
+//                                }
+                        }
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = "Аура! как понять?",
+                            ) {
+                                // навигация на экран мастер классов
+                            }
+                        }
+                        item {
+                            FloatingBox(
+                                modifier = Modifier
+                                    .padding(6.dp),
+                                height = 200f,
+                                width = 1f,
+                                closedTitle = "Проверим кто вам подходит?",
+                            ) {
+                                // навигация на экран мастер классов
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(
+                        AppColors.backgroundDark
+                            .copy(alpha = 0.2f)
+                    )
+                    .padding(vertical = 16.dp)
+            ) {
+                feedCardsState.forEach {
+                    FeedContentCard(
+                        modifier = Modifier
+//                                .heightIn(max = 400.dp)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        content = it,
+                        onClick = { }
                     )
                 }
             }
+
+            Spacer(Modifier.height(120.dp))
         }
+
+//        val cornerDp = lerp(24.dp, 12.dp, progress)
+//        val borderAlpha = 1f - progress
+//        Surface(
+//            modifier = Modifier
+//                .offset { IntOffset(0, offsetY.value.roundToInt()) }
+//                .fillMaxSize()
+//                .border(
+//                    width = 0.5.dp,
+//                    color = AppColors.divider.copy(alpha = borderAlpha),
+//                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
+//                )
+//                .pointerInput(canScroll) {
+//                    detectVerticalDragGestures(
+//                        onVerticalDrag = { change, dragAmount ->
+//                            change.consume()
+//                            scope.launch {
+//                                val newOffset =
+//                                    (offsetY.value + dragAmount).coerceIn(expandedY, collapsedY)
+//                                if (!canScroll || dragAmount > 0) {
+//                                    offsetY.snapTo(newOffset)
+//                                }
+//                            }
+//                        },
+//                        onDragEnd = {
+//                            val middle = (collapsedY + expandedY) / 2f
+//                            if (offsetY.value <= middle) animateToExpanded()
+//                            else animateToCollapsed()
+//                        }
+//                    )
+//                },
+//            shape = RoundedCornerShape(
+//                topStart = (28.dp * (1 - progress)).coerceAtLeast(0.dp),
+//                topEnd = (28.dp * (1 - progress)).coerceAtLeast(0.dp)
+//            ),
+//            color = AppColors.background.copy(alpha = 0.95f * progress),
+//            tonalElevation = 8.dp
+//        ) {
+//
+//
+//        }
+
+//        AnimatedVisibility(
+//            visible = progress >= 0.95f,
+//            modifier = Modifier
+//                .align(Alignment.BottomEnd)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .align(Alignment.BottomEnd)
+//                    .fillMaxWidth()
+//                    .padding(end = 16.dp, bottom = 100.dp),
+//                contentAlignment = Alignment.BottomEnd
+//            ) {
+//                FloatingActionButton(
+//                    onClick = {
+//                        scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
+//                    },
+//                    containerColor = AppColors.accentPrimary.copy(alpha = 0.5f),
+//                    contentColor = Color.White
+//                ) {
+//                    Icon(
+//                        painter = painterResource(R.drawable.arrow_up),
+//                        contentDescription = "Добавить"
+//                    )
+//                }
+//            }
+//        }
     }
 }

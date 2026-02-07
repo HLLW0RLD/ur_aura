@@ -4,12 +4,16 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -18,6 +22,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -43,9 +48,9 @@ fun Registration(reg : Registration) {
     AppScaffold(
         showBottomBar = false,
         topBar = {
-            CustomAppBar(
-                title = stringResource(R.string.app_name_stylized),
-            )
+//            CustomAppBar(
+//                title = stringResource(R.string.app_name_stylized),
+//            )
         },
     ) {
         RegistrationScreen(
@@ -67,22 +72,20 @@ fun RegistrationScreen(
     val navController = LocalNavController.current
     val scrollState = rememberScrollState()
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(AppColors.background)
-            .verticalScroll(scrollState)
-            .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
         Column(
             modifier = Modifier
-                .padding(16.dp),
+                .padding(16.dp)
+//                .imePadding()
+                .verticalScroll(scrollState)
+                .align(Alignment.TopCenter),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             AuraOutlinedTextField(
-                color = AppColors.textPrimary,
                 value = registrationViewModel.nickName,
                 onValueChange = { registrationViewModel.nickName = it },
                 label = stringResource(R.string.field_nickname),
@@ -90,50 +93,26 @@ fun RegistrationScreen(
                     .imePadding()
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
+            AuraOutlinedTextField(
                 value = registrationViewModel.lastName,
                 onValueChange = { registrationViewModel.lastName = it },
-                label = { Text(stringResource(R.string.field_last_name)) },
+                label = stringResource(R.string.field_last_name),
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
+            AuraOutlinedTextField(
                 value = registrationViewModel.firstName,
                 onValueChange = { registrationViewModel.firstName = it },
-                label = { Text(stringResource(R.string.field_first_name)) },
+                label = stringResource(R.string.field_first_name),
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
+            AuraOutlinedTextField(
                 value = registrationViewModel.middleName,
                 onValueChange = { registrationViewModel.middleName = it },
-                label = { Text(stringResource(R.string.field_middle_name_optional)) },
+                label = stringResource(R.string.field_middle_name_optional),
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
@@ -157,47 +136,49 @@ fun RegistrationScreen(
                     .imePadding()
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = AppColors.textPrimary,
-                    unfocusedTextColor = AppColors.textPrimary,
-                    focusedContainerColor = AppColors.background,
-                    unfocusedContainerColor = AppColors.background,
-                    focusedLabelColor = AppColors.accentPrimary,
-                    unfocusedLabelColor = AppColors.accentPrimary,
-                ),
+            AuraOutlinedTextField(
                 value = registrationViewModel.birthPlace,
                 onValueChange = { registrationViewModel.birthPlace = it },
-                label = { Text(stringResource(R.string.field_birth_place)) },
+                label = stringResource(R.string.field_birth_place),
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
             )
 
-            // Пол
+            val male = stringResource(R.string.gender_male)
+            val female = stringResource(R.string.gender_female)
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier
+                    .imePadding()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
             ) {
-                listOf(
-                    stringResource(R.string.gender_male),
-                    stringResource(R.string.gender_female)
-                ).forEach { option ->
-                    Button(
-                        onClick = { registrationViewModel.gender = option },
-                        colors = ButtonDefaults.buttonColors(
-                            if (registrationViewModel.gender == option) AppColors.accentPrimary
-                            else AppColors.backgroundLight)
-                    ) {
-                        Text(option)
-                    }
+                Button(
+                    onClick = { registrationViewModel.gender = male },
+                    colors = ButtonDefaults.buttonColors(
+                        if (registrationViewModel.gender == male) AppColors.accentPrimary
+                        else AppColors.backgroundLight)
+                ) {
+                    Text(male)
+                }
+                Spacer(Modifier.width(8.dp))
+                Button(
+                    onClick = { registrationViewModel.gender = female },
+                    colors = ButtonDefaults.buttonColors(
+                        if (registrationViewModel.gender == female) AppColors.accentPrimary
+                        else AppColors.backgroundLight)
+                ) {
+                    Text(female)
                 }
             }
 
+            Spacer(Modifier.size(16.dp))
             AuraTextButton(
                 text = stringResource(R.string.action_login),
                 enabled = registrationViewModel.isUserValid,
-//                enabled = true,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
             ) {
                 registrationViewModel.register {
                     navController.nav(Login)

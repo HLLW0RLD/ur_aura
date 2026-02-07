@@ -39,8 +39,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -70,7 +68,6 @@ import java.util.Locale
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
@@ -86,10 +83,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
@@ -108,6 +105,7 @@ import com.example.ur_color.data.model.SocialContent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.example.ur_color.data.model.User
 import com.example.ur_color.utils.AutoScrollPagerScope
 import com.example.ur_color.utils.IconPosition
@@ -116,9 +114,6 @@ import com.example.ur_color.utils.TwoColumnScopeImpl
 import com.example.ur_color.utils.WindowType
 import com.example.ur_color.utils.animPic
 import com.example.ur_color.utils.lerp
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlin.Int.Companion.MAX_VALUE
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -134,7 +129,6 @@ fun AuraDatePickerField(
 
     Box(modifier = modifier.fillMaxWidth()) {
         AuraOutlinedTextField(
-            color = color,
             value = date,
             onValueChange = {},
             readOnly = true,
@@ -203,7 +197,9 @@ private fun ReturnAuraPickerDialog(
             }
         },
         dismissButton = {
-            AuraTextButton(text = "Отмена", color = color) { onDismiss }
+            AuraTextButton(text = "Отмена", color = color) {
+                onDismiss()
+            }
         },
         colors = DatePickerDefaults.colors(
             containerColor = color ?: AppColors.accentPrimary,
@@ -226,7 +222,6 @@ fun AuraDateTimePickerField(
 
     Box(modifier = modifier.fillMaxWidth()) {
         AuraOutlinedTextField(
-            color = color,
             value = time,
             onValueChange = {},
             readOnly = true,
@@ -401,9 +396,9 @@ fun AuraTextButton(
         border = border,
         contentPadding = contentPadding,
         modifier = Modifier
-            .height(48.dp)
             .clip(RoundedCornerShape(12.dp))
             .then(modifier)
+            .height(48.dp)
     ) {
         Text(
             text = text,
@@ -452,7 +447,14 @@ fun AuraRadioButton(
 fun AuraOutlinedTextField(
     value: String,
     label: String,
-    color: Color? = null,
+    focusedTextColor: Color = AppColors.textPrimary,
+    unfocusedTextColor: Color = AppColors.textPrimary,
+    focusedLabelColor: Color = AppColors.accentPrimary,
+    unfocusedLabelColor: Color = AppColors.textPrimary,
+    focusedBorderColor: Color = AppColors.accentPrimary,
+    unfocusedBorderColor: Color = AppColors.textPrimary,
+    focusedContainerColor: Color = AppColors.background,
+    unfocusedContainerColor: Color = AppColors.background,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
@@ -466,15 +468,21 @@ fun AuraOutlinedTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    shape: Shape = RoundedCornerShape(25.dp),
     modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         colors = OutlinedTextFieldDefaults.colors(
-            focusedLabelColor = color ?: AppColors.textPrimary,
-            unfocusedLabelColor = color ?: AppColors.textPrimary,
-            focusedBorderColor = color ?: AppColors.textPrimary,
-            unfocusedBorderColor = color ?: AppColors.textPrimary,
+            focusedTextColor = focusedTextColor,
+            unfocusedTextColor = unfocusedTextColor,
+            focusedContainerColor = focusedContainerColor ,
+            unfocusedContainerColor = unfocusedContainerColor ,
+            focusedLabelColor = focusedLabelColor,
+            unfocusedLabelColor = unfocusedLabelColor,
+            focusedBorderColor = focusedBorderColor,
+            unfocusedBorderColor = unfocusedBorderColor,
         ),
+        shape = shape,
         value = value,
         onValueChange = {
             onValueChange(it)
@@ -483,6 +491,7 @@ fun AuraOutlinedTextField(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         modifier = Modifier
             .then(modifier)
+
             .fillMaxWidth(),
 
         enabled = enabled,
@@ -497,6 +506,110 @@ fun AuraOutlinedTextField(
         maxLines = maxLines,
         minLines = minLines,
     )
+}
+
+@Composable
+fun AuraPasswordField(
+    value: String,
+    label: String = "Пароль",
+    focusedTextColor: Color = AppColors.textPrimary,
+    unfocusedTextColor: Color = AppColors.textPrimary,
+    focusedLabelColor: Color = AppColors.accentPrimary,
+    unfocusedLabelColor: Color = AppColors.textPrimary,
+    focusedBorderColor: Color = AppColors.accentPrimary,
+    unfocusedBorderColor: Color = AppColors.textPrimary,
+    focusedContainerColor: Color = AppColors.background,
+    unfocusedContainerColor: Color = AppColors.background,
+    onValueChange: (String) -> Unit,
+    placeholder: String? = null,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorText: String? = null,
+    modifier: Modifier = Modifier,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    shape: Shape = RoundedCornerShape(25.dp),
+    passwordVisible: Boolean = false,
+    onPasswordVisibleChange: (Boolean) -> Unit = {},
+    showPasswordToggle: Boolean = true
+) {
+    var localPasswordVisible by remember { mutableStateOf(passwordVisible) }
+
+    LaunchedEffect(passwordVisible) {
+        localPasswordVisible = passwordVisible
+    }
+    val isVisible = localPasswordVisible
+
+    val onToggle: () -> Unit = {
+        val newValue = !localPasswordVisible
+        localPasswordVisible = newValue
+        onPasswordVisibleChange(newValue)
+    }
+
+
+    AuraOutlinedTextField(
+        focusedTextColor = focusedTextColor,
+        unfocusedTextColor = unfocusedTextColor,
+        focusedContainerColor = focusedContainerColor,
+        unfocusedContainerColor = unfocusedContainerColor,
+        focusedLabelColor = focusedLabelColor,
+        unfocusedLabelColor = unfocusedLabelColor,
+        focusedBorderColor = focusedBorderColor,
+        unfocusedBorderColor = unfocusedBorderColor,
+        value = value,
+        label = label,
+        onValueChange = onValueChange,
+        placeholder = if (placeholder != null) {
+            @Composable { Text(placeholder, color = AppColors.textSecondary) }
+        } else null,
+        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardActions = keyboardActions,
+        keyboardType = KeyboardType.Password,
+        enabled = enabled,
+        readOnly = readOnly,
+        isError = isError,
+        singleLine = true,
+        shape = shape,
+        modifier = modifier,
+        trailingIcon = if (showPasswordToggle) {
+            @Composable {
+                IconButton(
+                    onClick = onToggle,
+                    modifier = Modifier.size(40.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = if (value.isEmpty())
+                            AppColors.textSecondary
+                        else
+                            AppColors.textPrimary
+                    )
+                ) {
+                    Icon(
+                        painter = if (isVisible)
+                            painterResource(R.drawable.opened_eye)
+                        else
+                            painterResource(R.drawable.closed_eye),
+                        contentDescription = if (isVisible) "Скрыть пароль" else "Показать пароль",
+                        modifier = Modifier.size(24.dp),
+                        tint = if (value.isEmpty())
+                            AppColors.textSecondary
+                        else
+                            AppColors.textPrimary
+                    )
+                }
+            }
+        } else null
+    )
+
+    if (errorText != null && errorText.isNotEmpty()) {
+        Text(
+            text = errorText,
+            color = AppColors.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .padding(horizontal = 16.dp)
+        )
+    }
 }
 
 @Composable

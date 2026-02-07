@@ -3,10 +3,13 @@ package com.example.ur_color.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
@@ -15,8 +18,13 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.ur_color.R
+import com.example.ur_color.ui.AuraDateTimePickerField
+import com.example.ur_color.ui.AuraOutlinedTextField
+import com.example.ur_color.ui.AuraPasswordField
 import com.example.ur_color.ui.AuraTextButton
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.LoginViewModel
@@ -35,9 +43,9 @@ fun Login(login: Login) {
     AppScaffold(
         showBottomBar = false,
         topBar = {
-            CustomAppBar(
-                title = stringResource(R.string.app_name_stylized),
-            )
+//            CustomAppBar(
+//                title = stringResource(R.string.app_name_stylized),
+//            )
         },
     ) {
         LoginScreen(
@@ -59,43 +67,41 @@ fun LoginScreen(
         modifier = modifier
             .fillMaxSize()
             .background(AppColors.background)
-            .imePadding(),
+            .imePadding()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
 
-        OutlinedTextField(
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = AppColors.textPrimary,
-                unfocusedTextColor = AppColors.textPrimary,
-                focusedContainerColor = AppColors.background,
-                unfocusedContainerColor = AppColors.background,
-                focusedLabelColor = AppColors.accentPrimary,
-                unfocusedLabelColor = AppColors.accentPrimary,
-            ),
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp),
+            text = stringResource(R.string.enter_title),
+            fontSize = 36.sp,
+            color = AppColors.textPrimary,
+            textAlign = TextAlign.Start
+        )
+        Spacer(Modifier.size(36.dp))
+
+        AuraOutlinedTextField(
             value = loginViewModel.email,
             onValueChange = { loginViewModel.email = it },
-            label = { Text("Email") },
+            label = stringResource(R.string.email_title),
             modifier = Modifier
                 .imePadding()
                 .fillMaxWidth()
         )
-        OutlinedTextField(
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = AppColors.textPrimary,
-                unfocusedTextColor = AppColors.textPrimary,
-                focusedContainerColor = AppColors.background,
-                unfocusedContainerColor = AppColors.background,
-                focusedLabelColor = AppColors.accentPrimary,
-                unfocusedLabelColor = AppColors.accentPrimary,
-            ),
+        Spacer(Modifier.size(8.dp))
+        AuraPasswordField(
             value = loginViewModel.password,
             onValueChange = { loginViewModel.password = it },
-            label = { Text("Password") },
+            label = stringResource(R.string.password_title),
             modifier = Modifier
                 .imePadding()
                 .fillMaxWidth()
         )
 
+        Spacer(Modifier.size(36.dp))
         AuraTextButton(
             text = stringResource(R.string.action_login),
             enabled = loginViewModel.isLoginValid,

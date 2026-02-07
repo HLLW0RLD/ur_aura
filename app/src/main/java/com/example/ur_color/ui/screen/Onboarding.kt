@@ -2,6 +2,7 @@ package com.example.ur_color.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,43 +52,48 @@ fun OnboardingScreen(
 ) {
     val navController = LocalNavController.current
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(AppColors.background)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+
     ) {
-        Text(
-            text = stringResource(id = R.string.onboarding_description),
-            color = AppColors.textPrimary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 32.dp)
-        )
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = {
-                navController.nav(Login)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = AppColors.accentPrimary)
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(stringResource(R.string.action_login))
-        }
+            Text(
+                text = stringResource(id = R.string.onboarding_description),
+                color = AppColors.textPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 32.dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    navController.nav(Login)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = AppColors.accentPrimary)
+            ) {
+                Text(stringResource(R.string.action_login))
+            }
 
-        Button(
-            onClick = {
-                navController.nav(Registration)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = AppColors.accentPrimary)
-        ) {
-            Text(stringResource(R.string.action_register))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    navController.nav(Registration)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = AppColors.accentPrimary)
+            ) {
+                Text(stringResource(R.string.action_register))
+            }
         }
     }
 }

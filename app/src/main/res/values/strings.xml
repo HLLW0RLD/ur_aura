@@ -72,6 +72,9 @@
     <string name="daily_tests_description">Ежедневные вопросы помогают отслеживать ваше текущее состояние и динамику ауры.</string>
 
     <string name="settings_title">Настройки</string>
+    <string name="enter_title">Вход</string>
+    <string name="password_title">Пароль</string>
+    <string name="email_title">Email</string>
 
     <string name="settings_theme_title">Тема</string>
     <string name="settings_palette_title">Цветовая палитра</string>

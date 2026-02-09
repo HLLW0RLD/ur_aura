@@ -77,6 +77,7 @@ fun OnboardingScreen(
                 onClick = {
                     navController.nav(Login)
                 },
+                enabled = false,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = AppColors.accentPrimary)
             ) {

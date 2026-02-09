@@ -30,8 +30,8 @@ class RegistrationViewModel : BaseViewModel() {
     var birthPlace by mutableStateOf("")
     var gender by mutableStateOf("Мужской")
 
-    var email by mutableStateOf("qwert@yu.com")
-    var password by mutableStateOf("asdfg")
+    var email by mutableStateOf("not_working@email.test")
+    var password by mutableStateOf("0000")
 
     var about by mutableStateOf("")
 

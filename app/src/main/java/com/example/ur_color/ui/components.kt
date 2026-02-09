@@ -450,7 +450,7 @@ fun AuraOutlinedTextField(
     focusedTextColor: Color = AppColors.textPrimary,
     unfocusedTextColor: Color = AppColors.textPrimary,
     focusedLabelColor: Color = AppColors.accentPrimary,
-    unfocusedLabelColor: Color = AppColors.textPrimary,
+    unfocusedLabelColor: Color = AppColors.surfaceLight,
     focusedBorderColor: Color = AppColors.accentPrimary,
     unfocusedBorderColor: Color = AppColors.textPrimary,
     focusedContainerColor: Color = AppColors.background,
@@ -458,7 +458,6 @@ fun AuraOutlinedTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
-    placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
@@ -472,16 +471,6 @@ fun AuraOutlinedTextField(
     modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = focusedTextColor,
-            unfocusedTextColor = unfocusedTextColor,
-            focusedContainerColor = focusedContainerColor ,
-            unfocusedContainerColor = unfocusedContainerColor ,
-            focusedLabelColor = focusedLabelColor,
-            unfocusedLabelColor = unfocusedLabelColor,
-            focusedBorderColor = focusedBorderColor,
-            unfocusedBorderColor = unfocusedBorderColor,
-        ),
         shape = shape,
         value = value,
         onValueChange = {
@@ -496,7 +485,6 @@ fun AuraOutlinedTextField(
 
         enabled = enabled,
         readOnly = readOnly,
-        placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         isError = isError,
@@ -505,6 +493,16 @@ fun AuraOutlinedTextField(
         singleLine = singleLine,
         maxLines = maxLines,
         minLines = minLines,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = focusedTextColor,
+            unfocusedTextColor = unfocusedTextColor,
+            focusedContainerColor = focusedContainerColor ,
+            unfocusedContainerColor = unfocusedContainerColor ,
+            focusedLabelColor = focusedLabelColor,
+            unfocusedLabelColor = unfocusedLabelColor,
+            focusedBorderColor = focusedBorderColor,
+            unfocusedBorderColor = unfocusedBorderColor,
+        ),
     )
 }
 
@@ -521,7 +519,6 @@ fun AuraPasswordField(
     focusedContainerColor: Color = AppColors.background,
     unfocusedContainerColor: Color = AppColors.background,
     onValueChange: (String) -> Unit,
-    placeholder: String? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     isError: Boolean = false,
@@ -559,9 +556,6 @@ fun AuraPasswordField(
         value = value,
         label = label,
         onValueChange = onValueChange,
-        placeholder = if (placeholder != null) {
-            @Composable { Text(placeholder, color = AppColors.textSecondary) }
-        } else null,
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardActions = keyboardActions,
         keyboardType = KeyboardType.Password,
@@ -775,6 +769,8 @@ fun CustomAppBar(
     showOptions: Boolean = false,
     isCentered: Boolean = true,
     showDivider: Boolean = true,
+    height: Float = 56f,
+    textSize: Float = 16f,
     onBackClick: (() -> Unit)? = null,
     onOptionsClick: (() -> Unit)? = null,
     backIcon: Painter = painterResource(R.drawable.arrow_left),
@@ -788,7 +784,7 @@ fun CustomAppBar(
         modifier = modifier
             .statusBarsPadding()
             .fillMaxWidth()
-            .height(56.dp),
+            .height(height.dp),
         color = backgroundColor
     ) {
         Box {
@@ -808,8 +804,6 @@ fun CustomAppBar(
                             tint = backIconTint
                         )
                     }
-                } else {
-                    Spacer(modifier = Modifier.size(48.dp))
                 }
 
                 Text(
@@ -820,7 +814,8 @@ fun CustomAppBar(
                     else Modifier
                         .weight(1f)
                         .padding(start = 8.dp),
-                    textAlign = if (isCentered) TextAlign.Center else TextAlign.Start
+                    textAlign = if (isCentered) TextAlign.Center else TextAlign.Start,
+                    fontSize = textSize.sp
                 )
 
                 if (showOptions) {

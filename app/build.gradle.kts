@@ -35,6 +35,7 @@ android {
                 append("-$buildType")
                 append("-v$versionName")
                 append("(vc$versionCode)")
+                append(".apk")
             }
 
             outputImpl.outputFileName = fileName

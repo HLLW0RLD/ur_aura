@@ -125,7 +125,6 @@ fun Main(main : Main) {
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
-    profileViewModel: ProfileViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -136,8 +135,8 @@ fun MainScreen(
     val dailyCardService = remember { LocalDailyCardService() }
     val localMotivationService = remember { LocalMotivationService() }
 
-    val user = profileViewModel.user.collectAsState().value
-    val aura by profileViewModel.aura.collectAsState()
+    val user = mainViewModel.user.collectAsState().value
+    val aura by mainViewModel.aura.collectAsState()
     val zodiacSign = ZodiacSign.fromName(user?.zodiacSign ?: "") ?: ZodiacSign.GEMINI
 
     var motivated by remember { mutableStateOf<String?>(null) }

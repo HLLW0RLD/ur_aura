@@ -29,20 +29,14 @@ class ProfileViewModel(
     val user = _user.asStateFlow()
 
     private val _aura = MutableStateFlow<Bitmap?>(null)
-    val aura= _aura.asStateFlow()
+    val aura = _aura.asStateFlow()
 
-    private val _level = MutableStateFlow<Float>(1f)
-    val level = _level
 
     init {
         viewModelScope.launch {
-
-//            userRepository.register()
-
-
             _user.value = userRepository.getUser()
-            _level.value = userRepository.getLvl()
             _aura.value = userRepository.getAura()
+
             getPostsByUser(_user.value?.id)
         }
     }
@@ -66,22 +60,4 @@ class ProfileViewModel(
             postRepository.deletePost(postId)
         }
     }
-
-//    suspend fun syncWithApi(apiService: YourApiService) {
-//        val unsyncedPosts = postRepository.getUnsyncedPosts()
-//
-//        unsyncedPosts.forEach { post ->
-//            try {
-//                // Отправляем на сервер
-//                apiService.createPost(post)
-//
-//                // Отмечаем как синхронизированный
-//                postRepository.markAsSynced(post.id)
-//
-//            } catch (e: Exception) {
-//                // Обработка ошибки
-//                println("Failed to sync post: ${e.message}")
-//            }
-//        }
-//    }
 }

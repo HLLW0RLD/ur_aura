@@ -223,7 +223,7 @@ fun DailyTestScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val anavController = LocalNavController.current
+    val navController = LocalNavController.current
 
     val questions = remember { LocalDailyTestService().questionMods.toMutableStateList() }
     var currentIndex by remember { mutableStateOf(0) }

@@ -20,7 +20,6 @@ class DailyTestViewModel(
 ) : BaseViewModel() {
 
     private val _user = MutableStateFlow<UserData?>(null)
-    private val _level = MutableStateFlow<Float>(1f)
     private val _aura = MutableStateFlow<Bitmap?>(null)
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -29,7 +28,6 @@ class DailyTestViewModel(
     fun init() {
         viewModelScope.launch {
             _user.value = userRepository.getUser()
-            _level.value = userRepository.getLvl()
             _aura.value = userRepository.getAura()
         }
     }

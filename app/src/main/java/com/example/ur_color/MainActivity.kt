@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                 var isInitialized by remember { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
-                    val user = PersonalDataManager.getUser()
+                    val user = PersonalDataManager.getUserFromCache()
                     startRoute = if (user != null) TabsHost else Onboarding
                     isInitialized = true
                 }

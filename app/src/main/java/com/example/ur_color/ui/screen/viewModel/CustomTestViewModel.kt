@@ -20,7 +20,6 @@ class CustomTestViewModel(
 ) : BaseViewModel()  {
 
     private val _user = MutableStateFlow<UserData?>(null)
-    private val _level = MutableStateFlow<Float>(1f)
 
     // getting from db or api
     private val _questions = MutableStateFlow<Map<String, Pair<Int, Int>>>(mapOf())
@@ -29,7 +28,6 @@ class CustomTestViewModel(
     init {
         viewModelScope.launch {
             _user.value = userRepository.getUser()
-            _level.value = userRepository.getLvl()
         }
     }
 

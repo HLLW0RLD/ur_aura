@@ -782,7 +782,7 @@ fun CustomAppBar(
     isCentered: Boolean = true,
     showDivider: Boolean = true,
     height: Float = 56f,
-    textSize: Float = 16f,
+    textSize: Float = 24f,
     onBackClick: (() -> Unit)? = null,
     onOptionsClick: (() -> Unit)? = null,
     backIcon: Painter = painterResource(R.drawable.arrow_left),

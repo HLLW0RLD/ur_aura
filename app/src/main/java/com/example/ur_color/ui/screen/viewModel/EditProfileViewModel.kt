@@ -1,8 +1,6 @@
 package com.example.ur_color.ui.screen.viewModel
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -54,7 +52,7 @@ class EditProfileViewModel(
 
     fun update() {
         viewModelScope.launch {
-            PersonalDataManager.updateUser(about.value, avatar.value)
+            PersonalDataManager.updateUserCache(about.value, avatar.value)
         }
     }
 

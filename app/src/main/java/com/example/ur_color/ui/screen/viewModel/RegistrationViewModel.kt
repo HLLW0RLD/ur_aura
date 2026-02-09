@@ -10,9 +10,9 @@ import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.CharacteristicData
-import com.example.ur_color.data.model.user.UserDataRequest
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.data.model.user.toUserData
+import com.example.ur_color.data.remote.UserDataRequest
 import com.example.ur_color.utils.isValidEmail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -96,8 +96,8 @@ class RegistrationViewModel : BaseViewModel() {
 
             val bitmap = AuraGenerator.generateBaseAura(user.toUserData())
 
-            PersonalDataManager.saveUser(user.toUserData())
-            PersonalDataManager.saveAura(bitmap)
+            PersonalDataManager.saveUserToCache(user.toUserData())
+            PersonalDataManager.saveAuraToCache(bitmap)
 
             withContext(Dispatchers.Main) {
                 onSuccess()

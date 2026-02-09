@@ -77,7 +77,6 @@ fun ProfileScreen(
     val navController = LocalNavController.current
     val context = LocalContext.current
 
-    val level by profileViewModel.level.collectAsState()
     val profileCardsState by profileViewModel.profileCardsState.collectAsState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -142,7 +141,7 @@ fun ProfileScreen(
                                     text = stringResource(
                                         R.string.profile_name_level,
                                         u.firstName,
-                                        level?.toInt() ?: 1
+                                        u.userLevel
                                     ),
                                     style = MaterialTheme.typography.titleMedium
                                 )

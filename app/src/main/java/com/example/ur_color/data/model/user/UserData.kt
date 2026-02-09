@@ -3,6 +3,7 @@ package com.example.ur_color.data.model.user
 import com.example.ur_color.data.model.SocialContent
 import com.example.ur_color.data.model.User
 import com.example.ur_color.data.model.entity.PostEntity
+import com.example.ur_color.data.remote.UserDataRequest
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AuraColors
 import kotlinx.serialization.Serializable
@@ -40,4 +41,22 @@ fun UserData?.toUser(): User {
         avatar = this?.avatarUri
     )
 }
+
+fun UserDataRequest.toUserData() = UserData(
+    id = id,
+    nickName = nickName,
+    firstName = firstName,
+    lastName = lastName,
+    middleName = middleName,
+    about = about,
+    birthDate = birthDate,
+    birthTime = birthTime,
+    birthPlace = birthPlace,
+    gender = gender,
+    zodiacSign = zodiacSign,
+    avatarUri = avatarUri,
+    birthTimestamp = birthTimestamp,
+    characteristics = characteristics,
+    userLevel = userLevel
+)
 

@@ -1,17 +1,15 @@
 package com.example.ur_color.data.local.dataManager
 
-import android.content.Context
 import android.graphics.Bitmap
 import com.example.ur_color.data.local.storage.AuraStorage
 //import com.example.ur_color.data.local.HistoryStorage
 import com.example.ur_color.data.local.storage.UserStorage
 import com.example.ur_color.data.model.user.UserData
-import com.example.ur_color.utils.logDebug
 import com.example.ur_color.utils.logError
 
 object PersonalDataManager {
 
-    suspend fun updateUser(
+    suspend fun updateUserCache(
         about: String? = null,
         avatar: String? = null
     ) {
@@ -38,36 +36,24 @@ object PersonalDataManager {
         }
     }
 
-    suspend fun getUser(): UserData? {
+    suspend fun getUserFromCache(): UserData? {
         return UserStorage.load()
     }
 
-    suspend fun getLvl(): Float {
-        return UserStorage.loadLvl()?.toFloat() ?: 1f
-    }
-
-    suspend fun getAura(): Bitmap? {
+    suspend fun getAuraFromCache(): Bitmap? {
         return AuraStorage.load()
     }
 
-    suspend fun saveUser(user: UserData? = null) {
+    suspend fun saveUserToCache(user: UserData? = null) {
         user?.let {
             UserStorage.save(it)
         }
     }
 
-    suspend fun saveAura(aura: Bitmap? = null) {
+    suspend fun saveAuraToCache(aura: Bitmap? = null) {
         aura?.let {
             AuraStorage.save(it)
         }
-    }
-
-    suspend fun saveDailyTestDate(date: String) {
-        date.let { UserStorage.saveDailyTestDate(it) }
-    }
-
-    suspend fun loadDailyTestDate(): String? {
-        return UserStorage.loadDailyTestDate()
     }
 
     suspend fun updateLevel(lvl: Float = 0.1f) {
@@ -79,16 +65,25 @@ object PersonalDataManager {
         }
     }
 
+    suspend fun delete() {
+        UserStorage.delete()
+        AuraStorage.delete()
+    }
+
+
+    // need to be from api
+    suspend fun saveDailyTestDate(date: String) {
+        date.let { UserStorage.saveDailyTestDate(it) }
+    }
+    suspend fun loadDailyTestDate(): String? {
+        return UserStorage.loadDailyTestDate()
+    }
+
     suspend fun setAchievement(achievement: String) {
         UserStorage.saveAchievementId(achievement)
     }
 
     suspend fun getAchievements(): List<String>? {
         return UserStorage.loadAchievements()
-    }
-
-    suspend fun delete() {
-        UserStorage.delete()
-        AuraStorage.delete()
     }
 }

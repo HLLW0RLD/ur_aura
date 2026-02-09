@@ -26,7 +26,7 @@ val viewModelModule = module {
     viewModel { RegistrationViewModel() }
     viewModel { LoginViewModel() }
     viewModel { OnboardingViewModel() }
-    viewModel { MainViewModel() }
+    viewModel { MainViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { EditProfileViewModel(get()) }
     viewModel { AuraDetailsViewModel() }

@@ -39,10 +39,10 @@ object DailyTestOperator {
             updated = updateUserValue(updated, type, newValue)
         }
 
-        PersonalDataManager.saveUser(updated)
+        PersonalDataManager.saveUserToCache(updated)
 
         val aura = AuraGenerator.updateDynamicAura(aura, updated)
-        if (aura != null) PersonalDataManager.saveAura(aura)
+        if (aura != null) PersonalDataManager.saveAuraToCache(aura)
 
         resetDaily()
     }

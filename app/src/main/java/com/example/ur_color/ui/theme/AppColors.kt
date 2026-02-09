@@ -48,7 +48,7 @@ object AppColors {
 
 
     val error: Color
-        @Composable get() = MaterialTheme.colorScheme.error
+        @Composable get() = Color(0xFFDE5451)
     val success: Color
         @Composable get() = Color(0xFF4CAF50) // Зеленый для успеха
 

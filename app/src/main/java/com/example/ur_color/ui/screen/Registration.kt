@@ -36,9 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.ur_color.R
 import com.example.ur_color.ui.AuraDatePickerField
 import com.example.ur_color.ui.AuraDateTimePickerField
@@ -50,7 +48,6 @@ import com.example.ur_color.ui.screen.viewModel.RegistrationViewModel
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -144,6 +141,8 @@ private fun PersonalInfoPage(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    val showErrors = registrationViewModel.showErrors
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -157,13 +156,8 @@ private fun PersonalInfoPage(
             value = registrationViewModel.nickName,
             onValueChange = { registrationViewModel.nickName = it },
             label = stringResource(R.string.field_nickname),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        AuraOutlinedTextField(
-            value = registrationViewModel.lastName,
-            onValueChange = { registrationViewModel.lastName = it },
-            label = stringResource(R.string.field_last_name),
+            isError = showErrors && !registrationViewModel.isNickNameValid,
+            errorText = "заполните никнейм",
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -171,6 +165,17 @@ private fun PersonalInfoPage(
             value = registrationViewModel.firstName,
             onValueChange = { registrationViewModel.firstName = it },
             label = stringResource(R.string.field_first_name),
+            isError = showErrors && !registrationViewModel.isFirstNameValid,
+            errorText = "заполните имя",
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        AuraOutlinedTextField(
+            value = registrationViewModel.lastName,
+            onValueChange = { registrationViewModel.lastName = it },
+            label = stringResource(R.string.field_last_name),
+            isError = showErrors && !registrationViewModel.isLastNameValid,
+            errorText = "заполните фамилию",
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -178,6 +183,8 @@ private fun PersonalInfoPage(
             value = registrationViewModel.middleName,
             onValueChange = { registrationViewModel.middleName = it },
             label = stringResource(R.string.field_middle_name_optional),
+            isError = showErrors && !registrationViewModel.isMiddleNameValid,
+            errorText = "заполните отчество (опциионально)",
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -187,6 +194,8 @@ private fun PersonalInfoPage(
             date = registrationViewModel.birthDate,
             color = AppColors.textPrimary,
             onDateChanged = { registrationViewModel.birthDate = it },
+            isError = showErrors && !registrationViewModel.isBirthDateValid,
+            errorText = "заполните дату рождения",
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -195,6 +204,8 @@ private fun PersonalInfoPage(
             time = registrationViewModel.birthTime,
             color = AppColors.textPrimary,
             onTimeChanged = { registrationViewModel.birthTime = it },
+            isError = showErrors && !registrationViewModel.isBirthTimeValid,
+            errorText = "заполните время рождения",
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -202,6 +213,8 @@ private fun PersonalInfoPage(
             value = registrationViewModel.birthPlace,
             onValueChange = { registrationViewModel.birthPlace = it },
             label = stringResource(R.string.field_birth_place),
+            isError = showErrors && !registrationViewModel.isBirthPlaceValid,
+            errorText = "заполните место рождения",
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -237,16 +250,19 @@ private fun PersonalInfoPage(
         Spacer(Modifier.size(16.dp))
         AuraTextButton(
             text = stringResource(R.string.action_registration),
-            enabled = registrationViewModel.isUserValid,
             modifier = Modifier
-                .padding(24.dp)
                 .fillMaxWidth(),
         ) {
-            scope.launch {
-                focusManager.clearFocus()
-                keyboardController?.hide()
+            if (registrationViewModel.isUserValid) {
+                scope.launch {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
 
-                state.animateScrollToPage(1)
+                    registrationViewModel.clearErrors()
+                    state.animateScrollToPage(1)
+                }
+            } else {
+                registrationViewModel.validate()
             }
         }
     }
@@ -272,7 +288,6 @@ private fun AuthPage(
         horizontalAlignment = Alignment.Start
     )
     {
-
         AuraOutlinedTextField(
             value = registrationViewModel.email,
             onValueChange = { registrationViewModel.email = it },
@@ -293,11 +308,16 @@ private fun AuthPage(
             enabled = registrationViewModel.isLoginValid,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            scope.launch {
-                focusManager.clearFocus()
-                keyboardController?.hide()
+            if (registrationViewModel.isLoginValid) {
+                scope.launch {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
 
-                pagerState.animateScrollToPage(2)
+                    registrationViewModel.clearErrors()
+                    pagerState.animateScrollToPage(2)
+                }
+            } else {
+                registrationViewModel.validate()
             }
         }
         Spacer(Modifier.height(12.dp))

@@ -10,7 +10,6 @@ import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.CharacteristicData
-import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.UserDataRequest
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.data.model.user.toUserData
@@ -35,18 +34,39 @@ class RegistrationViewModel : BaseViewModel() {
 
     var about by mutableStateOf("")
 
+    var showErrors by mutableStateOf(false)
+        private set
+
+    val isNickNameValid get() = nickName.isNotBlank()
+    val isMiddleNameValid get() = middleName.isNotBlank()
+    val isFirstNameValid get() = firstName.isNotBlank()
+    val isLastNameValid get() = lastName.isNotBlank()
+    val isBirthDateValid get() = birthDate.isNotBlank()
+    val isBirthTimeValid get() = birthTime.isNotBlank()
+    val isBirthPlaceValid get() = birthPlace.isNotBlank()
+    val isGenderValid get() = gender.isNotBlank()
+
     val isUserValid: Boolean
-        get() = nickName.isNotBlank() &&
-                firstName.isNotBlank() &&
-                lastName.isNotBlank() &&
-                birthTime.isNotBlank() &&
-                birthPlace.isNotBlank() &&
-                gender.isNotBlank() &&
-                birthDate.isNotBlank()
+        get() = isNickNameValid &&
+                isMiddleNameValid &&
+                isFirstNameValid &&
+                isLastNameValid &&
+                isBirthDateValid &&
+                isBirthTimeValid &&
+                isBirthPlaceValid &&
+                isGenderValid
 
     val isLoginValid: Boolean
         get() = isValidEmail(email) &&
                 password.isNotBlank()
+
+    fun validate() {
+        showErrors = true
+    }
+
+    fun clearErrors() {
+        showErrors = false
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)

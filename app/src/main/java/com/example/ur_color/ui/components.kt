@@ -122,6 +122,8 @@ fun AuraDatePickerField(
     label: String,
     date: String,
     color: Color? = null,
+    isError: Boolean = false,
+    errorText: String? = null,
     onDateChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -132,6 +134,8 @@ fun AuraDatePickerField(
             value = date,
             onValueChange = {},
             readOnly = true,
+            isError = isError,
+            errorText = errorText,
             label = label,
             trailingIcon = {
 //                Icon(
@@ -215,6 +219,8 @@ fun AuraDateTimePickerField(
     label: String,
     time: String,
     color: Color? = null,
+    isError: Boolean = false,
+    errorText: String? = null,
     onTimeChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -225,6 +231,8 @@ fun AuraDateTimePickerField(
             value = time,
             onValueChange = {},
             readOnly = true,
+            isError = isError,
+            errorText = errorText,
             label = label,
         )
 
@@ -457,10 +465,11 @@ fun AuraOutlinedTextField(
     unfocusedContainerColor: Color = AppColors.background,
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorText: String? = null,
     onValueChange: (String) -> Unit,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
     singleLine: Boolean = false,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     minLines: Int = 1,
@@ -470,40 +479,53 @@ fun AuraOutlinedTextField(
     shape: Shape = RoundedCornerShape(25.dp),
     modifier: Modifier = Modifier,
 ) {
-    OutlinedTextField(
-        shape = shape,
-        value = value,
-        onValueChange = {
-            onValueChange(it)
-        },
-        label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        modifier = Modifier
-            .then(modifier)
-
-            .fillMaxWidth(),
-
-        enabled = enabled,
-        readOnly = readOnly,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        isError = isError,
-        visualTransformation = visualTransformation,
-        keyboardActions = keyboardActions,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = focusedTextColor,
-            unfocusedTextColor = unfocusedTextColor,
-            focusedContainerColor = focusedContainerColor ,
-            unfocusedContainerColor = unfocusedContainerColor ,
-            focusedLabelColor = focusedLabelColor,
-            unfocusedLabelColor = unfocusedLabelColor,
-            focusedBorderColor = focusedBorderColor,
-            unfocusedBorderColor = unfocusedBorderColor,
-        ),
-    )
+    Column(
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            shape = shape,
+            value = value,
+            onValueChange = {
+                onValueChange(it)
+            },
+            label = {
+                Text(
+                    text = label,
+                    color = if (isError) AppColors.error else if (value.isNotEmpty()) AppColors.accentPrimary else AppColors.textSecondary
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            modifier = modifier
+                .fillMaxWidth(),
+            enabled = enabled,
+            readOnly = readOnly,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
+            keyboardActions = keyboardActions,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = focusedTextColor,
+                unfocusedTextColor = unfocusedTextColor,
+                focusedContainerColor = focusedContainerColor,
+                unfocusedContainerColor = unfocusedContainerColor,
+                focusedLabelColor = focusedLabelColor,
+                unfocusedLabelColor = unfocusedLabelColor,
+                focusedBorderColor = focusedBorderColor,
+                unfocusedBorderColor = unfocusedBorderColor,
+            ),
+        )
+        if (isError && !errorText.isNullOrBlank()) {
+            Text(
+                text = errorText,
+                color = AppColors.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -562,6 +584,7 @@ fun AuraPasswordField(
         enabled = enabled,
         readOnly = readOnly,
         isError = isError,
+        errorText = errorText,
         singleLine = true,
         shape = shape,
         modifier = modifier,
@@ -593,17 +616,6 @@ fun AuraPasswordField(
             }
         } else null
     )
-
-    if (errorText != null && errorText.isNotEmpty()) {
-        Text(
-            text = errorText,
-            color = AppColors.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .padding(horizontal = 16.dp)
-        )
-    }
 }
 
 @Composable

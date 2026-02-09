@@ -15,9 +15,30 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    applicationVariants.all {
+        outputs.map { output ->
+            val outputImpl = output as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
+            val appName = "ur-feel-aura"
+
+            val versionName = versionName ?: "unknown"
+            val versionCode = versionCode.toString()
+            val buildType = buildType.name
+
+            val fileName = buildString {
+                append(appName)
+                append("-$buildType")
+                append("-v$versionName")
+                append("(vc$versionCode)")
+            }
+
+            outputImpl.outputFileName = fileName
+        }
     }
 
     buildTypes {

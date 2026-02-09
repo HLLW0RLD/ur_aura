@@ -76,18 +76,41 @@ object Main : Screen
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun Main(main : Main) {
-    val scrollState = rememberScrollState()
-
     AppScaffold(
         showBottomBar = true,
         topBar = {
             val navController = LocalNavController.current
 
-            CustomAppBar(
-                showDivider = true,
-                isCentered = true,
-                backgroundColor = AppColors.background.copy(alpha = 0.85f),
-            )
+            val labViewModel: LabViewModel = koinViewModel()
+            val isDailyTestAvailable by labViewModel.isDailyTestAvailable.collectAsState()
+
+            LaunchedEffect(Unit) {
+                labViewModel.checkDailyTestAvailability()
+            }
+
+            Box {
+                CustomAppBar(
+                    showDivider = true,
+                    isCentered = true,
+                    backgroundColor = AppColors.background.copy(alpha = 0.85f),
+                )
+
+                if (isDailyTestAvailable) {
+                    Text(
+                        text = stringResource(R.string.daily_test_new),
+                        color = AppColors.white,
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.BottomEnd)
+                            .clip(RoundedCornerShape(50.dp))
+                            .background(AppColors.accentPrimary)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .clickable {
+                                navController.nav(Test("0"))
+                            }
+                    )
+                }
+            }
         },
     ) {
         MainScreen(
@@ -103,7 +126,6 @@ fun Main(main : Main) {
 fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     profileViewModel: ProfileViewModel = koinViewModel(),
-    labViewModel: LabViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -116,7 +138,6 @@ fun MainScreen(
 
     val user = profileViewModel.user.collectAsState().value
     val aura by profileViewModel.aura.collectAsState()
-    val isDailyTestAvailable by labViewModel.isDailyTestAvailable.collectAsState()
     val zodiacSign = ZodiacSign.fromName(user?.zodiacSign ?: "") ?: ZodiacSign.GEMINI
 
     var motivated by remember { mutableStateOf<String?>(null) }
@@ -132,9 +153,6 @@ fun MainScreen(
         motivated = localMotivationService.getPhraseForToday()
     }
 
-    LaunchedEffect(Unit) {
-        labViewModel.checkDailyTestAvailability()
-    }
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -148,8 +166,6 @@ fun MainScreen(
 
     val progress = ((collapsedY - offsetY.value) / (collapsedY - expandedY)).coerceIn(0f, 1f)
     val canScroll = progress >= 0.999f
-
-    val auraShiftDp = screenHeight * 0.2f
 
     fun animateToExpanded() = scope.launch { offsetY.animateTo(expandedY, tween(400)) }
     fun animateToCollapsed() = scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
@@ -259,25 +275,6 @@ fun MainScreen(
                 thickness = 0.5.dp,
                 color = AppColors.textPrimary
             )
-            if (isDailyTestAvailable) {
-                Text(
-                    text = stringResource(R.string.daily_test_new),
-                    color = AppColors.white,
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .graphicsLayer {
-                            translationY = -auraShiftDp.toPx()
-                        }
-                        .clip(RoundedCornerShape(50.dp))
-                        .background(AppColors.black)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                        .clickable {
-                            navController.nav(Test("0"))
-                        }
-                )
-            }
-
-            Spacer(modifier = Modifier.size(16.dp))
 
             Column(
                 modifier = Modifier

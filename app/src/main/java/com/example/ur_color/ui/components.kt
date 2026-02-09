@@ -816,6 +816,10 @@ fun CustomAppBar(
                             tint = backIconTint
                         )
                     }
+                } else {
+                    if (isCentered) {
+                        Spacer(modifier = Modifier.size(48.dp))
+                    }
                 }
 
                 Text(

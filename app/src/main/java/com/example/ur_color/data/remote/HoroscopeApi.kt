@@ -1,6 +1,6 @@
 package com.example.ur_color.data.remote
 
-import com.example.ur_color.data.model.respoonse.HoroscopeResponse
+import com.example.ur_color.data.model.response.HoroscopeResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

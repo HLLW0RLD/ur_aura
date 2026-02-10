@@ -101,18 +101,21 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
-import com.example.ur_color.data.model.SocialContent
+import com.example.ur_color.data.model.response.SocialContent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.example.ur_color.data.model.User
+import androidx.compose.ui.text.input.TextFieldValue
+import com.example.ur_color.data.model.response.User
 import com.example.ur_color.utils.AutoScrollPagerScope
 import com.example.ur_color.utils.IconPosition
 import com.example.ur_color.utils.TwoColumnScope
 import com.example.ur_color.utils.TwoColumnScopeImpl
 import com.example.ur_color.utils.WindowType
 import com.example.ur_color.utils.animPic
+import com.example.ur_color.utils.formatDateInput
+import com.example.ur_color.utils.formatTimeInput
 import com.example.ur_color.utils.lerp
 import kotlin.Int.Companion.MAX_VALUE
 
@@ -123,33 +126,41 @@ fun AuraDatePickerField(
     date: String,
     color: Color? = null,
     isError: Boolean = false,
-    errorText: String? = null,
     onDateChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = date)) }
+
+    LaunchedEffect(date) {
+        if (date != textFieldValue.text) {
+            textFieldValue = TextFieldValue(text = date)
+        }
+    }
 
     Box(modifier = modifier.fillMaxWidth()) {
         AuraOutlinedTextField(
             value = date,
-            onValueChange = {},
-            readOnly = true,
+            onValueChange = { rawInput ->
+                val newValue = textFieldValue.copy(text = rawInput)
+                val formatted = formatDateInput(textFieldValue, newValue)
+                textFieldValue = formatted
+                onDateChanged(formatted.text)},
             isError = isError,
-            errorText = errorText,
             label = label,
             trailingIcon = {
-//                Icon(
-//                    Icons.Default.DateRange, contentDescription = "Выбрать дату",
-//                    tint = color ?: AppColors.accentPrimary
-//                )
+                IconButton(
+                    onClick = { showDatePicker = true },
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.calendar),
+                        contentDescription = "",
+                        tint = color ?: AppColors.textPrimary
+                    )
+                }
             },
-        )
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .alpha(0f)
-                .clickable { showDatePicker = true }
+            keyboardType = KeyboardType.Number
         )
     }
 
@@ -220,27 +231,42 @@ fun AuraDateTimePickerField(
     time: String,
     color: Color? = null,
     isError: Boolean = false,
-    errorText: String? = null,
     onTimeChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = time)) }
+
+    LaunchedEffect(time) {
+        if (time != textFieldValue.text) {
+            textFieldValue = TextFieldValue(text = time)
+        }
+    }
 
     Box(modifier = modifier.fillMaxWidth()) {
         AuraOutlinedTextField(
             value = time,
-            onValueChange = {},
-            readOnly = true,
+            onValueChange = { rawInput ->
+                val newValue = textFieldValue.copy(text = rawInput)
+                val formatted = formatTimeInput(textFieldValue, newValue)
+                textFieldValue = formatted
+                onTimeChanged(formatted.text)
+            },
             isError = isError,
-            errorText = errorText,
             label = label,
-        )
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .alpha(0f)
-                .clickable { showTimePicker = true }
+            trailingIcon = {
+                IconButton(
+                    onClick = { showTimePicker = true },
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.clock),
+                        contentDescription = "",
+                        tint = color ?: AppColors.textPrimary
+                    )
+                }
+            },
+            keyboardType = KeyboardType.Number
         )
     }
 
@@ -466,7 +492,6 @@ fun AuraOutlinedTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     isError: Boolean = false,
-    errorText: String? = null,
     onValueChange: (String) -> Unit,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -517,14 +542,6 @@ fun AuraOutlinedTextField(
                 unfocusedBorderColor = unfocusedBorderColor,
             ),
         )
-        if (isError && !errorText.isNullOrBlank()) {
-            Text(
-                text = errorText,
-                color = AppColors.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp)
-            )
-        }
     }
 }
 
@@ -584,7 +601,6 @@ fun AuraPasswordField(
         enabled = enabled,
         readOnly = readOnly,
         isError = isError,
-        errorText = errorText,
         singleLine = true,
         shape = shape,
         modifier = modifier,

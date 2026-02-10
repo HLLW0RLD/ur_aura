@@ -3,8 +3,8 @@ package com.example.ur_color.ui.screen.viewModel
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
-import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.model.User
+import com.example.ur_color.data.model.response.SocialContent
+import com.example.ur_color.data.model.response.User
 import com.example.ur_color.data.repo.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

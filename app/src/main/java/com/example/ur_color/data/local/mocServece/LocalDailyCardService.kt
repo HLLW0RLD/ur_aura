@@ -2,7 +2,7 @@ package com.example.ur_color.data.local.mocServece
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.ur_color.data.model.Card
+import com.example.ur_color.data.model.response.Card
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate

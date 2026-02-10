@@ -1,15 +1,13 @@
 package com.example.ur_color.ui.screen.viewModel
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.SocialContent
+import com.example.ur_color.data.model.response.SocialContent
 import com.example.ur_color.data.model.user.UserData
-import com.example.ur_color.data.model.user.toUser
 import com.example.ur_color.data.repo.PostRepository
 import com.example.ur_color.data.repo.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow

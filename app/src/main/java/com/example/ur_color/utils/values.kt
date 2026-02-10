@@ -1,12 +1,12 @@
 package com.example.ur_color.utils
 
 import com.example.ur_color.R
-import com.example.ur_color.data.model.AuraItem
-import com.example.ur_color.data.model.AuraItemType
-import com.example.ur_color.data.model.AuraRowConfig
-import com.example.ur_color.data.model.AuraSection
-import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.model.User
+import com.example.ur_color.data.model.response.AuraItem
+import com.example.ur_color.data.model.response.AuraItemType
+import com.example.ur_color.data.model.response.AuraRowConfig
+import com.example.ur_color.data.model.response.AuraSection
+import com.example.ur_color.data.model.response.SocialContent
+import com.example.ur_color.data.model.response.User
 import com.example.ur_color.data.model.question.ModType
 import com.example.ur_color.ui.theme.AuraColors
 

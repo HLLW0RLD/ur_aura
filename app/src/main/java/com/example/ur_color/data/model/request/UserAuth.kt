@@ -1,4 +1,4 @@
-package com.example.ur_color.data.model.user
+package com.example.ur_color.data.model.request
 
 data class UserAuth(
     val email: String,

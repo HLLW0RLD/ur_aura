@@ -1,8 +1,7 @@
 package com.example.ur_color.data.repo
 
 import com.example.ur_color.data.local.db.PostDao
-import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.model.entity.PostEntity
+import com.example.ur_color.data.model.response.SocialContent
 import com.example.ur_color.data.model.entity.toPost
 import com.example.ur_color.data.model.entity.toPostEntity
 import kotlinx.coroutines.flow.Flow

@@ -36,9 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ur_color.R
-import com.example.ur_color.data.model.AuraItem
-import com.example.ur_color.data.model.AuraItemType
-import com.example.ur_color.data.model.AuraRowConfig
+import com.example.ur_color.data.model.response.AuraItem
+import com.example.ur_color.data.model.response.AuraItemType
+import com.example.ur_color.data.model.response.AuraRowConfig
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.FloatingBox
 import com.example.ur_color.ui.screen.viewModel.LabViewModel
@@ -121,7 +121,7 @@ fun LabScreen(
                                 if (isDailyTestAvailable) {
                                     navController.nav(Test("0"))
                                 } else {
-                                    toast(context, context.getString(R.string.test_done))
+                                    toast(context.getString(R.string.test_done))
                                 }
                             }
 

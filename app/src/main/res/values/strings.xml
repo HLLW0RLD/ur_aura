@@ -40,7 +40,7 @@
     <string name="field_last_name">Фамилия</string>
     <string name="field_first_name">Имя</string>
     <string name="field_middle_name_optional">Отчество (опционально)</string>
-    <string name="field_birth_date">Дата рождения (ДД/ММ/ГГГГ)</string>
+    <string name="field_birth_date">Дата рождения (ДД.ММ.ГГГГ)</string>
     <string name="field_birth_time">Время рождения (ЧЧ:ММ)</string>
     <string name="field_birth_place">Место рождения</string>
     <string name="gender_male">Мужской</string>
@@ -73,7 +73,7 @@
     <string name="daily_tests_description">Ежедневные вопросы помогают отслеживать ваше текущее состояние и динамику ауры.</string>
 
     <string name="enter_title">Вход</string>
-    <string name="login_title">Введите логин и пароль</string>
+    <string name="login_title">Введите почту и пароль</string>
     <string name="registration_title">Анкета</string>
     <string name="about_title">Расскажите о себе</string>
     <string name="about_button">О себе</string>
@@ -81,6 +81,9 @@
     <string name="skip">Расскажу потом, войти</string>
     <string name="settings_title">Настройки</string>
     <string name="password_title">Пароль</string>
+    <string name="confirm_password_title">Повторите пароль</string>
+    <string name="confirm_password_alert">Пароли не совпадают</string>
+    <string name="confirm_email_alert">Неверный формат почты</string>
     <string name="email_title">Email</string>
 
     <string name="settings_theme_title">Тема</string>

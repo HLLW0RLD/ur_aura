@@ -1,4 +1,4 @@
-package com.example.ur_color.data.model
+package com.example.ur_color.data.model.response
 
 sealed class SocialContent {
     abstract val id: String

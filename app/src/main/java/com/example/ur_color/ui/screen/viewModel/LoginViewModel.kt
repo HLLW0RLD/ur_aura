@@ -4,32 +4,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.base.BaseViewModel
-import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.user.CharacteristicData
-import com.example.ur_color.data.model.user.UserAuth
-import com.example.ur_color.data.model.user.UserData
-import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
+import com.example.ur_color.data.repo.AuthRepository
 import com.example.ur_color.utils.isValidEmail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginViewModel : BaseViewModel() {
+class LoginViewModel(
+    private val authRepository: AuthRepository,
+) : BaseViewModel() {
 
     var email by mutableStateOf("qwert@yu.com")
     var password by mutableStateOf("asdfg")
+    var confirmPassword by mutableStateOf("")
 
     val isLoginValid: Boolean
         get() = isValidEmail(email) &&
-            password.isNotBlank()
+            password.isNotBlank() &&
+            confirmPassword.isNotBlank() &&
+            password == confirmPassword
+
 
     fun login(onSuccess: () -> Unit) {
 
         viewModelScope.launch(Dispatchers.Default) {
 
-            val user = UserAuth(
+            val result = authRepository.login(
                 email = email,
                 password = password
             )

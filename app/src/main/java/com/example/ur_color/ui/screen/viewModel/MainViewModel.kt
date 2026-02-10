@@ -1,17 +1,13 @@
 package com.example.ur_color.ui.screen.viewModel
 
 import android.graphics.Bitmap
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
-import com.example.ur_color.data.model.AuraSection
-import com.example.ur_color.data.model.Horoscope
-import com.example.ur_color.data.model.SocialContent
+import com.example.ur_color.data.model.response.Horoscope
+import com.example.ur_color.data.model.response.SocialContent
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.repo.HoroscopeDate
-import com.example.ur_color.data.repo.HoroscopeRepository
 import com.example.ur_color.data.repo.UserRepository
-import com.example.ur_color.utils.auraSections
 import com.example.ur_color.utils.feedCards
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,8 +42,6 @@ class MainViewModel(
         viewModelScope.launch {
             _user.value = userRepository.getUser()
             _aura.value = userRepository.getAura()
-
-//            userRepository.register()
         }
     }
 

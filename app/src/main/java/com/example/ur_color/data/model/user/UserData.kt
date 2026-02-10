@@ -1,17 +1,12 @@
 package com.example.ur_color.data.model.user
 
-import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.model.User
-import com.example.ur_color.data.model.entity.PostEntity
-import com.example.ur_color.data.remote.UserDataRequest
-import com.example.ur_color.ui.theme.AppColors
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.data.model.request.UserRegistration
+import com.example.ur_color.data.model.response.User
 import kotlinx.serialization.Serializable
-import java.util.UUID
 
 @Serializable
 data class UserData(
-    val id: String = UUID.randomUUID().toString(),
+    val id: String = "",
     val nickName: String,
     val firstName: String,
     val lastName: String,
@@ -23,7 +18,6 @@ data class UserData(
     val gender: String,
     val zodiacSign: String,
     val avatarUri: String? = null,
-    val birthTimestamp: Long = 0L,
     val characteristics: CharacteristicData,
     val userLevel: Int = 1,
 
@@ -42,8 +36,8 @@ fun UserData?.toUser(): User {
     )
 }
 
-fun UserDataRequest.toUserData() = UserData(
-    id = id,
+fun UserRegistration.toUserData() = UserData(
+//    id = id,
     nickName = nickName,
     firstName = firstName,
     lastName = lastName,
@@ -55,7 +49,6 @@ fun UserDataRequest.toUserData() = UserData(
     gender = gender,
     zodiacSign = zodiacSign,
     avatarUri = avatarUri,
-    birthTimestamp = birthTimestamp,
     characteristics = characteristics,
     userLevel = userLevel
 )

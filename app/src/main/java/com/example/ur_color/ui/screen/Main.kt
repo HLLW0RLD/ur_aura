@@ -33,7 +33,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import com.example.ur_color.data.local.mocServece.LocalDailyCardService
-import com.example.ur_color.data.model.Card
+import com.example.ur_color.data.model.response.Card
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.utils.LocalNavController
 import kotlinx.serialization.Serializable
@@ -129,7 +129,6 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
-    val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
     val dailyCardService = remember { LocalDailyCardService() }
@@ -142,7 +141,6 @@ fun MainScreen(
     var motivated by remember { mutableStateOf<String?>(null) }
     var card by remember { mutableStateOf<Card?>(null) }
 
-    val horoscopeState by mainViewModel.horoscopeState.collectAsState()
     val feedCardsState by mainViewModel.feedCardsState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -151,23 +149,6 @@ fun MainScreen(
         result.onSuccess { card = it }
         motivated = localMotivationService.getPhraseForToday()
     }
-
-
-    val density = LocalDensity.current
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val collapsedHeight = screenHeight / 1.8f
-    val collapsedY = with(density) { collapsedHeight.toPx() }               // свернутая подложка
-    val expandedY = 300f                                                             // полностью раскрытая подложка
-
-    val offsetY = remember { Animatable(collapsedY) }
-
-    val progress = ((collapsedY - offsetY.value) / (collapsedY - expandedY)).coerceIn(0f, 1f)
-    val canScroll = progress >= 0.999f
-
-    fun animateToExpanded() = scope.launch { offsetY.animateTo(expandedY, tween(400)) }
-    fun animateToCollapsed() = scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
 
     val vectorMetrics = listOf(
         user?.characteristics?.energyVector to stringResource(R.string.metric_energy),
@@ -246,10 +227,6 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    shape = RoundedCornerShape(
-                        topStart = (28.dp * (1 - progress)).coerceAtLeast(0.dp),
-                        topEnd = (28.dp * (1 - progress)).coerceAtLeast(0.dp)
-                    ),
                     color = AppColors.background.copy(alpha = 0.95f)
                 )
                 .verticalScroll(scrollState),

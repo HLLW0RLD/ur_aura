@@ -3,8 +3,8 @@ package com.example.ur_color.data.model.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.ur_color.data.model.SocialContent
-import com.example.ur_color.data.model.User
+import com.example.ur_color.data.model.response.SocialContent
+import com.example.ur_color.data.model.response.User
 
 @Entity(tableName = "posts")
 data class PostEntity(

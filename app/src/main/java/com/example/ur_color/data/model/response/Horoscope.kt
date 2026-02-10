@@ -1,10 +1,14 @@
-package com.example.ur_color.data.model.respoonse
+package com.example.ur_color.data.model.response
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.ur_color.data.model.Horoscope
 import com.example.ur_color.utils.formatDateToRussian
 import com.google.gson.annotations.SerializedName
+
+data class Horoscope(
+    val day: String,
+    val horoscope: String
+)
 
 data class HoroscopeResponse(
     @SerializedName("data") val data: HoroscopeData,

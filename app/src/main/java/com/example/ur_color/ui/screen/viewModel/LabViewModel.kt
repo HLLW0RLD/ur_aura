@@ -1,17 +1,13 @@
 package com.example.ur_color.ui.screen.viewModel
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
-import com.example.ur_color.R
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.AuraSection
-import com.example.ur_color.ui.theme.AuraColors
+import com.example.ur_color.data.model.response.AuraSection
 import com.example.ur_color.utils.auraSections
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate

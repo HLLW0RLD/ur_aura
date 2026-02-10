@@ -29,6 +29,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 import androidx.core.graphics.toColorInt
+import com.example.ur_color.App
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -57,8 +58,20 @@ val LocalNavController =
 //  UI / UX
 /*==============================================================================================*/
 
-fun toast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(context, message, duration).show()
+fun toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(App.instance, message, duration).show()
+}
+
+fun toIsoDate(displayDate: String): String? {
+    return try {
+        val inputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date = inputFormat.parse(displayDate) ?: return null
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        toast("Ошибка конвертации даты: $displayDate\n${e.message}")
+        null
+    }
 }
 
 fun isValidEmail(email: String): Boolean {
@@ -139,8 +152,8 @@ fun formatDateInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFie
     val year = if (digits.length > 4) digits.substring(4, minOf(8, digits.length)) else ""
 
     var formatted = day
-    if (month.isNotEmpty()) formatted += "/$month"
-    if (year.isNotEmpty()) formatted += "/$year"
+    if (month.isNotEmpty()) formatted += ".$month"
+    if (year.isNotEmpty()) formatted += ".$year"
 
     if (formatted.length > 10) {
         formatted = formatted.take(10)

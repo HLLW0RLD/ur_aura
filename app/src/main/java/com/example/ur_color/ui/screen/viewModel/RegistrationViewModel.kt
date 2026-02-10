@@ -9,16 +9,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.user.CharacteristicData
+import com.example.ur_color.data.model.request.UserRegistration
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.data.model.user.toUserData
-import com.example.ur_color.data.remote.UserDataRequest
+import com.example.ur_color.data.repo.AuthRepository
 import com.example.ur_color.utils.isValidEmail
+import com.example.ur_color.utils.toIsoDate
+import com.example.ur_color.utils.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RegistrationViewModel : BaseViewModel() {
+class RegistrationViewModel(
+    private val authRepository: AuthRepository,
+): BaseViewModel() {
 
     var nickName by mutableStateOf("")
     var firstName by mutableStateOf("")
@@ -29,8 +33,9 @@ class RegistrationViewModel : BaseViewModel() {
     var birthPlace by mutableStateOf("")
     var gender by mutableStateOf("Мужской")
 
-    var email by mutableStateOf("not_working@email.test")
-    var password by mutableStateOf("0000")
+    var email by mutableStateOf("@mail.com")
+    var password by mutableStateOf("")
+    var confirmPassword by mutableStateOf("")
 
     var about by mutableStateOf("")
 
@@ -38,7 +43,6 @@ class RegistrationViewModel : BaseViewModel() {
         private set
 
     val isNickNameValid get() = nickName.isNotBlank()
-    val isMiddleNameValid get() = middleName.isNotBlank()
     val isFirstNameValid get() = firstName.isNotBlank()
     val isLastNameValid get() = lastName.isNotBlank()
     val isBirthDateValid get() = birthDate.isNotBlank()
@@ -48,7 +52,6 @@ class RegistrationViewModel : BaseViewModel() {
 
     val isUserValid: Boolean
         get() = isNickNameValid &&
-                isMiddleNameValid &&
                 isFirstNameValid &&
                 isLastNameValid &&
                 isBirthDateValid &&
@@ -56,9 +59,18 @@ class RegistrationViewModel : BaseViewModel() {
                 isBirthPlaceValid &&
                 isGenderValid
 
-    val isLoginValid: Boolean
+    val isEmailValid: Boolean
         get() = isValidEmail(email) &&
-                password.isNotBlank()
+                email.isNotBlank()
+
+    val isPasswordValid: Boolean
+        get() = password.isNotBlank() &&
+                confirmPassword.isNotBlank() &&
+                password == confirmPassword
+
+    val isLoginValid: Boolean
+        get() = isEmailValid && isPasswordValid
+
 
     fun validate() {
         showErrors = true
@@ -67,7 +79,6 @@ class RegistrationViewModel : BaseViewModel() {
     fun clearErrors() {
         showErrors = false
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun register(onSuccess: () -> Unit) {
@@ -78,30 +89,56 @@ class RegistrationViewModel : BaseViewModel() {
             val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
             val zodiac = calculateZodiac(day, month)
 
-            val user = UserDataRequest(
-                nickName = nickName,
-                firstName = firstName,
+
+            val result = authRepository.register(
                 email = email,
                 password = password,
+                nickName = nickName,
+                firstName = firstName,
                 lastName = lastName,
-                middleName = middleName.ifBlank { null },
-                birthDate = birthDate,
+                middleName = middleName,
+                about = about,
+                birthDate = toIsoDate(birthDate) ?: "",
                 birthTime = birthTime,
                 birthPlace = birthPlace,
                 gender = gender,
-                about = about,
-                zodiacSign = zodiac.nameRu,
-                characteristics = CharacteristicData()
+                zodiacSign = zodiac.nameRu
             )
 
-            val bitmap = AuraGenerator.generateBaseAura(user.toUserData())
+//            when {
+//                result.isSuccess -> {
 
-            PersonalDataManager.saveUserToCache(user.toUserData())
-            PersonalDataManager.saveAuraToCache(bitmap)
+                    val user = UserRegistration(
+                        nickName = nickName,
+                        firstName = firstName,
+                        email = email,
+                        password = password,
+                        lastName = lastName,
+                        middleName = middleName.ifBlank { null },
+                        birthDate = birthDate,
+                        birthTime = birthTime,
+                        birthPlace = birthPlace,
+                        gender = gender,
+                        about = about,
+                        zodiacSign = zodiac.nameRu,
+                    )
 
-            withContext(Dispatchers.Main) {
-                onSuccess()
-            }
+                    val bitmap = AuraGenerator.generateBaseAura(user.toUserData())
+
+                    PersonalDataManager.saveUserToCache(user.toUserData())
+                    PersonalDataManager.saveAuraToCache(bitmap)
+
+                    withContext(Dispatchers.Main) {
+                        onSuccess()
+                    }
+//                }
+
+//                result.isFailure -> {
+//                    withContext(Dispatchers.Main) {
+//                        toast("${result.exceptionOrNull()?.message}")
+//                    }
+//                }
+//            }
         }
     }
 }

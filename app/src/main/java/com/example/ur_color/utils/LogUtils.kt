@@ -18,18 +18,6 @@ fun logDebug(
     )
 }
 
-fun logSuccess(
-    msg: Any?,
-    resolvedTag: String? = null
-) {
-    log(
-        msg = msg,
-        fixedLabel = LogType.SUCCESS,
-        logColor = tagColorMap[LogType.SUCCESS] ?: LogColor.GREEN,
-        resolvedTag = resolvedTag ?: "Success"
-    )
-}
-
 fun logError(
     msg: Any?,
     resolvedTag: String? = null

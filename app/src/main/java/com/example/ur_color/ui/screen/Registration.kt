@@ -106,7 +106,7 @@ fun RegistrationScreen(
         HorizontalPager(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            userScrollEnabled = true
+            userScrollEnabled = false
         ) { page ->
             when (page) {
                 0 -> PersonalInfoPage(state)

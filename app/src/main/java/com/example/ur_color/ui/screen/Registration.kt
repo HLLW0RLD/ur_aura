@@ -83,7 +83,7 @@ fun Registration(reg : Registration) {
         RegistrationScreen(
             state = state,
             modifier = Modifier
-                .padding(top = it.calculateTopPadding() - 72.dp)
+                .padding(top = it.calculateTopPadding())
         )
     }
 }
@@ -104,7 +104,7 @@ fun RegistrationScreen(
         contentAlignment = Alignment.Center
     ) {
         HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
+//            modifier = Modifier.fillMaxSize(),
             state = state,
             userScrollEnabled = false
         ) { page ->
@@ -115,17 +115,17 @@ fun RegistrationScreen(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        ) {
-            Spacer(modifier = Modifier.size(24.dp))
-            DotsIndicator(
-                totalDots = 3,
-                selectedIndex = state.currentPage,
-            )
-            Spacer(modifier = Modifier.size(24.dp))
-        }
+//        Column(
+//            modifier = Modifier
+//                .align(Alignment.BottomCenter)
+//        ) {
+//            Spacer(modifier = Modifier.size(24.dp))
+//            DotsIndicator(
+//                totalDots = 3,
+//                selectedIndex = state.currentPage,
+//            )
+//            Spacer(modifier = Modifier.size(24.dp))
+//        }
     }
 }
 
@@ -145,10 +145,11 @@ private fun PersonalInfoPage(
 
     Column(
         modifier = modifier
+            .imePadding()
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(start = 16.dp, end = 16.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     )
     {
         AuraOutlinedTextField(

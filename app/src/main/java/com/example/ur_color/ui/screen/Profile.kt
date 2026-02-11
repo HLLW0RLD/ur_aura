@@ -322,10 +322,7 @@ fun ProfileScreen(
                     Column(
                         modifier = Modifier
                             .clip(RoundedCornerShape(25.dp))
-                            .background(
-                                color
-                                    .copy(alpha = 0.2f)
-                            )
+                            .background(color.copy(alpha = 0.2f))
                             .padding(vertical = 12.dp)
                     ) {
                         if (!profileCardsState.isNullOrEmpty()) {
@@ -377,7 +374,15 @@ fun ProfileScreen(
                 }
             }
         } ?: run {
-            Text(stringResource(R.string.profile_no_user), style = MaterialTheme.typography.bodyMedium)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    stringResource(R.string.profile_no_user),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
 
         if (showBottomSheet) {

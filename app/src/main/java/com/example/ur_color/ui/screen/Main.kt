@@ -189,7 +189,7 @@ fun MainScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(AppColors.background)
+            .background(AppColors.backgroundLight)
     ) {
 //        aura?.let {
 //            Box(
@@ -226,9 +226,7 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = AppColors.background.copy(alpha = 0.95f)
-                )
+                .background(color = AppColors.background)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

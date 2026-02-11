@@ -27,7 +27,6 @@ class LoginViewModel(
 
 
     fun login(onSuccess: () -> Unit) {
-
         viewModelScope.launch(Dispatchers.Default) {
 
             val result = authRepository.login(

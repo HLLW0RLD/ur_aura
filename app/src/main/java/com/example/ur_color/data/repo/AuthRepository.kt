@@ -26,11 +26,7 @@ class AuthRepository(
                 val errorBody = response.errorBody()?.string()
                 logError("Ошибка сервера: ${response.code()} - $errorBody")
 
-                when (response.code()) {
-                    400 -> Result.failure(Exception("Пароль должен содержать буквы разного регистра и цифры"))
-                    409 -> Result.failure(Exception("Пользователь уже существует"))
-                    else -> Result.failure(Exception("Ошибка сервера: ${response.code()}"))
-                }
+                Result.failure(Exception(errorBody))
             }
         } catch (e: Exception) {
             logError("Сетевая ошибка: ${e.message}")

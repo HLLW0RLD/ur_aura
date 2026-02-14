@@ -3,11 +3,12 @@ package com.example.ur_color.data.repo
 import com.example.ur_color.data.model.request.UserAuth
 import com.example.ur_color.data.model.request.UserRegistration
 import com.example.ur_color.data.model.response.AuthData
+import com.example.ur_color.data.remote.AuthApi
 import com.example.ur_color.data.remote.UserApi
 import com.example.ur_color.utils.logError
 
 class AuthRepository(
-    val api: UserApi
+    val api: AuthApi
 ){
 
     suspend fun login(

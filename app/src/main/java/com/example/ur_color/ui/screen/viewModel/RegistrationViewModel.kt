@@ -32,17 +32,14 @@ class RegistrationViewModel(
     var birthTime by mutableStateOf("")
     var birthPlace by mutableStateOf("")
     var gender by mutableStateOf("Мужской")
-
     var email by mutableStateOf("")
     var password by mutableStateOf("")
     var confirmPassword by mutableStateOf("")
-
     var about by mutableStateOf("")
+
 
     var alertShown by mutableStateOf(false)
         private set
-
-
     val isNickNameValid get() = nickName.isNotBlank()
     val isFirstNameValid get() = firstName.isNotBlank()
     val isLastNameValid get() = lastName.isNotBlank()

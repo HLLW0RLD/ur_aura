@@ -199,6 +199,7 @@ private fun PersonalInfoPage(
                 .fillMaxWidth()
         )
 
+        Spacer(modifier = Modifier.size(12.dp))
         val male = stringResource(R.string.gender_male)
         val female = stringResource(R.string.gender_female)
         Row(

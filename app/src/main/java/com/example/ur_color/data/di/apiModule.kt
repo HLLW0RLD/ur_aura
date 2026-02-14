@@ -1,5 +1,7 @@
 package com.example.ur_color.data.di
 
+import com.example.ur_color.data.remote.AuthApi
+import com.example.ur_color.data.remote.ContentApi
 import com.example.ur_color.data.remote.UserApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -28,5 +30,7 @@ val apiModule = module {
             .build()
     }
 
+    single { get<Retrofit>().create(ContentApi::class.java) }
     single { get<Retrofit>().create(UserApi::class.java) }
+    single { get<Retrofit>().create(AuthApi::class.java) }
 }

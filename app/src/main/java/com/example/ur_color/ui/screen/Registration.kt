@@ -28,7 +28,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +45,7 @@ import com.example.ur_color.ui.AuraPasswordField
 import com.example.ur_color.ui.AuraTextButton
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.screen.viewModel.RegistrationViewModel
+import com.example.ur_color.ui.screen.viewModel.ValidationError
 import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.ui.theme.AppScaffold
 import com.example.ur_color.utils.LocalNavController
@@ -114,18 +114,6 @@ fun RegistrationScreen(
                 2 -> AboutPage()
             }
         }
-
-//        Column(
-//            modifier = Modifier
-//                .align(Alignment.BottomCenter)
-//        ) {
-//            Spacer(modifier = Modifier.size(24.dp))
-//            DotsIndicator(
-//                totalDots = 3,
-//                selectedIndex = state.currentPage,
-//            )
-//            Spacer(modifier = Modifier.size(24.dp))
-//        }
     }
 }
 
@@ -141,7 +129,7 @@ private fun PersonalInfoPage(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val showErrors = registrationViewModel.showErrors
+    val alertShown = registrationViewModel.alertShown
 
     Column(
         modifier = modifier
@@ -156,7 +144,7 @@ private fun PersonalInfoPage(
             value = registrationViewModel.nickName,
             onValueChange = { registrationViewModel.nickName = it },
             label = stringResource(R.string.field_nickname),
-            isError = showErrors && !registrationViewModel.isNickNameValid,
+            isError = alertShown && !registrationViewModel.isNickNameValid,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -164,7 +152,7 @@ private fun PersonalInfoPage(
             value = registrationViewModel.firstName,
             onValueChange = { registrationViewModel.firstName = it },
             label = stringResource(R.string.field_first_name),
-            isError = showErrors && !registrationViewModel.isFirstNameValid,
+            isError = alertShown && !registrationViewModel.isFirstNameValid,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -172,7 +160,7 @@ private fun PersonalInfoPage(
             value = registrationViewModel.lastName,
             onValueChange = { registrationViewModel.lastName = it },
             label = stringResource(R.string.field_last_name),
-            isError = showErrors && !registrationViewModel.isLastNameValid,
+            isError = alertShown && !registrationViewModel.isLastNameValid,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -189,7 +177,7 @@ private fun PersonalInfoPage(
             date = registrationViewModel.birthDate,
             color = AppColors.textPrimary,
             onDateChanged = { registrationViewModel.birthDate = it },
-            isError = showErrors && !registrationViewModel.isBirthDateValid,
+            isError = alertShown && !registrationViewModel.isBirthDateValid,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -198,7 +186,7 @@ private fun PersonalInfoPage(
             time = registrationViewModel.birthTime,
             color = AppColors.textPrimary,
             onTimeChanged = { registrationViewModel.birthTime = it },
-            isError = showErrors && !registrationViewModel.isBirthTimeValid,
+            isError = alertShown && !registrationViewModel.isBirthTimeValid,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -206,7 +194,7 @@ private fun PersonalInfoPage(
             value = registrationViewModel.birthPlace,
             onValueChange = { registrationViewModel.birthPlace = it },
             label = stringResource(R.string.field_birth_place),
-            isError = showErrors && !registrationViewModel.isBirthPlaceValid,
+            isError = alertShown && !registrationViewModel.isBirthPlaceValid,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -240,21 +228,50 @@ private fun PersonalInfoPage(
         }
 
         Spacer(Modifier.size(16.dp))
+
+        val validationError = registrationViewModel.validateUser()
+        val errorNickname = stringResource(R.string.error_required_nickname)
+        val errorFirstName = stringResource(R.string.error_required_first_name)
+        val errorLastName = stringResource(R.string.error_required_last_name)
+        val errorBirthDate = stringResource(R.string.error_required_birth_date)
+        val errorBirthTime = stringResource(R.string.error_required_birth_time)
+        val errorBirthPlace = stringResource(R.string.error_required_birth_place)
+        val errorGender = stringResource(R.string.error_required_gender)
+
         AuraTextButton(
             text = stringResource(R.string.action_registration),
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            if (registrationViewModel.isUserValid) {
+            if (validationError == null) {
                 scope.launch {
                     focusManager.clearFocus()
                     keyboardController?.hide()
-
                     registrationViewModel.clearErrors()
                     state.animateScrollToPage(1)
                 }
             } else {
-                registrationViewModel.validate()
+                if (!registrationViewModel.isNickNameValid) {
+                    registrationViewModel.showError(errorNickname)
+                }
+                if (!registrationViewModel.isFirstNameValid) {
+                    registrationViewModel.showError(errorFirstName)
+                }
+                if (!registrationViewModel.isLastNameValid) {
+                    registrationViewModel.showError(errorLastName)
+                }
+                if (!registrationViewModel.isBirthDateValid) {
+                    registrationViewModel.showError(errorBirthDate)
+                }
+                if (!registrationViewModel.isBirthTimeValid) {
+                    registrationViewModel.showError(errorBirthTime)
+                }
+                if (!registrationViewModel.isBirthPlaceValid) {
+                    registrationViewModel.showError(errorBirthPlace)
+                }
+                if (!registrationViewModel.isGenderValid) {
+                    registrationViewModel.showError(errorGender)
+                }
             }
         }
     }
@@ -273,17 +290,7 @@ private fun AuthPage(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val showErrors = registrationViewModel.showErrors
-
-    val alertPassword = stringResource(R.string.confirm_password_alert)
-    LaunchedEffect(showErrors && !registrationViewModel.isPasswordValid) {
-        toast(alertPassword)
-    }
-
-    val alertEmail = stringResource(R.string.confirm_email_alert)
-    LaunchedEffect(showErrors && !registrationViewModel.isEmailValid) {
-        toast(alertEmail)
-    }
+    val alertShown = registrationViewModel.alertShown
 
     Column(
         modifier = modifier
@@ -298,7 +305,7 @@ private fun AuthPage(
             value = registrationViewModel.email,
             onValueChange = { registrationViewModel.email = it },
             label = stringResource(R.string.email_title),
-            isError = showErrors && !registrationViewModel.isEmailValid,
+            isError = alertShown && !registrationViewModel.isEmailValid,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
@@ -306,7 +313,7 @@ private fun AuthPage(
             value = registrationViewModel.password,
             onValueChange = { registrationViewModel.password = it },
             label = stringResource(R.string.password_title),
-            isError = showErrors && !registrationViewModel.isPasswordValid,
+            isError = alertShown && !registrationViewModel.isPasswordValid,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
@@ -314,16 +321,22 @@ private fun AuthPage(
             value = registrationViewModel.confirmPassword,
             onValueChange = { registrationViewModel.confirmPassword = it },
             label = stringResource(R.string.confirm_password_title),
-            isError = showErrors && !registrationViewModel.isPasswordValid,
+            isError = alertShown && !registrationViewModel.isConfirmPasswordValid,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.size(24.dp))
+
+        val validationError = registrationViewModel.validateLogin()
+        val errorEmail = stringResource(R.string.error_email_invalid)
+        val errorPasswordRequired = stringResource(R.string.error_password_required)
+        val errorPasswordMismatch = stringResource(R.string.error_password_mismatch)
+
         AuraTextButton(
             text = stringResource(R.string.about_title),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            if (registrationViewModel.isLoginValid) {
+            if (validationError == null) {
                 scope.launch {
                     focusManager.clearFocus()
                     keyboardController?.hide()
@@ -332,7 +345,14 @@ private fun AuthPage(
                     pagerState.animateScrollToPage(2)
                 }
             } else {
-                registrationViewModel.validate()
+                if (!registrationViewModel.isEmailValid) {
+                    registrationViewModel.showError(errorEmail)
+                }
+                if (registrationViewModel.password.isBlank()) {
+                    registrationViewModel.showError(errorPasswordRequired)
+                } else if (registrationViewModel.password != registrationViewModel.confirmPassword) {
+                    registrationViewModel.showError(errorPasswordMismatch)
+                }
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -340,7 +360,7 @@ private fun AuthPage(
             text = stringResource(R.string.skip),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            if (registrationViewModel.isLoginValid) {
+            if (validationError == null) {
                 registrationViewModel.register {
                     focusManager.clearFocus()
                     keyboardController?.hide()
@@ -348,7 +368,14 @@ private fun AuthPage(
                     navController.nav(TabsHost)
                 }
             } else {
-                registrationViewModel.validate()
+                if (!registrationViewModel.isEmailValid) {
+                    registrationViewModel.showError(errorEmail)
+                }
+                if (registrationViewModel.password.isBlank()) {
+                    registrationViewModel.showError(errorPasswordRequired)
+                } else if (registrationViewModel.password != registrationViewModel.confirmPassword) {
+                    registrationViewModel.showError(errorPasswordMismatch)
+                }
             }
         }
         Spacer(Modifier.height(16.dp))
@@ -398,44 +425,5 @@ private fun AboutPage(
             }
         }
         Spacer(Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun DotsIndicator(
-    totalDots : Int,
-    selectedIndex : Int,
-    selectedColor: Color = AppColors.accentPrimary,
-    unSelectedColor: Color = AppColors.textPrimary,
-    modifier: Modifier = Modifier
-){
-
-    LazyRow(
-        modifier = modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-    ) {
-
-        items(totalDots) { index ->
-            if (index == selectedIndex) {
-                Box(
-                    modifier = Modifier
-                        .size(5.dp)
-                        .clip(CircleShape)
-                        .background(selectedColor)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(5.dp)
-                        .clip(CircleShape)
-                        .background(unSelectedColor)
-                )
-            }
-
-            if (index != totalDots - 1) {
-                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-            }
-        }
     }
 }

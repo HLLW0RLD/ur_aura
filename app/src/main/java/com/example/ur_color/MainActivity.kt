@@ -8,7 +8,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,6 +40,7 @@ import com.example.ur_color.ui.screen.animatedScreenComposable
 import com.example.ur_color.ui.screen.route
 import com.example.ur_color.ui.theme.AppTheme
 import com.example.ur_color.utils.LocalNavController
+import com.example.ur_color.utils.TopAlertHost
 
 class MainActivity : ComponentActivity() {
 
@@ -107,6 +111,12 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                             ) { EditProfile(it) }
                         }
+
+                        TopAlertHost(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .windowInsetsPadding(WindowInsets.statusBars) // учитываем статус-бар
+                        )
                     }
                 }
             }

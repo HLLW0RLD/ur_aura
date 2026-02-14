@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.ur_color"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 35
         versionCode = 2
         versionName = "1.2"
@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
     kapt(libs.androidx.room.compiler)
 
+    implementation(libs.androidx.compose.material)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

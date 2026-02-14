@@ -16,6 +16,7 @@ import com.example.ur_color.ui.screen.viewModel.LoginViewModel
 import com.example.ur_color.ui.screen.viewModel.OnboardingViewModel
 import com.example.ur_color.ui.screen.viewModel.SettingsViewModel
 import com.example.ur_color.ui.screen.viewModel.TestConstructorViewModel
+import com.example.ur_color.utils.AlertManager
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -23,7 +24,7 @@ import org.koin.dsl.module
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 val viewModelModule = module {
 
-    viewModel { RegistrationViewModel(get()) }
+    viewModel { RegistrationViewModel(get(), get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { OnboardingViewModel() }
     viewModel { MainViewModel(get()) }
@@ -37,4 +38,7 @@ val viewModelModule = module {
     viewModel { SettingsViewModel() }
     viewModel { LabViewModel() }
     viewModel { CreatePostViewModel(get()) }
+
+    // alert for VM
+    single { AlertManager() }
 }

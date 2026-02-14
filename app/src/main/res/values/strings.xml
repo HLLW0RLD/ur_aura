@@ -80,11 +80,27 @@
     <string name="about_clue">Описание</string>
     <string name="skip">Расскажу потом, войти</string>
     <string name="settings_title">Настройки</string>
+
+    <string name="email_title">Email</string>
     <string name="password_title">Пароль</string>
     <string name="confirm_password_title">Повторите пароль</string>
-    <string name="confirm_password_alert">Пароли не совпадают</string>
-    <string name="confirm_email_alert">Неверный формат почты</string>
-    <string name="email_title">Email</string>
+
+    <string name="error_required_nickname">Пожалуйста, введите никнейм</string>
+    <string name="error_required_first_name">Пожалуйста, введите имя</string>
+    <string name="error_required_last_name">Пожалуйста, введите фамилию</string>
+    <string name="error_required_middle_name">Пожалуйста, введите отчество</string>
+    <string name="error_required_birth_date">Пожалуйста, укажите дату рождения</string>
+    <string name="error_required_birth_time">Пожалуйста, укажите время рождения</string>
+    <string name="error_required_birth_place">Пожалуйста, укажите место рождения</string>
+    <string name="error_required_gender">Пожалуйста, выберите пол</string>
+    <string name="error_required_about">Пожалуйста, расскажите о себе</string>
+    <string name="error_email_invalid">Пожалуйста, введите корректный email</string>
+    <string name="error_password_required">Пожалуйста, введите пароль</string>
+    <string name="error_password_mismatch">Пароли не совпадают</string>
+    <string name="error_required">Обязательное поле</string>
+    <string name="error_registration">Ошибка регистрации. Попробуйте позже.</string>
+    <string name="error_email_exists">Email уже зарегистрирован</string>
+    <string name="error_network">Ошибка сети. Проверьте подключение.</string>
 
     <string name="settings_theme_title">Тема</string>
     <string name="settings_palette_title">Цветовая палитра</string>

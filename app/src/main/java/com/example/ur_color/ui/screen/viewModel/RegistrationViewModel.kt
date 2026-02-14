@@ -137,7 +137,7 @@ class RegistrationViewModel(
 
 //                result.isFailure -> {
 //                    withContext(Dispatchers.Main) {
-//                        toast("${result.exceptionOrNull()?.message}")
+//                         showError("${result.exceptionOrNull()?.message}")
 //                    }
 //                }
 //            }

@@ -2,7 +2,6 @@ package com.example.ur_color.ui.screen.bottomSheet
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -49,6 +48,7 @@ import coil.request.ImageRequest
 import com.example.ur_color.R
 import com.example.ur_color.data.model.response.User
 import com.example.ur_color.ui.screen.viewModel.CreatePostViewModel
+import com.example.ur_color.utils.toast
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,7 +204,7 @@ fun CreatePostBottomSheet(
 
     LaunchedEffect(state.error) {
         state.error?.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            toast(it)
         }
     }
 }

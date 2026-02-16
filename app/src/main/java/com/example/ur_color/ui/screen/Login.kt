@@ -105,7 +105,6 @@ fun LoginScreen(
         AuraTextButton(
             text = stringResource(R.string.action_login),
             enabled = loginViewModel.isLoginValid,
-//            enabled = true,
             modifier = Modifier.fillMaxWidth(),
         ) {
             loginViewModel.login {

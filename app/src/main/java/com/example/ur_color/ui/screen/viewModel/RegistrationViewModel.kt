@@ -15,6 +15,8 @@ import com.example.ur_color.utils.AlertManager
 import com.example.ur_color.utils.isValidEmail
 import com.example.ur_color.utils.toIsoDate
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -37,7 +39,6 @@ class RegistrationViewModel(
     var confirmPassword by mutableStateOf("")
     var about by mutableStateOf("")
 
-
     var alertShown by mutableStateOf(false)
         private set
     val isNickNameValid get() = nickName.isNotBlank()
@@ -51,34 +52,13 @@ class RegistrationViewModel(
     val isPasswordValid get() = password.isNotBlank()
     val isConfirmPasswordValid get() = confirmPassword.isNotBlank() && password == confirmPassword
 
-    fun validateUser(): ValidationError? = when {
-        nickName.isBlank() -> ValidationError.NicknameRequired
-        firstName.isBlank() -> ValidationError.FirstNameRequired
-        lastName.isBlank() -> ValidationError.LastNameRequired
-        birthDate.isBlank() -> ValidationError.BirthDateRequired
-        birthTime.isBlank() -> ValidationError.BirthTimeRequired
-        birthPlace.isBlank() -> ValidationError.BirthPlaceRequired
-        gender.isBlank() -> ValidationError.GenderRequired
-        else -> null
-    }
+    val _tokenState = MutableStateFlow<RegisterState>(RegisterState.Loading)
+    val tokenState = _tokenState.asStateFlow()
 
-    fun validateLogin(): ValidationError? = when {
-        email.isBlank() || !isValidEmail(email) -> ValidationError.EmailInvalid
-        password.isBlank() -> ValidationError.PasswordRequired
-        confirmPassword.isBlank() || password != confirmPassword -> ValidationError.PasswordMismatch
-        else -> null
-    }
-
-    fun showError(text: String, onActionClick: (() -> Unit)? = null) {
-        alertShown = true
-        alertManager.showError(text, onActionClick)
-    }
-
-    fun clearErrors() {
-        alertShown = true
-    }
 
     fun register(onSuccess: () -> Unit) {
+        _tokenState.value = RegisterState.Loading
+
         val error = validateUser() ?: validateLogin()
         if (error != null) {
             alertShown = true
@@ -107,42 +87,76 @@ class RegistrationViewModel(
                 zodiacSign = zodiac.nameRu
             )
 
-//            when {
-//                result.isSuccess -> {
+            result.onSuccess {
+                _tokenState.value = RegisterState.Success( result.getOrNull()?.token ?: "")
 
-                    val user = UserRegistration(
-                        nickName = nickName,
-                        firstName = firstName,
-                        email = email,
-                        password = password,
-                        lastName = lastName,
-                        middleName = middleName.ifBlank { null },
-                        birthDate = birthDate,
-                        birthTime = birthTime,
-                        birthPlace = birthPlace,
-                        gender = gender,
-                        about = about,
-                        zodiacSign = zodiac.nameRu,
-                    )
+                val user = UserRegistration(
+                    nickName = nickName,
+                    firstName = firstName,
+                    email = email,
+                    password = password,
+                    lastName = lastName,
+                    middleName = middleName.ifBlank { null },
+                    birthDate = birthDate,
+                    birthTime = birthTime,
+                    birthPlace = birthPlace,
+                    gender = gender,
+                    about = about,
+                    zodiacSign = zodiac.nameRu,
+                )
 
-                    val bitmap = AuraGenerator.generateBaseAura(user.toUserData())
+                val bitmap = AuraGenerator.generateBaseAura(user.toUserData())
 
-                    PersonalDataManager.saveUserToCache(user.toUserData())
-                    PersonalDataManager.saveAuraToCache(bitmap)
+                PersonalDataManager.saveUserToCache(user.toUserData())
+                PersonalDataManager.saveAuraToCache(bitmap)
 
-                    withContext(Dispatchers.Main) {
-                        onSuccess()
-                    }
-//                }
+                withContext(Dispatchers.Main) {
+                    onSuccess()
+                }
+            }
 
-//                result.isFailure -> {
-//                    withContext(Dispatchers.Main) {
-//                         showError("${result.exceptionOrNull()?.message}")
-//                    }
-//                }
-//            }
+            result.onFailure {
+                _tokenState.value = RegisterState.Error
+
+                withContext(Dispatchers.Main) {
+                    showError("${result.exceptionOrNull()?.message}")
+                }
+            }
         }
     }
+
+    fun validateUser(): ValidationError? = when {
+        nickName.isBlank() -> ValidationError.NicknameRequired
+        firstName.isBlank() -> ValidationError.FirstNameRequired
+        lastName.isBlank() -> ValidationError.LastNameRequired
+        birthDate.isBlank() -> ValidationError.BirthDateRequired
+        birthTime.isBlank() -> ValidationError.BirthTimeRequired
+        birthPlace.isBlank() -> ValidationError.BirthPlaceRequired
+        gender.isBlank() -> ValidationError.GenderRequired
+        else -> null
+    }
+
+    fun validateLogin(): ValidationError? = when {
+        email.isBlank() || !isValidEmail(email) -> ValidationError.EmailInvalid
+        password.isBlank() -> ValidationError.PasswordRequired
+        confirmPassword.isBlank() || password != confirmPassword -> ValidationError.PasswordMismatch
+        else -> null
+    }
+
+    fun showError(text: String, onActionClick: (() -> Unit)? = null) {
+        alertShown = true
+        alertManager.showError(text, onActionClick)
+    }
+
+    fun clearErrors() {
+        alertShown = true
+    }
+}
+
+sealed class RegisterState {
+    object Loading : RegisterState()
+    data class Success(val token: String) : RegisterState()
+    object Error : RegisterState()
 }
 
 sealed class ValidationError {

@@ -2,10 +2,11 @@ package com.example.ur_color.data.model.request
 
 import com.example.ur_color.data.model.user.CharacteristicData
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 data class UserRegistration(
-//    val id: String = "",
+    val id: String = "",
     val email: String,
     val password: String,
     val nickName: String,
@@ -19,6 +20,7 @@ data class UserRegistration(
     val gender: String,
     val zodiacSign: String,
     val avatarUri: String? = null,
+    val birthTimestamp: Long = 0L,
     val characteristics: CharacteristicData = CharacteristicData(),
     val userLevel: Int = 1,
 )

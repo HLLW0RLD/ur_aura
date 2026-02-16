@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +48,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.ur_color.R
 import com.example.ur_color.data.model.response.User
+import com.example.ur_color.ui.AuraOutlinedTextField
 import com.example.ur_color.ui.screen.viewModel.CreatePostViewModel
+import com.example.ur_color.ui.theme.AppColors
 import com.example.ur_color.utils.toast
 import org.koin.androidx.compose.koinViewModel
 
@@ -79,15 +82,18 @@ fun CreatePostBottomSheet(
             viewModel.reset()
             onDismiss()
         },
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = AppColors.background
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .heightIn(min = 700.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = CenterVertically
             ) {
@@ -96,14 +102,45 @@ fun CreatePostBottomSheet(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
+
+                Row {
+                    IconButton(
+                        onClick = {
+                        pickImageLauncher.launch("image/*")
+                    }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.attach_media),
+                            contentDescription = "",
+                            tint = AppColors.icon
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                        viewModel.createPost(currentUser)
+                        onDismiss()
+                    }
+                        ,
+                        enabled = state.isButtonEnabled && !state.isLoading,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.wright_post),
+                            contentDescription = "",
+                            tint = AppColors.icon
+                        )
+                    }
+                }
             }
+            HorizontalDivider(color = AppColors.icon)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Выбранное изображение (если есть)
             state.selectedImageUri?.let { uri ->
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(context)
@@ -140,65 +177,24 @@ fun CreatePostBottomSheet(
             }
 
             // Текстовое поле
-            OutlinedTextField(
+            AuraOutlinedTextField(
                 value = state.text,
                 onValueChange = viewModel::onTextChanged,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 100.dp),
-                label = { Text("Что у вас нового?") },
-                placeholder = { Text("Поделитесь своими мыслями...") },
+                    .heightIn(min = 300.dp),
+                label = "Что у вас нового?...",
                 maxLines = 5,
                 enabled = !state.isLoading,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
+                focusedContainerColor = AppColors.background,
+                unfocusedContainerColor = AppColors.background,
+                focusedBorderColor = AppColors.background,
+                unfocusedBorderColor = AppColors.background
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Кнопка добавления фото
-            OutlinedButton(
-                onClick = { pickImageLauncher.launch("image/*") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isLoading,
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.card_trick),
-                    contentDescription = "Добавить фото",
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Добавить фото")
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Кнопка создания поста
-            Button(
-                onClick = {
-                    // Запускаем создание поста в корутине
-                    viewModel.createPost(currentUser)
-                    onDismiss()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                enabled = state.isButtonEnabled && !state.isLoading,
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text("Опубликовать")
-                }
-            }
         }
     }
 

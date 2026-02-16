@@ -82,56 +82,56 @@ val questionTemplates: Map<ModType, List<String>> = mapOf(
 val demoUsers = listOf(
     User(
         id = "0",
-        username = "bobo",
+        nickName = "bobo",
         level = 777,
         about = "ауры это круто!",
         avatar = "https://picsum.photos/seed/abstract02/600/600"
     ),
     User(
         id = "1",
-        username = "Анастасия",
+        nickName = "Анастасия",
         level = 2,
         about = "Исследую осознанность и телесные практики",
         avatar = "https://picsum.photos/seed/abstract01/600/600"
     ),
     User(
         id = "2",
-        username = "Дмитрий",
+        nickName = "Дмитрий",
         level = 7,
         about = "Психология, логика и немного дзена",
         avatar = "https://picsum.photos/seed/abstract02/600/600"
     ),
     User(
         id = "3",
-        username = "Мария",
+        nickName = "Мария",
         level = 3,
         about = "Пишу о чувствах и внутренних состояниях",
         avatar = "https://picsum.photos/seed/abstract03/600/600"
     ),
     User(
         id = "4",
-        username = "Илья",
+        nickName = "Илья",
         level = 11,
         about = "Ищу баланс между рациональным и интуитивным",
         avatar = "https://picsum.photos/seed/abstract04/600/600"
     ),
     User(
         id = "5",
-        username = "Екатерина",
+        nickName = "Екатерина",
         level = 5,
         about = "Телесная терапия и мягкие практики",
         avatar = "https://picsum.photos/seed/abstract05/600/600"
     ),
     User(
         id = "6",
-        username = "Ольга",
+        nickName = "Ольга",
         level = 2,
         about = "Практикую осознанное письмо",
         avatar = "https://picsum.photos/seed/abstract07/600/600"
     ),
     User(
         id = "7",
-        username = "Валерия",
+        nickName = "Валерия",
         level = 1,
         about = "Работаю с эмоциями через визуальные образы",
         avatar = "https://picsum.photos/seed/abstract09/600/600"

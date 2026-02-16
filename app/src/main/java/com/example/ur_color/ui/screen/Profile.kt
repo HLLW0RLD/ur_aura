@@ -433,7 +433,8 @@ fun ProfileScreen(
                                 Icon(
                                     modifier = Modifier
                                         .size(36.dp),
-                                    painter = painterResource(R.drawable.card_trick),
+                                    painter = painterResource(R.drawable.wright_post),
+                                    tint = AppColors.background,
                                     contentDescription = ""
                                 )
                             }

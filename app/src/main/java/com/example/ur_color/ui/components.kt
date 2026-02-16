@@ -1783,7 +1783,7 @@ private fun PostAuthorHeader(user: User) {
         if (!user.avatar.isNullOrBlank()) {
             AsyncImage(
                 model = user.avatar,
-                contentDescription = user.username,
+                contentDescription = user.nickName,
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape),
@@ -1795,7 +1795,7 @@ private fun PostAuthorHeader(user: User) {
 
         Column {
             Text(
-                text = user.username + stringResource(R.string.user_lvl_header, user.level),
+                text = user.nickName + stringResource(R.string.user_lvl_header, user.level),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = AppColors.textPrimary,

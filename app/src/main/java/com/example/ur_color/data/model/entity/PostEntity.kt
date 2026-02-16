@@ -40,7 +40,7 @@ fun SocialContent.Post.toPostEntity(
         id = id,
         text = text,
         authorId = author.id,
-        username = author.username,
+        username = author.nickName,
         userLevel = author.level,
         about = author.about,
         avatar = author.avatar,
@@ -55,7 +55,7 @@ fun PostEntity.toPost(): SocialContent.Post {
         text = text,
         author = User(
             id = authorId,
-            username = username,
+            nickName = username,
             level = userLevel,
             about = about,
             avatar = avatar

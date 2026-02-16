@@ -33,7 +33,6 @@ data class CharacteristicData(
     val anxietyVector: List<Float> = List(10) { 50f },
     val fatigueVector: List<Float> = List(10) { 50f },
 
-//    val custom: List<String> = listOf()
 )
 
 data class CustomCharacteristic(

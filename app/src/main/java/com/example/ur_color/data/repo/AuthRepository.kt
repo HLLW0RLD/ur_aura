@@ -6,6 +6,7 @@ import com.example.ur_color.data.model.response.AuthData
 import com.example.ur_color.data.remote.AuthApi
 import com.example.ur_color.data.remote.UserApi
 import com.example.ur_color.utils.logError
+import java.util.UUID
 
 class AuthRepository(
     val api: AuthApi
@@ -52,7 +53,7 @@ class AuthRepository(
     ): Result<AuthData?> {
 
         val request = UserRegistration(
-//            id = UUID.randomUUID().toString(),
+            id = UUID.randomUUID().toString(),
             email = email,
             password = password,
             nickName = nickName,

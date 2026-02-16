@@ -29,7 +29,7 @@ data class UserData(
 fun UserData?.toUser(): User {
     return User(
         id = this?.id ?: "",
-        username = "${this?.firstName} ${this?.lastName}",
+        nickName = this?.nickName ?: "",
         level = this?.userLevel ?: 1,
         about = this?.about,
         avatar = this?.avatarUri
@@ -37,7 +37,7 @@ fun UserData?.toUser(): User {
 }
 
 fun UserRegistration.toUserData() = UserData(
-//    id = id,
+    id = id,
     nickName = nickName,
     firstName = firstName,
     lastName = lastName,

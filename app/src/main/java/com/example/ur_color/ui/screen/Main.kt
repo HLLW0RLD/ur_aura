@@ -73,6 +73,7 @@ import kotlin.math.roundToInt
 @Serializable
 object Main : Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun Main(main : Main) {

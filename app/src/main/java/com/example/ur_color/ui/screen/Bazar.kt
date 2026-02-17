@@ -3,6 +3,7 @@ package com.example.ur_color.ui.screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,6 +20,7 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 data object Bazar: Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Bazar(bazar: Bazar) {

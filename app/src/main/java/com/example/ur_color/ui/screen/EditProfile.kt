@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 object EditProfile: Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfile(editProfile: EditProfile) {
     AppScaffold(

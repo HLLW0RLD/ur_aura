@@ -29,6 +29,7 @@ import kotlinx.serialization.Serializable
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
@@ -52,6 +53,7 @@ data class Test(
     val name: String = "Ежедневные тесты"
 ) : Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun Test(test : Test) {

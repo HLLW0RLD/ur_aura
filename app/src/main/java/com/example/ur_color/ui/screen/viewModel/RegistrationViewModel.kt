@@ -8,6 +8,7 @@ import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.request.UserRegistration
+import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.data.model.user.toUserData
 import com.example.ur_color.data.repo.AuthRepository
@@ -90,11 +91,9 @@ class RegistrationViewModel(
             result.onSuccess {
                 _tokenState.value = RegisterState.Success( result.getOrNull()?.token ?: "")
 
-                val user = UserRegistration(
+                val user = UserData(
                     nickName = nickName,
                     firstName = firstName,
-                    email = email,
-                    password = password,
                     lastName = lastName,
                     middleName = middleName.ifBlank { null },
                     birthDate = birthDate,
@@ -105,9 +104,9 @@ class RegistrationViewModel(
                     zodiacSign = zodiac.nameRu,
                 )
 
-                val bitmap = AuraGenerator.generateBaseAura(user.toUserData())
+                val bitmap = AuraGenerator.generateBaseAura(user)
 
-                PersonalDataManager.saveUserToCache(user.toUserData())
+                PersonalDataManager.saveUserToCache(user)
                 PersonalDataManager.saveAuraToCache(bitmap)
 
                 withContext(Dispatchers.Main) {

@@ -18,7 +18,7 @@ data class UserData(
     val gender: String,
     val zodiacSign: String,
     val avatarUri: String? = null,
-    val characteristics: CharacteristicData,
+    val characteristics: CharacteristicData = CharacteristicData(),
     val userLevel: Int = 1,
 
 //    val achievements: List<Achievement> = listOf()

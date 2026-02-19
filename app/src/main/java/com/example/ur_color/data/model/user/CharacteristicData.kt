@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CharacteristicData(
-
     val energy: Float = 50f,
     val mood: Float = 50f,
     val stress: Float = 50f,
@@ -32,7 +31,6 @@ data class CharacteristicData(
     val socialVector: List<Float> = List(10) { 50f },
     val anxietyVector: List<Float> = List(10) { 50f },
     val fatigueVector: List<Float> = List(10) { 50f },
-
 )
 
 data class CustomCharacteristic(

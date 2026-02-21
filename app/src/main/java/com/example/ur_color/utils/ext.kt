@@ -34,6 +34,7 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import org.json.JSONObject
+import java.util.Calendar
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -60,18 +61,6 @@ val LocalNavController =
 
 fun toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(App.instance, message, duration).show()
-}
-
-fun toIsoDate(displayDate: String): String? {
-    return try {
-        val inputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val date = inputFormat.parse(displayDate) ?: return null
-        outputFormat.format(date)
-    } catch (e: Exception) {
-        toast("Ошибка конвертации даты: $displayDate\n${e.message}")
-        null
-    }
 }
 
 fun isValidEmail(email: String): Boolean {
@@ -105,6 +94,47 @@ fun getCurrentDateTime(): String {
     val dateFormat = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
     val date = Date()
     return dateFormat.format(date)
+}
+
+fun stringDigitsToTime(digits: String): String {
+    val clean = digits.filter { it.isDigit() }.take(4)
+    val hours = clean.take(2).padStart(2, '0')
+    val minutes = clean.drop(2).take(2).padStart(2, '0')
+    return "$hours:$minutes"
+}
+
+fun toIsoBackendDate(digits: String): String {
+    val clean = digits.filter { it.isDigit() }.take(8)
+    if (clean.length < 8) return "null"
+
+    val day = clean.substring(0, 2).toIntOrNull() ?: return "null"
+    val month = clean.substring(2, 4).toIntOrNull() ?: return "null"
+    val year = clean.substring(4, 8).toIntOrNull() ?: return "null"
+
+    return try {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.MONTH, month - 1)
+            set(Calendar.YEAR, year)
+        }
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        outputFormat.format(calendar.time)
+    } catch (e: Exception) {
+        logError("Ошибка конвертации даты из цифр: $digits\n${e.message}")
+        "null"
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun formatDateToRussian(dateStr: String): String {
+    return try {
+        val parser = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH)
+        val parsed = LocalDate.parse(dateStr, parser)
+        val rusFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("ru"))
+        parsed.format(rusFormatter)
+    } catch (e: Exception) {
+        dateStr
+    }
 }
 
 fun formatTimeInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFieldValue {
@@ -174,18 +204,6 @@ fun formatDateInput(oldValue: TextFieldValue, newValue: TextFieldValue): TextFie
         text = formatted,
         selection = TextRange(cursorPos)
     )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun formatDateToRussian(dateStr: String): String {
-    return try {
-        val parser = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH)
-        val parsed = LocalDate.parse(dateStr, parser)
-        val rusFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("ru"))
-        parsed.format(rusFormatter)
-    } catch (e: Exception) {
-        dateStr
-    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

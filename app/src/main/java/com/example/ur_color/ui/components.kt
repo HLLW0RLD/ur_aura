@@ -108,11 +108,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
 import com.example.ur_color.data.model.response.User
 import com.example.ur_color.utils.AutoScrollPagerScope
+import com.example.ur_color.utils.DateVisualTransformation
 import com.example.ur_color.utils.IconPosition
+import com.example.ur_color.utils.TimeVisualTransformation
 import com.example.ur_color.utils.TwoColumnScope
 import com.example.ur_color.utils.TwoColumnScopeImpl
 import com.example.ur_color.utils.WindowType
@@ -145,10 +151,11 @@ fun AuraDatePickerField(
         AuraOutlinedTextField(
             value = date,
             onValueChange = { rawInput ->
-                val newValue = textFieldValue.copy(text = rawInput)
-                val formatted = formatDateInput(textFieldValue, newValue)
-                textFieldValue = formatted
-                onDateChanged(formatted.text)},
+                val digits = rawInput.filter { it.isDigit() }.take(8)
+                val newValue = textFieldValue.copy(text = digits)
+                textFieldValue = newValue
+                onDateChanged(newValue.text)
+            },
             isError = isError,
             label = label,
             trailingIcon = {
@@ -163,6 +170,7 @@ fun AuraDatePickerField(
                     )
                 }
             },
+            visualTransformation = DateVisualTransformation(),
             keyboardType = KeyboardType.Number
         )
     }
@@ -250,10 +258,8 @@ fun AuraDateTimePickerField(
         AuraOutlinedTextField(
             value = time,
             onValueChange = { rawInput ->
-                val newValue = textFieldValue.copy(text = rawInput)
-                val formatted = formatTimeInput(textFieldValue, newValue)
-                textFieldValue = formatted
-                onTimeChanged(formatted.text)
+                val digits = rawInput.filter { it.isDigit() }.take(4)
+                onTimeChanged(digits)
             },
             isError = isError,
             label = label,
@@ -269,6 +275,7 @@ fun AuraDateTimePickerField(
                     )
                 }
             },
+            visualTransformation = TimeVisualTransformation(),
             keyboardType = KeyboardType.Number
         )
     }

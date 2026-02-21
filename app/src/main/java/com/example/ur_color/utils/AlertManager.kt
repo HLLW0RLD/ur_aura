@@ -227,7 +227,7 @@ private fun TopAlertBar(
                 Text(
                     text = message,
                     color = AppColors.white,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )

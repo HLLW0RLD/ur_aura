@@ -7,25 +7,27 @@ import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.request.UserRegistration
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
-import com.example.ur_color.data.model.user.toUserData
 import com.example.ur_color.data.repo.AuthRepository
 import com.example.ur_color.utils.AlertManager
 import com.example.ur_color.utils.isValidEmail
-import com.example.ur_color.utils.toIsoDate
+import com.example.ur_color.utils.logError
+import com.example.ur_color.utils.stringDigitsToTime
+import com.example.ur_color.utils.toIsoBackendDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class RegistrationViewModel(
     private val authRepository: AuthRepository,
     private val alertManager: AlertManager
-): BaseViewModel()
-{
+): BaseViewModel() {
 
     var nickName by mutableStateOf("")
     var firstName by mutableStateOf("")
@@ -67,11 +69,13 @@ class RegistrationViewModel(
         }
 
         viewModelScope.launch(Dispatchers.Default) {
-            val parts = birthDate.split(".")
+            val formattedDate = toIsoBackendDate(birthDate)
+            val formattedTime = stringDigitsToTime(birthTime)
+
+            val parts = formattedDate.split(".")
             val day = parts.getOrNull(0)?.toIntOrNull() ?: 1
             val month = parts.getOrNull(1)?.toIntOrNull() ?: 1
             val zodiac = calculateZodiac(day, month)
-
 
             val result = authRepository.register(
                 email = email,
@@ -81,8 +85,8 @@ class RegistrationViewModel(
                 lastName = lastName,
                 middleName = middleName,
                 about = about,
-                birthDate = toIsoDate(birthDate) ?: "",
-                birthTime = birthTime,
+                birthDate = formattedDate,
+                birthTime = formattedTime,
                 birthPlace = birthPlace,
                 gender = gender,
                 zodiacSign = zodiac.nameRu

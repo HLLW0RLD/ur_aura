@@ -10,5 +10,5 @@ val repoModule = module {
 //    single { HoroscopeRepository(get()) }
     single { UserRepository(get()) }
     single { AuthRepository(get()) }
-    single { PostRepository(get()) }
+    single { PostRepository(get(), get()) }
 }

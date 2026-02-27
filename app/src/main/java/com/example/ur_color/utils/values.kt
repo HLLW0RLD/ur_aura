@@ -5,8 +5,8 @@ import com.example.ur_color.data.model.response.AuraItem
 import com.example.ur_color.data.model.response.AuraItemType
 import com.example.ur_color.data.model.response.AuraRowConfig
 import com.example.ur_color.data.model.response.AuraSection
-import com.example.ur_color.data.model.response.SocialContent
-import com.example.ur_color.data.model.response.User
+import com.example.ur_color.data.model.response.UserContent
+import com.example.ur_color.data.model.response.UserModel
 import com.example.ur_color.data.model.question.ModType
 import com.example.ur_color.ui.theme.AuraColors
 
@@ -80,56 +80,56 @@ val questionTemplates: Map<ModType, List<String>> = mapOf(
 )
 
 val demoUsers = listOf(
-    User(
+    UserModel(
         id = "0",
         nickName = "bobo",
         level = 777,
         about = "ауры это круто!",
         avatar = "https://picsum.photos/seed/abstract02/600/600"
     ),
-    User(
+    UserModel(
         id = "1",
         nickName = "Анастасия",
         level = 2,
         about = "Исследую осознанность и телесные практики",
         avatar = "https://picsum.photos/seed/abstract01/600/600"
     ),
-    User(
+    UserModel(
         id = "2",
         nickName = "Дмитрий",
         level = 7,
         about = "Психология, логика и немного дзена",
         avatar = "https://picsum.photos/seed/abstract02/600/600"
     ),
-    User(
+    UserModel(
         id = "3",
         nickName = "Мария",
         level = 3,
         about = "Пишу о чувствах и внутренних состояниях",
         avatar = "https://picsum.photos/seed/abstract03/600/600"
     ),
-    User(
+    UserModel(
         id = "4",
         nickName = "Илья",
         level = 11,
         about = "Ищу баланс между рациональным и интуитивным",
         avatar = "https://picsum.photos/seed/abstract04/600/600"
     ),
-    User(
+    UserModel(
         id = "5",
         nickName = "Екатерина",
         level = 5,
         about = "Телесная терапия и мягкие практики",
         avatar = "https://picsum.photos/seed/abstract05/600/600"
     ),
-    User(
+    UserModel(
         id = "6",
         nickName = "Ольга",
         level = 2,
         about = "Практикую осознанное письмо",
         avatar = "https://picsum.photos/seed/abstract07/600/600"
     ),
-    User(
+    UserModel(
         id = "7",
         nickName = "Валерия",
         level = 1,
@@ -138,7 +138,7 @@ val demoUsers = listOf(
     )
 )
 val feedCards = listOf(
-    SocialContent.Post(
+    UserContent.Post(
         id = "p1",
         text = "Иногда тишина говорит больше, чем любые формулировки. \nОсобенно когда честно отвечаешь себе.\n" +
                 "bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla \n" +
@@ -156,54 +156,54 @@ val feedCards = listOf(
         image = null
     ),
 
-    SocialContent.Ad(
-        id = "ad1",
-        title = "🧘 Онлайн-практика для восстановления фокуса",
-        image = "https://picsum.photos/seed/ad01/800/600",
-        cta = "Попробовать"
-    ),
+//    SocialContent.Ad(
+//        id = "ad1",
+//        title = "🧘 Онлайн-практика для восстановления фокуса",
+//        image = "https://picsum.photos/seed/ad01/800/600",
+//        cta = "Попробовать"
+//    ),
 
-    SocialContent.Post(
+    UserContent.Post(
         id = "p2",
         text = "Принятие начинается с честного взгляда на себя",
         author = demoUsers[2],
         image = "https://picsum.photos/seed/post01/900/600"
     ),
 
-    SocialContent.Post(
+    UserContent.Post(
         id = "p3",
         text = "Иногда путь — это просто разрешение не спешить",
         author = demoUsers[4],
         image = null
     ),
 
-    SocialContent.Ad(
-        id = "ad2",
-        title = "🌿 Курс «Медленное внимание»",
-        image = "https://picsum.photos/seed/ad02/800/600",
-        cta = "Начать"
-    ),
+//    SocialContent.Ad(
+//        id = "ad2",
+//        title = "🌿 Курс «Медленное внимание»",
+//        image = "https://picsum.photos/seed/ad02/800/600",
+//        cta = "Начать"
+//    ),
 
-    SocialContent.Post(
+    UserContent.Post(
         id = "p4",
         text = "Записывать мысли — значит давать им форму",
         author = demoUsers[5],
         image = null
     ),
 
-    SocialContent.Post(
+    UserContent.Post(
         id = "p5",
         text = "Образ иногда точнее слов",
         author = demoUsers[6],
         image = "https://picsum.photos/seed/post02/900/600"
     ),
 
-    SocialContent.Ad(
-        id = "ad3",
-        title = "🔮 Индивидуальная сессия самопознания",
-        image = "https://picsum.photos/seed/ad03/800/600",
-        cta = "Записаться"
-    )
+//    SocialContent.Ad(
+//        id = "ad3",
+//        title = "🔮 Индивидуальная сессия самопознания",
+//        image = "https://picsum.photos/seed/ad03/800/600",
+//        cta = "Записаться"
+//    )
 )
 
 val auraSections = listOf(

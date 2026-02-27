@@ -15,14 +15,3 @@ interface AuthApi {
     @POST("auth/login")
     suspend fun login(@Body user: UserAuth): Response<AuthData>
 }
-
-//data class RegisterRequest(
-//    val email: String,
-//    val password: String,
-//    val firstName: String,
-//    val lastName: String,
-//    val birthDate: String,
-//    val birthPlace: String,
-//    val gender: String,
-//    val zodiacSign: String
-//)

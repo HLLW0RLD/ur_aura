@@ -70,7 +70,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.animation.core.animateDp
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -85,8 +84,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.blur
@@ -103,18 +100,13 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
-import com.example.ur_color.data.model.response.SocialContent
+import com.example.ur_color.data.model.response.UserContent
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.TransformedText
-import com.example.ur_color.data.model.response.User
+import com.example.ur_color.data.model.response.UserModel
 import com.example.ur_color.utils.AutoScrollPagerScope
 import com.example.ur_color.utils.DateVisualTransformation
 import com.example.ur_color.utils.IconPosition
@@ -123,10 +115,7 @@ import com.example.ur_color.utils.TwoColumnScope
 import com.example.ur_color.utils.TwoColumnScopeImpl
 import com.example.ur_color.utils.WindowType
 import com.example.ur_color.utils.animPic
-import com.example.ur_color.utils.formatDateInput
-import com.example.ur_color.utils.formatTimeInput
 import com.example.ur_color.utils.lerp
-import kotlin.Int.Companion.MAX_VALUE
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -1640,9 +1629,9 @@ private fun ExpandableContent(
 
 @Composable
 fun FeedContentCard(
-    content: SocialContent,
+    content: UserContent,
     modifier: Modifier = Modifier,
-    onClick: (SocialContent) -> Unit = {}
+    onClick: (UserContent) -> Unit = {}
 ) {
 
     val context = LocalContext.current
@@ -1670,7 +1659,7 @@ fun FeedContentCard(
                 .padding(12.dp)
         ) {
             when (content) {
-                is SocialContent.Post -> {
+                is UserContent.Post -> {
                     Column {
                         PostAuthorHeader(content.author)
 
@@ -1691,46 +1680,46 @@ fun FeedContentCard(
                     }
                 }
 
-                is SocialContent.Ad -> {
-                    Box {
-                        AsyncImage(
-                            model = content.image,
-                            contentDescription = content.title,
-                            modifier = Modifier
-                                .height(300.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Text(
-                            text = content.title,
-                            color = AppColors.textAuto(Color.Black.copy(alpha = 0.3f)),
-                            fontSize = 14.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomStart)
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(
-                                            Color.Transparent,
-                                            AppColors.backgroundDark.copy(alpha = 0.85f)
-                                        )
-                                    )
-                                )
-                                .padding(4.dp)
-                                .basicMarquee(iterations = MAX_VALUE)
-                        )
-                    }
-                }
+//                is SocialContent.Ad -> {
+//                    Box {
+//                        AsyncImage(
+//                            model = content.image,
+//                            contentDescription = content.title,
+//                            modifier = Modifier
+//                                .height(300.dp)
+//                                .fillMaxWidth()
+//                                .clip(RoundedCornerShape(8.dp)),
+//                            contentScale = ContentScale.Crop
+//                        )
+//
+//                        Text(
+//                            text = content.title,
+//                            color = AppColors.textAuto(Color.Black.copy(alpha = 0.3f)),
+//                            fontSize = 14.sp,
+//                            maxLines = 1,
+//                            overflow = TextOverflow.Ellipsis,
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .align(Alignment.BottomStart)
+//                                .background(
+//                                    Brush.verticalGradient(
+//                                        listOf(
+//                                            Color.Transparent,
+//                                            AppColors.backgroundDark.copy(alpha = 0.85f)
+//                                        )
+//                                    )
+//                                )
+//                                .padding(4.dp)
+//                                .basicMarquee(iterations = MAX_VALUE)
+//                        )
+//                    }
+//                }
             }
 
             Spacer(Modifier.height(8.dp))
 
             when (content) {
-                is SocialContent.Post -> {
+                is UserContent.Post -> {
                     if (!content.text.isNullOrBlank()) {
                         var expanded by remember { mutableStateOf(false) }
                         var isOverflowing by remember { mutableStateOf(false) }
@@ -1772,28 +1761,28 @@ fun FeedContentCard(
                     }
                 }
 
-                is SocialContent.Ad -> {
-                    Text(
-                        text = content.cta,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF007AFF)
-                    )
-                }
+//                is SocialContent.Ad -> {
+//                    Text(
+//                        text = content.cta,
+//                        fontSize = 14.sp,
+//                        fontWeight = FontWeight.Bold,
+//                        color = Color(0xFF007AFF)
+//                    )
+//                }
             }
         }
     }
 }
 @Composable
-private fun PostAuthorHeader(user: User) {
+private fun PostAuthorHeader(userModel: UserModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        if (!user.avatar.isNullOrBlank()) {
+        if (!userModel.avatar.isNullOrBlank()) {
             AsyncImage(
-                model = user.avatar,
-                contentDescription = user.nickName,
+                model = userModel.avatar,
+                contentDescription = userModel.nickName,
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape),
@@ -1805,7 +1794,7 @@ private fun PostAuthorHeader(user: User) {
 
         Column {
             Text(
-                text = user.nickName + stringResource(R.string.user_lvl_header, user.level),
+                text = userModel.nickName + stringResource(R.string.user_lvl_header, userModel.level),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = AppColors.textPrimary,
@@ -1813,9 +1802,9 @@ private fun PostAuthorHeader(user: User) {
                 overflow = TextOverflow.Ellipsis
             )
 
-            if (!user.about.isNullOrBlank()) {
+            if (!userModel.about.isNullOrBlank()) {
                 Text(
-                    text = user.about,
+                    text = userModel.about,
                     fontSize = 12.sp,
                     color = AppColors.textSecondary,
                     maxLines = 1,

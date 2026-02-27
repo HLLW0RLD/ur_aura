@@ -6,7 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
-import com.example.ur_color.data.model.response.SocialContent
+import com.example.ur_color.data.model.response.UserContent
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.repo.PostRepository
 import com.example.ur_color.data.repo.UserRepository
@@ -20,7 +20,7 @@ class ProfileViewModel(
     private val postRepository: PostRepository
 ) : BaseViewModel() {
 
-    private val _profileCardsState = MutableStateFlow<List<SocialContent.Post>?>(null)
+    private val _profileCardsState = MutableStateFlow<List<UserContent.Post>?>(null)
     val profileCardsState = _profileCardsState.asStateFlow()
 
     private val _user = MutableStateFlow<UserData?>(null)
@@ -35,7 +35,7 @@ class ProfileViewModel(
             _user.value = userRepository.getUser()
             _aura.value = userRepository.getAura()
 
-            getPostsByUser(_user.value?.id)
+            getUserPosts(_user.value?.id)
         }
     }
 
@@ -45,9 +45,9 @@ class ProfileViewModel(
         }
     }
 
-    suspend fun getPostsByUser(userId: String?) {
+    suspend fun getUserPosts(userId: String?) {
         userId?.let { id ->
-            postRepository.getPostsByUser(id).collect { posts ->
+            postRepository.getUserPosts(id).collect { posts ->
                 _profileCardsState.value = posts
             }
         }

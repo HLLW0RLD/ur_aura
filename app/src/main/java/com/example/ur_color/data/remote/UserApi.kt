@@ -1,15 +1,17 @@
 package com.example.ur_color.data.remote
 
-import com.example.ur_color.data.model.request.UserAuth
-import com.example.ur_color.data.model.request.UserRegistration
-import com.example.ur_color.data.model.response.AuthData
+import com.example.ur_color.data.model.user.UserData
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface UserApi {
 
-    fun getUser()
+    @GET("user/me")
+    fun getMe(): Response<UserData>
 
-    fun getUserData()
+    @GET("user/{id}")
+    fun getUserById(
+        @Query("id") id: String
+    ): Response<UserData>
 }

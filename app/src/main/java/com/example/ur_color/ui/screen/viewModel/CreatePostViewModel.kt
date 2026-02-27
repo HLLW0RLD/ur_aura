@@ -3,9 +3,10 @@ package com.example.ur_color.ui.screen.viewModel
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
-import com.example.ur_color.data.model.response.SocialContent
-import com.example.ur_color.data.model.response.User
+import com.example.ur_color.data.model.response.UserContent
+import com.example.ur_color.data.model.response.UserModel
 import com.example.ur_color.data.repo.PostRepository
+import com.example.ur_color.utils.getCurrentDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,23 +39,22 @@ class CreatePostViewModel(
         _state.update { it.copy(selectedImageUri = null) }
     }
 
-    fun createPost(currentUser: User) {
+    fun createPost(currentUserModel: UserModel) {
         try {
             viewModelScope.launch {
                 _state.update { it.copy(isLoading = true, error = null) }
 
-                // Создаем пост
-                val post = SocialContent.Post(
+                val post = UserContent.Post(
+                    created = getCurrentDateTime(),
                     id = UUID.randomUUID().toString(),
                     text = _state.value.text.trim(),
-                    author = currentUser,
-                    image = _state.value.selectedImageUri?.toString() // Сохраняем URI как строку
+                    author = currentUserModel,
+                    image = null
+//                    image = _state.value.selectedImageUri?.toString()
                 )
 
-                // Сохраняем в локальную БД
-                postRepository.savePost(post)
+                postRepository.createPost(post)
 
-                // Сбрасываем состояние
                 _state.update { CreatePostState.Empty }
             }
         } catch (e: Exception) {

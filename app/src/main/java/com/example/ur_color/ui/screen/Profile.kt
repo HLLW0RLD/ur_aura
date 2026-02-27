@@ -4,10 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -511,7 +507,7 @@ fun ProfileScreen(
 
         if (showBottomSheet) {
             CreatePostBottomSheet(
-                currentUser = user.toUser(),
+                currentUserModel = user.toUser(),
                 onDismiss = { showBottomSheet = false },
             )
         }

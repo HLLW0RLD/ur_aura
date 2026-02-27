@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import com.example.ur_color.data.local.base.BaseViewModel
 import com.example.ur_color.data.model.response.Horoscope
-import com.example.ur_color.data.model.response.SocialContent
+import com.example.ur_color.data.model.response.UserContent
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.repo.HoroscopeDate
 import com.example.ur_color.data.repo.UserRepository
@@ -29,7 +29,7 @@ class MainViewModel(
     private val _horoscopeState = MutableStateFlow<HoroscopeUiState>(HoroscopeUiState.Loading)
     val horoscopeState: StateFlow<HoroscopeUiState> = _horoscopeState
 
-    private val _feedCardsState = MutableStateFlow<List<SocialContent>>(feedCards)
+    private val _feedCardsState = MutableStateFlow<List<UserContent>>(feedCards)
     val feedCardsState = _feedCardsState.asStateFlow()
 
     private val _user = MutableStateFlow<UserData?>(null)

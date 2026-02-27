@@ -1,7 +1,7 @@
 package com.example.ur_color.data.model.user
 
 import com.example.ur_color.data.model.request.UserRegistration
-import com.example.ur_color.data.model.response.User
+import com.example.ur_color.data.model.response.UserModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,8 +26,8 @@ data class UserData(
     val auraSeed: Long = (firstName + lastName + birthPlace + zodiacSign).hashCode().toLong()
 }
 
-fun UserData?.toUser(): User {
-    return User(
+fun UserData?.toUser(): UserModel {
+    return UserModel(
         id = this?.id ?: "",
         nickName = this?.nickName ?: "",
         level = this?.userLevel ?: 1,

@@ -3,8 +3,8 @@ package com.example.ur_color.data.model.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.ur_color.data.model.response.SocialContent
-import com.example.ur_color.data.model.response.User
+import com.example.ur_color.data.model.response.UserContent
+import com.example.ur_color.data.model.response.UserModel
 
 @Entity(tableName = "posts")
 data class PostEntity(
@@ -33,7 +33,7 @@ data class PostEntity(
 
 )
 
-fun SocialContent.Post.toPostEntity(
+fun UserContent.Post.toPostEntity(
     synced: Boolean = false
 ): PostEntity {
     return PostEntity(
@@ -49,11 +49,11 @@ fun SocialContent.Post.toPostEntity(
     )
 }
 
-fun PostEntity.toPost(): SocialContent.Post {
-    return SocialContent.Post(
+fun PostEntity.toPost(): UserContent.Post {
+    return UserContent.Post(
         id = id,
         text = text,
-        author = User(
+        author = UserModel(
             id = authorId,
             nickName = username,
             level = userLevel,

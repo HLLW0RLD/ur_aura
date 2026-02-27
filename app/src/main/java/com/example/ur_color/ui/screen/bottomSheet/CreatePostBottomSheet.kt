@@ -14,21 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,7 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.ur_color.R
-import com.example.ur_color.data.model.response.User
+import com.example.ur_color.data.model.response.UserModel
 import com.example.ur_color.ui.AuraOutlinedTextField
 import com.example.ur_color.ui.screen.viewModel.CreatePostViewModel
 import com.example.ur_color.ui.theme.AppColors
@@ -57,7 +50,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePostBottomSheet(
-    currentUser: User,
+    currentUserModel: UserModel,
     onDismiss: () -> Unit,
     viewModel: CreatePostViewModel = koinViewModel()
 ) {
@@ -117,7 +110,7 @@ fun CreatePostBottomSheet(
                     }
                     IconButton(
                         onClick = {
-                        viewModel.createPost(currentUser)
+                        viewModel.createPost(currentUserModel)
                         onDismiss()
                     }
                         ,

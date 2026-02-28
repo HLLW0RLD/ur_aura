@@ -249,7 +249,7 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .clickable {
                                 profileViewModel.deleteUser()
-                                navController.nav(Registration, true)
+                                navController.nav(Onboarding, true)
                             }
                             .padding(4.dp)
                     )

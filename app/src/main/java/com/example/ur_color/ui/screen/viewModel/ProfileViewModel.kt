@@ -30,12 +30,14 @@ class ProfileViewModel(
     val aura = _aura.asStateFlow()
 
 
-    init {
+    fun init(id: String? = null) {
         viewModelScope.launch {
-            _user.value = userRepository.getUser()
-            _aura.value = userRepository.getAura()
-
-            getUserPosts(_user.value?.id)
+            if (id == null) {
+                _user.value = userRepository.getMe(true)
+                _aura.value = userRepository.getAura()
+            } else {
+                _user.value = userRepository.getUserById(id)
+            }
         }
     }
 

@@ -1,8 +1,12 @@
 package com.example.ur_color.data.di
 
+import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.remote.AuthApi
+import com.example.ur_color.data.remote.AuthInterceptor
 import com.example.ur_color.data.remote.ContentApi
 import com.example.ur_color.data.remote.UserApi
+import com.example.ur_color.utils.logDebug
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -16,16 +20,27 @@ val apiModule = module {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
-        .build()
+    single {
+        AuthInterceptor {
+            runBlocking {
+                PersonalDataManager.getTokenFromCache()
+            }
+        }
+    }
+
+    single {
+        OkHttpClient.Builder()
+            .addInterceptor(get<AuthInterceptor>())
+            .addInterceptor(logging)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .build()
+    }
 
     single {
         Retrofit.Builder()
-            .baseUrl("http://141.98.190.23/api/")
-            .client(client)
+            .baseUrl("https://feel-u.ru/api/")
+            .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

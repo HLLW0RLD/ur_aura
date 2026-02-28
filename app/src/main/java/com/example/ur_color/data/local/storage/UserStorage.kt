@@ -1,14 +1,19 @@
 package com.example.ur_color.data.local.storage
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.example.ur_color.App
 import com.example.ur_color.data.model.user.UserData
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 object UserStorage {
@@ -18,6 +23,7 @@ object UserStorage {
     private val Context.dataStore by preferencesDataStore(name = USER_PREFERENCES)
 
     private val USER_KEY = stringPreferencesKey("user_json")
+    private val TOKEN_KEY = stringPreferencesKey("token_key")
     private val DAILY_TEST_KEY = stringPreferencesKey("daily_test_date")
     private val USER_LVL_KEY = floatPreferencesKey("user_lvl")
     private val USER_ACHIEVEMENTS_KEY = stringPreferencesKey("user_achievements")
@@ -37,12 +43,25 @@ object UserStorage {
             prefs.remove(DAILY_TEST_KEY)
             prefs.remove(USER_LVL_KEY)
             prefs.remove(USER_ACHIEVEMENTS_KEY)
+            prefs.remove(TOKEN_KEY)
         }
     }
 
     suspend fun load(): UserData? {
         val json = context.dataStore.data.first()[USER_KEY] ?: return null
         return gson.fromJson(json, UserData::class.java)
+    }
+
+    suspend fun saveToken(token: String) {
+        val encrypted = TokenCipher.encrypt(token)
+        context.dataStore.edit { prefs ->
+            prefs[TOKEN_KEY] = encrypted
+        }
+    }
+
+    suspend fun getToken(): String? {
+        val encrypted = context.dataStore.data.first()[TOKEN_KEY] ?: return null
+        return TokenCipher.decrypt(encrypted)
     }
 
     // DAILY TEST
@@ -52,7 +71,7 @@ object UserStorage {
         }
     }
 
-    suspend fun loadDailyTestDate(): String? {
+    suspend fun getDailyTestDate(): String? {
         return context.dataStore.data.first()[DAILY_TEST_KEY]
     }
 
@@ -63,20 +82,20 @@ object UserStorage {
         }
     }
 
-    suspend fun loadLvl(): Float? {
+    suspend fun getLvl(): Float? {
         return context.dataStore.data.first()[USER_LVL_KEY]
     }
 
     // USER ACHIEVEMENTS
     suspend fun saveAchievementId(achievementId: String) {
-        val current = loadAchievements() ?: emptyList()
+        val current = getAchievements() ?: emptyList()
         if (achievementId !in current) {
             val updated = current + achievementId
             saveAchievements(updated)
         }
     }
 
-    suspend fun loadAchievements(): List<String>? {
+    suspend fun getAchievements(): List<String>? {
         val json = context.dataStore.data.first()[USER_ACHIEVEMENTS_KEY]
         return if (json.isNullOrBlank()) {
             emptyList()

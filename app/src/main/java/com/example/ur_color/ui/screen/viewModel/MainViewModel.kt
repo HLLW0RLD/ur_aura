@@ -40,7 +40,8 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            _user.value = userRepository.getUser()
+            // getMe убрать true после добавления апи обновления характеристик
+            _user.value = userRepository.getMe(true)
             _aura.value = userRepository.getAura()
         }
     }

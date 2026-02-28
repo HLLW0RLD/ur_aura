@@ -82,6 +82,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
@@ -103,6 +105,7 @@ import coil.compose.AsyncImage
 import com.example.ur_color.data.model.response.UserContent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -437,6 +440,70 @@ fun AuraTextButton(
             text = text,
             color = AppColors.background
         )
+    }
+}
+
+@Composable
+fun AnimatedFloatingActionButton(
+    visible: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    containerColor: Color = AppColors.accentPrimary,
+    contentColor: Color = AppColors.background,
+    enterDelay: Int = 0,
+    startOffsetDp: Float = 80f
+) {
+    val density = LocalDensity.current
+
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(
+            initialOffsetY = {
+                with(density) { startOffsetDp.dp.roundToPx() }
+            },
+            animationSpec = tween(
+                durationMillis = 300,
+                delayMillis = enterDelay,
+                easing = FastOutSlowInEasing
+            )
+        ) + scaleIn(
+            initialScale = 0.8f,
+            animationSpec = tween(
+                durationMillis = 200,
+                delayMillis = enterDelay,
+                easing = FastOutSlowInEasing
+            )
+        ) + fadeIn(
+            animationSpec = tween(durationMillis = 100, delayMillis = enterDelay)
+        ),
+        exit = slideOutVertically(
+            targetOffsetY = {
+                with(density) { startOffsetDp.dp.roundToPx() }
+            },
+            animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+        ) + fadeOut(
+            animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing)
+        ),
+        modifier = modifier
+    ) {
+        FloatingActionButton(
+            onClick = onClick,
+            containerColor = containerColor,
+            contentColor = contentColor,
+            shape = CircleShape,
+            modifier = Modifier
+                .padding(16.dp)
+                .size(56.dp),
+            elevation = FloatingActionButtonDefaults.elevation(8.dp)
+        ) {
+            Icon(
+                painter = icon,
+                contentDescription = null,
+                tint = AppColors.white,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 

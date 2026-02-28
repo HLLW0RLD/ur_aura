@@ -97,17 +97,17 @@ fun CreatePostBottomSheet(
                 )
 
                 Row {
-                    IconButton(
-                        onClick = {
-                        pickImageLauncher.launch("image/*")
-                    }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.attach_media),
-                            contentDescription = "",
-                            tint = AppColors.icon
-                        )
-                    }
+//                    IconButton(
+//                        onClick = {
+//                        pickImageLauncher.launch("image/*")
+//                    }
+//                    ) {
+//                        Icon(
+//                            painter = painterResource(R.drawable.attach_media),
+//                            contentDescription = "",
+//                            tint = AppColors.icon
+//                        )
+//                    }
                     IconButton(
                         onClick = {
                         viewModel.createPost(currentUserModel)

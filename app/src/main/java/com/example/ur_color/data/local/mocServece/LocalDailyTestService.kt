@@ -10,22 +10,6 @@ import com.example.ur_color.utils.questionTemplates
 private const val VECTOR_SMOOTH_FACTOR = 0.3f
 class LocalDailyTestService {
 
-    // Матрица синергий между модами (какие моды хорошо сочетаются)
-    private val synergyMatrix = mapOf(
-        ModType.ENERGY_LEVEL to setOf(ModType.PHYSICAL_ENERGY, ModType.MOTIVATION, ModType.FOCUS),
-        ModType.MOOD to setOf(ModType.SOCIAL_ENERGY, ModType.COMMUNICATION, ModType.CHARISMA),
-        ModType.STRESS to setOf(ModType.ANXIETY, ModType.FATIGUE),
-        ModType.FOCUS to setOf(ModType.MOTIVATION, ModType.ENERGY_LEVEL),
-        ModType.SOCIAL_ENERGY to setOf(ModType.COMMUNICATION, ModType.CHARISMA, ModType.MOOD),
-    )
-
-    // Матрица антагонизмов
-    private val antagonismMatrix = mapOf(
-        ModType.STRESS to setOf(ModType.MOOD, ModType.FOCUS, ModType.SLEEP_QUALITY),
-        ModType.FATIGUE to setOf(ModType.ENERGY_LEVEL, ModType.MOTIVATION, ModType.PHYSICAL_ENERGY),
-        ModType.ANXIETY to setOf(ModType.COMMUNICATION, ModType.CHARISMA, ModType.SOCIAL_ENERGY),
-    )
-
     val questionMods = generateBaseQuestions().shuffled()
 
     fun generateBaseQuestions(): List<Question> {

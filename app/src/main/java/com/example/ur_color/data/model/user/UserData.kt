@@ -20,8 +20,6 @@ data class UserData(
     val avatarUri: String? = null,
     val characteristics: CharacteristicData = CharacteristicData(),
     val userLevel: Int = 1,
-
-//    val achievements: List<Achievement> = listOf()
 )  {
     val auraSeed: Long = (firstName + lastName + birthPlace + zodiacSign).hashCode().toLong()
 }

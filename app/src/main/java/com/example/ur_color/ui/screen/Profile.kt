@@ -4,6 +4,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,12 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +52,7 @@ import coil.compose.AsyncImage
 import com.example.ur_color.R
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.toUser
+import com.example.ur_color.ui.AnimatedFloatingActionButton
 import com.example.ur_color.ui.CustomAppBar
 import com.example.ur_color.ui.ExpandableFloatingBox
 import com.example.ur_color.ui.FeedContentCard
@@ -51,11 +64,14 @@ import com.example.ur_color.ui.theme.AuraColors
 import com.example.ur_color.ui.theme.toColor
 import com.example.ur_color.utils.LocalNavController
 import com.example.ur_color.utils.animPic
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Serializable
-data class Profile(val user: String = "null") : Screen
+data class Profile(
+    val id: String? = null,
+) : Screen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -64,6 +80,16 @@ fun Profile(profile : Profile) {
         showBottomBar = true,
     ) {
         val profileViewModel: ProfileViewModel = koinViewModel()
+
+        LaunchedEffect(profile) {
+            if (profile.id != null) {
+                profileViewModel.init(profile.id)
+            } else {
+                profileViewModel.init()
+            }
+        }
+
+
         val user by profileViewModel.user.collectAsState()
 
         ProfileScreen(
@@ -129,93 +155,34 @@ fun ProfileScreen(
         }
     }
 
-    Column(
+    var fabVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(user?.id) {
+        fabVisible = false
+        delay(50)
+        fabVisible = true
+    }
+
+    Box(
         modifier = modifier
             .nestedScroll(nestedScrollConnection)
             .fillMaxSize()
             .background(AppColors.background)
     ) {
-        user?.let { u ->
-            Column(
-                modifier = modifier
-                    .statusBarsPadding()
-            ) {
-                AnimatedVisibility(
-                    visible = !extended,
+        Column {
+            user?.let { u ->
+                Column(
+                    modifier = modifier
+                        .statusBarsPadding()
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .statusBarsPadding()
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    AnimatedVisibility(
+                        visible = !extended,
                     ) {
-                        val avatarPainter = if (u.avatarUri != null) {
-                            u.avatarUri
-                        } else {
-                            "https://picsum.photos/seed/abstract02/600/600"
-                        }
-
-                        Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            AsyncImage(
-                                model = avatarPainter,
-                                contentDescription = "",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                color = AppColors.textPrimary,
-                                text = u.nickName,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
-
-                        IconButton(
-                            onClick = {
-                                navController.nav(Settings)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.switcher_options),
-                                contentDescription = "",
-                                tint = AppColors.icon
-                            )
-                        }
-                    }
-                }
-
-                AnimatedVisibility(
-                    visible = extended
-                ) {
-                    Column {
-                        CustomAppBar(
-                            title = stringResource(R.string.profile_title),
-                            showOptions = true,
-                            optionsIcon = painterResource(R.drawable.switcher_options),
-                            onOptionsClick = {
-                                navController.nav(Settings)
-                            },
-                            isCentered = true,
-                            showDivider = true,
-                            backgroundColor = AppColors.background,
-                        )
-
-                        Spacer(Modifier.height(16.dp))
-
                         Row(
                             modifier = Modifier
+                                .statusBarsPadding()
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.Top,
+                                .padding(horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             val avatarPainter = if (u.avatarUri != null) {
@@ -225,285 +192,341 @@ fun ProfileScreen(
                             }
 
                             Row(
-                                modifier = Modifier
+                                modifier = Modifier,
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 AsyncImage(
                                     model = avatarPainter,
                                     contentDescription = "",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
-                                        .size(130.dp)
+                                        .size(48.dp)
                                         .clip(CircleShape)
                                 )
-
                                 Spacer(Modifier.width(8.dp))
-
-                                Column {
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = stringResource(
-                                            R.string.profile_name_level,
-                                            u.nickName,
-                                            u.userLevel
-                                        ),
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Text(
-                                        color = AppColors.textPrimary,
-                                        text = stringResource(
-                                            R.string.profile_zodiac,
-                                            u.zodiacSign.lowercase()
-                                        ),
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-
-                                    var expanded by remember { mutableStateOf(false) }
-                                    var isOverflowing by remember { mutableStateOf(false) }
-                                    Column(
-                                        modifier = Modifier
-                                            .animateContentSize()
-                                    ) {
-                                        Text(
-                                            text = u.about.orEmpty(),
-                                            color = AppColors.textPrimary,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            maxLines = if (expanded) Int.MAX_VALUE else 5,
-                                            overflow = TextOverflow.Ellipsis,
-                                            onTextLayout = { textLayoutResult ->
-                                                isOverflowing = textLayoutResult.hasVisualOverflow
-                                            }
-                                        )
-
-                                        if (isOverflowing || expanded) {
-                                            Spacer(Modifier.height(4.dp))
-
-                                            Text(
-                                                text = if (expanded) "скрыть" else "ещё",
-                                                style = MaterialTheme.typography.labelMedium,
-                                                color = AppColors.accentPrimary,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable(
-                                                        indication = null,
-                                                        interactionSource = remember { MutableInteractionSource() }
-                                                    ) {
-                                                        expanded = !expanded
-                                                    }
-                                            )
-                                        }
-                                    }
-
-                                    // dropdown with full user info
-                                    // ${calculateAge(u.birthDate)}
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            LazyColumn(
-                state = scrollState,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(25.dp))
-                            .background(color.copy(alpha = 0.2f))
-                            .padding(vertical = 16.dp)
-                    ) {
-                        Text(
-                            color = AppColors.textAuto(AppColors.surfaceLight),
-                            text = stringResource(R.string.profile_aura_achievement),
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-
-                                }
-                                .padding(bottom = 4.dp, start = 16.dp),
-                        )
-                        LazyRow(
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .height(48.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            item {
-                                Spacer(Modifier.size(8.dp))
-                            }
-                            items(animPic.size) {
-                                val pic = animPic.shuffled()[it]
-                                val ind = AuraColors.values().toList().shuffled().first()
-
-                                Box(
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .background(
-                                            color = ind.toColor(),
-                                            shape = CircleShape
-                                        )
-                                        .clip(CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .size(36.dp),
-                                        painter = painterResource(pic),
-                                        contentDescription = ""
-                                    )
-                                }
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .padding(end = 12.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.Absolute.Center
-                        ) {
-                            ExpandableFloatingBox(
-                                closedTitle = stringResource(R.string.profile_more),
-                                expandedTitle = stringResource(R.string.prrofile_other_info),
-                                canShowFull = true,
-                                expandHeight = 200f,
-                                backgroundColor = AppColors.surface,
-                                expandBackgroundColor = AppColors.surface,
-                                borderColor = AppColors.surface,
-                                closedTitleColor = AppColors.textPrimary,
-                                borderWidth = 2f,
-                                height = 80f,
-                                modifier = Modifier
-                                    .weight(2.5f)
-                            ) {
-                                Column(
-                                    verticalArrangement = Arrangement.Top
-                                ) {
-
-                                    Spacer(Modifier.height(4.dp))
-                                    Text(
-                                        color = AppColors.textAuto(color),
-                                        text = stringResource(R.string.profile_aura_details) + " (premium)",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                navController.nav(AuraDetails())
-                                            }
-                                            .padding(8.dp),
-                                    )
-                                    Spacer(Modifier.height(4.dp))
-                                    Text(
-                                        color = AppColors.textAuto(color),
-                                        text = stringResource(R.string.profile_life_goals) + " (premium)",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                navController.nav(AuraDetails())
-                                            }
-                                            .padding(8.dp),
-                                    )
-                                }
+                                Text(
+                                    color = AppColors.textPrimary,
+                                    text = u.nickName,
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
                             }
 
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .size(80.dp)
-                                    .background(
-                                        color = AppColors.accentPrimary,
-                                        shape = RoundedCornerShape(20.dp)
-                                    )
-                                    .clickable {
-                                        showBottomSheet = true
-                                    },
-                                contentAlignment = Alignment.Center
+                            IconButton(
+                                onClick = {
+                                    navController.nav(Settings)
+                                }
                             ) {
                                 Icon(
-                                    modifier = Modifier
-                                        .size(36.dp),
-                                    painter = painterResource(R.drawable.wright_post),
-                                    tint = AppColors.background,
-                                    contentDescription = ""
+                                    painter = painterResource(R.drawable.switcher_options),
+                                    contentDescription = "",
+                                    tint = AppColors.icon
                                 )
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = extended
+                    ) {
+                        Column {
+                            CustomAppBar(
+                                title = stringResource(R.string.profile_title),
+                                showOptions = true,
+                                optionsIcon = painterResource(R.drawable.switcher_options),
+                                onOptionsClick = {
+                                    navController.nav(Settings)
+                                },
+                                isCentered = true,
+                                showDivider = true,
+                                backgroundColor = AppColors.background,
+                            )
+
+                            Spacer(Modifier.height(16.dp))
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                val avatarPainter = if (u.avatarUri != null) {
+                                    u.avatarUri
+                                } else {
+                                    "https://picsum.photos/seed/abstract02/600/600"
+                                }
+
+                                Row(
+                                    modifier = Modifier
+                                ) {
+                                    AsyncImage(
+                                        model = avatarPainter,
+                                        contentDescription = "",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .size(130.dp)
+                                            .clip(CircleShape)
+                                    )
+
+                                    Spacer(Modifier.width(8.dp))
+
+                                    Column {
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = stringResource(
+                                                R.string.profile_name_level,
+                                                u.nickName,
+                                                u.userLevel
+                                            ),
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Text(
+                                            color = AppColors.textPrimary,
+                                            text = stringResource(
+                                                R.string.profile_zodiac,
+                                                u.zodiacSign.lowercase()
+                                            ),
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+
+                                        var expanded by remember { mutableStateOf(false) }
+                                        var isOverflowing by remember { mutableStateOf(false) }
+                                        Column(
+                                            modifier = Modifier
+                                                .animateContentSize()
+                                        ) {
+                                            Text(
+                                                text = u.about.orEmpty(),
+                                                color = AppColors.textPrimary,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                maxLines = if (expanded) Int.MAX_VALUE else 5,
+                                                overflow = TextOverflow.Ellipsis,
+                                                onTextLayout = { textLayoutResult ->
+                                                    isOverflowing =
+                                                        textLayoutResult.hasVisualOverflow
+                                                }
+                                            )
+
+                                            if (isOverflowing || expanded) {
+                                                Spacer(Modifier.height(4.dp))
+
+                                                Text(
+                                                    text = if (expanded) "скрыть" else "ещё",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    color = AppColors.accentPrimary,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .clickable(
+                                                            indication = null,
+                                                            interactionSource = remember { MutableInteractionSource() }
+                                                        ) {
+                                                            expanded = !expanded
+                                                        }
+                                                )
+                                            }
+                                        }
+
+                                        // dropdown with full user info
+                                        // ${calculateAge(u.birthDate)}
+                                    }
+                                }
                             }
                         }
                     }
                 }
 
-                item {
-                    Column(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(25.dp))
-                            .background(color.copy(alpha = 0.2f))
-                            .padding(vertical = 12.dp)
-                    ) {
-                        if (!profileCardsState.isNullOrEmpty()) {
-                            profileCardsState?.forEach {
-                                FeedContentCard(
-                                    modifier = Modifier
-//                                .heightIn(max = 400.dp)
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    content = it,
-                                    onClick = { }
-                                )
-                            }
-                        } else {
-                            Column(
+                Spacer(Modifier.height(16.dp))
+
+                LazyColumn(
+                    state = scrollState,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(25.dp))
+                                .background(color.copy(alpha = 0.2f))
+                                .padding(vertical = 16.dp)
+                        ) {
+                            Text(
+                                color = AppColors.textAuto(AppColors.surfaceLight),
+                                text = stringResource(R.string.profile_aura_achievement),
+                                style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = null
-                                    ) {
-                                        showBottomSheet = true
-                                    },
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                                    .fillMaxWidth()
+                                    .clickable {
+
+                                    }
+                                    .padding(bottom = 4.dp, start = 16.dp),
+                            )
+                            LazyRow(
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
+                                    .height(48.dp),
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Image(
-                                    modifier = Modifier
-                                        .size(250.dp),
-                                    painter = painterResource(R.drawable.cauldron_potion),
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(AppColors.accentPrimary)
-                                )
-                                Text(
-                                    color = AppColors.textAuto(color),
-                                    text = "Напишите первый  пост!",
-                                    fontSize = 24.sp,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    textAlign = TextAlign.Center,
+                                item {
+                                    Spacer(Modifier.size(8.dp))
+                                }
+                                items(animPic.size) {
+                                    val pic = animPic.shuffled()[it]
+                                    val ind = AuraColors.values().toList().shuffled().first()
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .background(
+                                                color = ind.toColor(),
+                                                shape = CircleShape
+                                            )
+                                            .clip(CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .size(36.dp),
+                                            painter = painterResource(pic),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier,
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.Absolute.Center
+                            ) {
+                                ExpandableFloatingBox(
+                                    closedTitle = stringResource(R.string.profile_more),
+                                    expandedTitle = stringResource(R.string.prrofile_other_info),
+                                    canShowFull = true,
+                                    expandHeight = 200f,
+                                    backgroundColor = AppColors.surface,
+                                    expandBackgroundColor = AppColors.surface,
+                                    borderColor = AppColors.surface,
+                                    closedTitleColor = AppColors.textPrimary,
+                                    borderWidth = 2f,
+                                    height = 80f,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(24.dp),
-                                )
+                                ) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Top
+                                    ) {
+
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            color = AppColors.textAuto(color),
+                                            text = stringResource(R.string.profile_aura_details) + " (premium)",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    navController.nav(AuraDetails())
+                                                }
+                                                .padding(8.dp),
+                                        )
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            color = AppColors.textAuto(color),
+                                            text = stringResource(R.string.profile_life_goals) + " (premium)",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    navController.nav(AuraDetails())
+                                                }
+                                                .padding(8.dp),
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
-                item {
-                    Spacer(Modifier.height(24.dp))
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(25.dp))
+                                .background(color.copy(alpha = 0.2f))
+                                .padding(vertical = 12.dp)
+                        ) {
+                            if (!profileCardsState.isNullOrEmpty()) {
+                                profileCardsState?.forEach {
+                                    FeedContentCard(
+                                        modifier = Modifier
+//                                .heightIn(max = 400.dp)
+                                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        content = it,
+                                        onClick = { }
+                                    )
+                                }
+                            } else {
+                                Column(
+                                    modifier = Modifier
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = null
+                                        ) {
+                                            showBottomSheet = true
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Image(
+                                        modifier = Modifier
+                                            .size(250.dp),
+                                        painter = painterResource(R.drawable.cauldron_potion),
+                                        contentDescription = null,
+                                        colorFilter = ColorFilter.tint(AppColors.accentPrimary)
+                                    )
+                                    Text(
+                                        color = AppColors.textAuto(color),
+                                        text = "Напишите первый  пост!",
+                                        fontSize = 24.sp,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(24.dp),
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Spacer(Modifier.height(24.dp))
+                    }
                 }
-            }
-        } ?: run {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    stringResource(R.string.profile_no_user),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            } ?: run {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        stringResource(R.string.profile_no_user),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
+
+        AnimatedFloatingActionButton(
+            modifier = Modifier
+                .padding(bottom = 100.dp, end = 16.dp)
+                .align(Alignment.BottomEnd),
+            visible = fabVisible && extended,
+            onClick = { showBottomSheet = true },
+            icon = painterResource(R.drawable.wright_post),
+            enterDelay = 200
+        )
 
         if (showBottomSheet) {
             CreatePostBottomSheet(

@@ -10,7 +10,7 @@ import java.util.UUID
 
 class AuthRepository(
     val api: AuthApi
-){
+) {
 
     suspend fun login(
         email: String,
@@ -68,17 +68,6 @@ class AuthRepository(
             zodiacSign = zodiacSign,
             userLevel = userLevel
         )
-
-//        val request = RegisterRequest(
-//            email = email,
-//            password = password,
-//            firstName = firstName,
-//            lastName = lastName,
-//            birthDate = birthDate,
-//            birthPlace = birthPlace,
-//            gender = gender,
-//            zodiacSign = zodiacSign
-//        )
 
         return try {
             val response = api.register(request)

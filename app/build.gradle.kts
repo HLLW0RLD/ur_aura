@@ -14,8 +14,8 @@ android {
         applicationId = "com.example.ur_color"
         minSdk = 25
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.4"
+        versionCode = 5
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -92,6 +92,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
     kapt(libs.androidx.room.compiler)
+
+    // security
+    implementation(libs.androidx.security.crypto)
 
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.core.ktx)

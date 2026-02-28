@@ -5,6 +5,7 @@ import com.example.ur_color.data.local.storage.AuraStorage
 //import com.example.ur_color.data.local.HistoryStorage
 import com.example.ur_color.data.local.storage.UserStorage
 import com.example.ur_color.data.model.user.UserData
+import com.example.ur_color.utils.logDebug
 import com.example.ur_color.utils.logError
 
 object PersonalDataManager {
@@ -36,6 +37,14 @@ object PersonalDataManager {
         }
     }
 
+    suspend fun getTokenFromCache(): String? {
+        return UserStorage.getToken()
+    }
+
+    suspend fun saveTokenToCache(token: String) {
+        UserStorage.saveToken(token)
+    }
+
     suspend fun getUserFromCache(): UserData? {
         return UserStorage.load()
     }
@@ -58,7 +67,7 @@ object PersonalDataManager {
 
     suspend fun updateLevel(lvl: Float = 0.1f) {
         try {
-            val level = UserStorage.loadLvl()?.toFloat() ?: 1f
+            val level = UserStorage.getLvl()?.toFloat() ?: 1f
             UserStorage.saveLvl(level + lvl)
         } catch (e: Exception) {
             logError(e.message)
@@ -76,7 +85,7 @@ object PersonalDataManager {
         date.let { UserStorage.saveDailyTestDate(it) }
     }
     suspend fun loadDailyTestDate(): String? {
-        return UserStorage.loadDailyTestDate()
+        return UserStorage.getDailyTestDate()
     }
 
     suspend fun setAchievement(achievement: String) {
@@ -84,6 +93,6 @@ object PersonalDataManager {
     }
 
     suspend fun getAchievements(): List<String>? {
-        return UserStorage.loadAchievements()
+        return UserStorage.getAchievements()
     }
 }

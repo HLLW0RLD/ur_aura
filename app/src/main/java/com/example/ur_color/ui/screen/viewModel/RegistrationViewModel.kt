@@ -10,8 +10,10 @@ import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.user.UserData
 import com.example.ur_color.data.model.user.ZodiacSign.Companion.calculateZodiac
 import com.example.ur_color.data.repo.AuthRepository
+import com.example.ur_color.data.repo.UserRepository
 import com.example.ur_color.utils.AlertManager
 import com.example.ur_color.utils.isValidEmail
+import com.example.ur_color.utils.logDebug
 import com.example.ur_color.utils.logError
 import com.example.ur_color.utils.stringDigitsToTime
 import com.example.ur_color.utils.toIsoBackendDate
@@ -26,6 +28,7 @@ import java.util.Locale
 
 class RegistrationViewModel(
     private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val alertManager: AlertManager
 ): BaseViewModel() {
 
@@ -94,24 +97,9 @@ class RegistrationViewModel(
 
             result.onSuccess {
                 _tokenState.value = RegisterState.Success( result.getOrNull()?.token ?: "")
+                PersonalDataManager.saveTokenToCache(result.getOrNull()?.token ?: "")
 
-                val user = UserData(
-                    nickName = nickName,
-                    firstName = firstName,
-                    lastName = lastName,
-                    middleName = middleName.ifBlank { null },
-                    birthDate = birthDate,
-                    birthTime = birthTime,
-                    birthPlace = birthPlace,
-                    gender = gender,
-                    about = about,
-                    zodiacSign = zodiac.nameRu,
-                )
-
-                val bitmap = AuraGenerator.generateBaseAura(user)
-
-                PersonalDataManager.saveUserToCache(user)
-                PersonalDataManager.saveAuraToCache(bitmap)
+                userRepository.getMe()
 
                 withContext(Dispatchers.Main) {
                     onSuccess()

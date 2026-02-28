@@ -24,7 +24,7 @@ import org.koin.dsl.module
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 val viewModelModule = module {
 
-    viewModel { RegistrationViewModel(get(), get()) }
+    viewModel { RegistrationViewModel(get(), get(), get()) }
     viewModel { LoginViewModel(get(), get()) }
     viewModel { OnboardingViewModel() }
     viewModel { MainViewModel(get()) }

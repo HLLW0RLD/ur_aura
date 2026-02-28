@@ -45,7 +45,6 @@ class CreatePostViewModel(
                 _state.update { it.copy(isLoading = true, error = null) }
 
                 val post = UserContent.Post(
-                    created = getCurrentDateTime(),
                     id = UUID.randomUUID().toString(),
                     text = _state.value.text.trim(),
                     author = currentUserModel,

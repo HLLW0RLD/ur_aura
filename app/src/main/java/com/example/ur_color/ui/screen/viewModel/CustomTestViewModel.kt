@@ -27,7 +27,7 @@ class CustomTestViewModel(
 
     init {
         viewModelScope.launch {
-            _user.value = userRepository.getUser()
+//            _user.value = userRepository.getUser()
         }
     }
 

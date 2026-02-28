@@ -34,7 +34,8 @@ class EditProfileViewModel(
 
     init {
         viewModelScope.launch {
-            val loadedUser = userRepository.getUser()
+            // getMe убрать true после добавления апи обновления характеристик
+            val loadedUser = userRepository.getMe(true)
             logDebug("${loadedUser?.avatarUri}")
             _user.value = loadedUser
             _about.value = loadedUser?.about

@@ -1,5 +1,6 @@
 package com.example.ur_color.data.model.response
 
+import com.example.ur_color.utils.getCurrentDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,7 +11,7 @@ sealed class UserContent {
     @Serializable
     data class Post(
         override val id: String,
-        override val created: String,
+        override val created: String = getCurrentDateTime(),
         val text: String?,
         val author: UserModel,
         val image: String? = null,

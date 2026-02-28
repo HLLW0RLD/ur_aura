@@ -96,7 +96,6 @@ fun AuraDetailsScreen(
     val scrollState = rememberScrollState()
 
     val aura by profileViewModel.aura.collectAsState()
-    val userData by profileViewModel.user.collectAsState()
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current

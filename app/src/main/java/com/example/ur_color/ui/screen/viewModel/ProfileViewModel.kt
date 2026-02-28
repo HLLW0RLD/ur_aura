@@ -38,7 +38,10 @@ class ProfileViewModel(
             } else {
                 _user.value = userRepository.getUserById(id)
             }
+
+            getUserPosts(_user.value?.id)
         }
+
     }
 
     fun deleteUser() {

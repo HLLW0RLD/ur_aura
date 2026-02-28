@@ -23,8 +23,8 @@ class LoginViewModel(
     private val alertManager: AlertManager
 ) : BaseViewModel() {
 
-    var email by mutableStateOf("qwert@yu.com")
-    var password by mutableStateOf("asdfg")
+    var email by mutableStateOf("")
+    var password by mutableStateOf("")
 
     val _tokenState = MutableStateFlow<RegisterState>(RegisterState.Loading)
     val tokenState = _tokenState.asStateFlow()

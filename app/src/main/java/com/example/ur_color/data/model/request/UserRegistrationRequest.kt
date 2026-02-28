@@ -2,10 +2,9 @@ package com.example.ur_color.data.model.request
 
 import com.example.ur_color.data.model.user.CharacteristicData
 import kotlinx.serialization.Serializable
-import java.util.UUID
 
 @Serializable
-data class UserRegistration(
+data class UserRegistrationRequest(
     val id: String = "",
     val email: String,
     val password: String,

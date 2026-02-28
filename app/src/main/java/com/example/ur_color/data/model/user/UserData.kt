@@ -1,6 +1,6 @@
 package com.example.ur_color.data.model.user
 
-import com.example.ur_color.data.model.request.UserRegistration
+import com.example.ur_color.data.model.request.UserRegistrationRequest
 import com.example.ur_color.data.model.response.UserModel
 import kotlinx.serialization.Serializable
 
@@ -34,7 +34,7 @@ fun UserData?.toUser(): UserModel {
     )
 }
 
-fun UserRegistration.toUserData() = UserData(
+fun UserRegistrationRequest.toUserData() = UserData(
     id = id,
     nickName = nickName,
     firstName = firstName,

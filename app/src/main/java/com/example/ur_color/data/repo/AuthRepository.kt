@@ -1,10 +1,9 @@
 package com.example.ur_color.data.repo
 
-import com.example.ur_color.data.model.request.UserAuth
-import com.example.ur_color.data.model.request.UserRegistration
+import com.example.ur_color.data.model.request.UserAuthRequest
+import com.example.ur_color.data.model.request.UserRegistrationRequest
 import com.example.ur_color.data.model.response.AuthData
 import com.example.ur_color.data.remote.AuthApi
-import com.example.ur_color.data.remote.UserApi
 import com.example.ur_color.utils.logError
 import java.util.UUID
 
@@ -17,7 +16,7 @@ class AuthRepository(
         password: String,
     ): Result<AuthData?>  {
 
-        val request = UserAuth(email, password)
+        val request = UserAuthRequest(email, password)
 
         return try {
             val response = api.login(request)
@@ -52,7 +51,7 @@ class AuthRepository(
         userLevel: Int = 1
     ): Result<AuthData?> {
 
-        val request = UserRegistration(
+        val request = UserRegistrationRequest(
             id = UUID.randomUUID().toString(),
             email = email,
             password = password,

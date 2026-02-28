@@ -144,6 +144,7 @@ private fun PersonalInfoPage(
     {
         AuraOutlinedTextField(
             value = registrationViewModel.nickName,
+            maxLines = 1,
             onValueChange = { registrationViewModel.nickName = it },
             label = stringResource(R.string.field_nickname),
             isError = alertShown && !registrationViewModel.isNickNameValid,
@@ -152,6 +153,7 @@ private fun PersonalInfoPage(
         )
         AuraOutlinedTextField(
             value = registrationViewModel.firstName,
+            maxLines = 1,
             onValueChange = { registrationViewModel.firstName = it },
             label = stringResource(R.string.field_first_name),
             isError = alertShown && !registrationViewModel.isFirstNameValid,
@@ -160,6 +162,7 @@ private fun PersonalInfoPage(
         )
         AuraOutlinedTextField(
             value = registrationViewModel.lastName,
+            maxLines = 1,
             onValueChange = { registrationViewModel.lastName = it },
             label = stringResource(R.string.field_last_name),
             isError = alertShown && !registrationViewModel.isLastNameValid,
@@ -168,6 +171,7 @@ private fun PersonalInfoPage(
         )
         AuraOutlinedTextField(
             value = registrationViewModel.middleName,
+            maxLines = 1,
             onValueChange = { registrationViewModel.middleName = it },
             label = stringResource(R.string.field_middle_name_optional),
             modifier = Modifier
@@ -194,6 +198,7 @@ private fun PersonalInfoPage(
         )
         AuraOutlinedTextField(
             value = registrationViewModel.birthPlace,
+            maxLines = 1,
             onValueChange = { registrationViewModel.birthPlace = it },
             label = stringResource(R.string.field_birth_place),
             isError = alertShown && !registrationViewModel.isBirthPlaceValid,
@@ -306,6 +311,7 @@ private fun AuthPage(
     {
         AuraOutlinedTextField(
             value = registrationViewModel.email,
+            maxLines = 1,
             onValueChange = { registrationViewModel.email = it },
             label = stringResource(R.string.email_title),
             isError = alertShown && !registrationViewModel.isEmailValid,

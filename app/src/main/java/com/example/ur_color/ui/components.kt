@@ -660,6 +660,7 @@ fun AuraPasswordField(
         unfocusedBorderColor = unfocusedBorderColor,
         value = value,
         label = label,
+        maxLines = 1,
         onValueChange = onValueChange,
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardActions = keyboardActions,

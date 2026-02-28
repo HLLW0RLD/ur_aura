@@ -11,7 +11,7 @@ sealed class UserContent {
     @Serializable
     data class Post(
         override val id: String,
-        override val created: String = getCurrentDateTime(),
+        override val created: String = "",
         val text: String?,
         val author: UserModel,
         val image: String? = null,

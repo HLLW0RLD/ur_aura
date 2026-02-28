@@ -1,6 +1,6 @@
 package com.example.ur_color.data.model.request
 
-data class UserAuth(
+data class UserAuthRequest(
     val email: String,
     val password: String,
 )

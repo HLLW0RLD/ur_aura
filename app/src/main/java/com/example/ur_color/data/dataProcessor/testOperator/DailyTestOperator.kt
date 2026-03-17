@@ -5,6 +5,7 @@ import com.example.ur_color.data.dataProcessor.aura.AuraGenerator
 import com.example.ur_color.data.local.dataManager.PersonalDataManager
 import com.example.ur_color.data.model.question.ModType
 import com.example.ur_color.data.model.question.Question
+import com.example.ur_color.data.model.user.CharacteristicData
 import com.example.ur_color.data.model.user.UserData
 import kotlin.collections.iterator
 
@@ -23,8 +24,8 @@ object DailyTestOperator {
         }
     }
 
-    suspend fun applyDailyResult(user: UserData?, aura: Bitmap?) {
-        if (user == null) return
+    suspend fun applyDailyResult(user: UserData?): CharacteristicData? {
+        if (user == null) return null
         var updated = user!!
 
         for ((type, list) in accumulators) {
@@ -39,12 +40,11 @@ object DailyTestOperator {
             updated = updateUserValue(updated, type, newValue)
         }
 
+        // сохранение обновленного юзерра
         PersonalDataManager.saveUserToCache(updated)
 
-        val aura = AuraGenerator.updateDynamicAura(aura, updated)
-        if (aura != null) PersonalDataManager.saveAuraToCache(aura)
-
         resetDaily()
+        return updated.characteristics
     }
 
     private fun getValue(user: UserData, type: ModType): Float =

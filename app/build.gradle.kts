@@ -14,8 +14,8 @@ android {
         applicationId = "com.example.ur_color"
         minSdk = 25
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.6"
+        versionCode = 6
+        versionName = "1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -95,6 +95,10 @@ dependencies {
 
     // security
     implementation(libs.androidx.security.crypto)
+
+    // paging
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
 
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.core.ktx)

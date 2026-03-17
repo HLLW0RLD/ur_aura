@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import com.example.ur_color.data.model.response.UserContent
 import kotlinx.serialization.Serializable
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -12,10 +13,10 @@ import retrofit2.http.Query
 interface ContentApi {
 
     @POST("post/create")
-    suspend fun createPost(post: CreatePostRequest)
+    suspend fun createPost(@Body post: CreatePostRequest): Response<Unit>
 
     @GET("post/get/{id}")
-    suspend fun getPostById(): Response<UserContent.Post>
+    suspend fun getPostById(@Path("id") id: String): Response<UserContent.Post>
 
     @GET("post/{user_id}/feed")
     suspend fun getUserPosts(

@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.ur_color.R
 import com.example.ur_color.data.model.user.UserData
@@ -112,6 +113,7 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     val profileCardsState by profileViewModel.profileCardsState.collectAsState()
+    val posts = profileViewModel.postsFlow?.collectAsLazyPagingItems()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val color = AppColors.backgroundDark
@@ -450,53 +452,60 @@ fun ProfileScreen(
                         }
                     }
 
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(25.dp))
-                                .background(color.copy(alpha = 0.2f))
-                                .padding(vertical = 12.dp)
-                        ) {
-                            if (!profileCardsState.isNullOrEmpty()) {
-                                profileCardsState?.forEach {
+                    if ((posts?.itemCount ?: 0) > 0) {
+                        items(posts?.itemCount ?: 0) { index ->
+                            val post = posts?.get(index)
+
+                            post?.let {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(25.dp))
+                                        .background(
+                                            AppColors.backgroundDark
+                                                .copy(alpha = 0.2f)
+                                        )
+                                        .padding(top = 16.dp, bottom = 8.dp)
+                                ) {
                                     FeedContentCard(
                                         modifier = Modifier
-//                                .heightIn(max = 400.dp)
                                             .padding(horizontal = 16.dp, vertical = 8.dp),
                                         content = it,
                                         onClick = { }
                                     )
                                 }
-                            } else {
-                                Column(
+                            }
+                        }
+                    } else  {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = null
+                                    ) {
+                                        showBottomSheet = true
+                                    },
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Image(
                                     modifier = Modifier
-                                        .clickable(
-                                            indication = null,
-                                            interactionSource = null
-                                        ) {
-                                            showBottomSheet = true
-                                        },
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Image(
-                                        modifier = Modifier
-                                            .size(250.dp),
-                                        painter = painterResource(R.drawable.cauldron_potion),
-                                        contentDescription = null,
-                                        colorFilter = ColorFilter.tint(AppColors.accentPrimary)
-                                    )
-                                    Text(
-                                        color = AppColors.textAuto(color),
-                                        text = "Напишите первый  пост!",
-                                        fontSize = 24.sp,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(24.dp),
-                                    )
-                                }
+                                        .size(250.dp),
+                                    painter = painterResource(R.drawable.cauldron_potion),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(AppColors.accentPrimary)
+                                )
+                                Text(
+                                    color = AppColors.textAuto(color),
+                                    text = "Напишите первый  пост!",
+                                    fontSize = 24.sp,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+                                )
                             }
                         }
                     }

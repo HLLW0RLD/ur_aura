@@ -10,7 +10,7 @@
     <string name="motivation_fallback">Упс, мотивацию нужно поднять!</string>
 
     <!-- Daily test -->
-    <string name="daily_test_new">новый тест!</string>
+    <string name="daily_test_new">новый тест!</string> //
 
     <!-- Cards -->
     <string name="card_today_title">%1$s сегодня %2$s</string>
@@ -28,7 +28,7 @@
     <string name="metric_sleep_quality">Качество сна</string>
     <string name="metric_mood">Настроение</string>
     <string name="metric_motivation">Мотивация</string>
-    <string name="metric_focus">Фокус</string>
+    <string name="metric_focus">Концентрация</string>
     <string name="metric_charisma">Харизма</string>
     <string name="metric_social">Социальная энергия</string>
     <string name="metric_communication">Коммуникация</string>

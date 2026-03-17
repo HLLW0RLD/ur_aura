@@ -292,7 +292,7 @@ val auraSections = listOf(
     ),
 
     AuraSection(
-        sectionTitle = "Изотерика",
+        sectionTitle = "Эзотерика",
         rowConfig = AuraRowConfig(
             color = AuraColors.PLUM,
             topIconRes = R.drawable.magic_hat,

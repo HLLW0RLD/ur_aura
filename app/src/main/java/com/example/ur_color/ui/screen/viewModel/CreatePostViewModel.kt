@@ -44,15 +44,10 @@ class CreatePostViewModel(
             viewModelScope.launch {
                 _state.update { it.copy(isLoading = true, error = null) }
 
-                val post = UserContent.Post(
-                    id = UUID.randomUUID().toString(),
+                postRepository.createPost(
                     text = _state.value.text.trim(),
-                    author = currentUserModel,
-                    image = null
-//                    image = _state.value.selectedImageUri?.toString()
+                    authorId = currentUserModel.id,
                 )
-
-                postRepository.createPost(post)
 
                 _state.update { CreatePostState.Empty }
             }

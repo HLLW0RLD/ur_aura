@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.lerp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ur_color.R
 import com.example.ur_color.data.local.mocServece.LocalMotivationService
 import com.example.ur_color.data.model.user.ZodiacSign
@@ -143,6 +145,11 @@ fun MainScreen(
     var card by remember { mutableStateOf<Card?>(null) }
 
     val feedCardsState by mainViewModel.feedCardsState.collectAsState()
+    val posts = mainViewModel.postsFlow?.collectAsLazyPagingItems()
+
+    LaunchedEffect(Unit) {
+        mainViewModel.init()
+    }
 
     LaunchedEffect(Unit) {
         mainViewModel.loadDailyHoroscope(sign = zodiacSign.value)
@@ -224,284 +231,222 @@ fun MainScreen(
 //            }
 //        }
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = AppColors.background)
-                .verticalScroll(scrollState),
+                .background(color = AppColors.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.size(16.dp))
-            Text(
-                color = AppColors.textSecondary,
-                text = motivated ?: stringResource(R.string.motivation_fallback),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth(0.75f)
-                    .padding(vertical = 8.dp)
-            )
-
-            Spacer(modifier = Modifier.size(8.dp))
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                thickness = 0.5.dp,
-                color = AppColors.textPrimary
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(25.dp))
-                    .background(
-                        AppColors.backgroundDark
-                            .copy(alpha = 0.2f)
-                    )
-                    .padding(top = 16.dp, bottom = 8.dp)
-            ) {
-                LazyRow(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .heightIn(max = 130.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    item { Spacer(modifier = Modifier.width(0.dp)) }
-
-                    items(
-                        count = vectorMetrics.size,
-                        key = { index -> "metric_$index" }
-                    ) { vector ->
-                        val metric = vectorMetrics[vector]
-                        val value = metric.first ?: listOf()
-                        val label = metric.second
-
-                        var exp by rememberSaveable { mutableStateOf(false) }
-
-                        ExpandableGradientGraphBox(
-                            label = label,
-                            indicator = metrics[vector] ?: 0f,
-                            values = value,
-                            vector = vector,
-                            expanded = exp,
-                            onToggleExpanded = { exp = !exp },
-                        )
-                    }
-
-                    item { Spacer(modifier = Modifier.width(8.dp)) }
-                }
-
+            item {
                 Spacer(modifier = Modifier.size(16.dp))
+                Text(
+                    color = AppColors.textSecondary,
+                    text = motivated ?: stringResource(R.string.motivation_fallback),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(0.75f)
+                        .padding(vertical = 8.dp)
+                )
 
-                Box {
-                    var autoScroll by rememberSaveable { mutableStateOf(true) }
-                    AutoScrollHorizontalPager(
-                        autoScroll = autoScroll,
-                        isInfinite = true,
-                        modifier = Modifier.fillMaxWidth(),
+                Spacer(modifier = Modifier.size(8.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    thickness = 0.5.dp,
+                    color = AppColors.textPrimary
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(25.dp))
+                        .background(
+                            AppColors.backgroundDark
+                                .copy(alpha = 0.2f)
+                        )
+                        .padding(top = 16.dp, bottom = 8.dp)
+                ) {
+                    LazyRow(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .heightIn(max = 130.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = stringResource(
-                                    R.string.card_today_title,
-                                    user?.firstName ?: "",
-                                    card?.name
-                                        ?: stringResource(R.string.error_oops)
-                                ),
+                        item { Spacer(modifier = Modifier.width(0.dp)) }
+
+                        items(
+                            count = vectorMetrics.size,
+                            key = { index -> "metric_$index" }
+                        ) { vector ->
+                            val metric = vectorMetrics[vector]
+                            val value = metric.first ?: listOf()
+                            val label = metric.second
+
+                            var exp by rememberSaveable { mutableStateOf(false) }
+
+                            ExpandableGradientGraphBox(
+                                label = label,
+                                indicator = metrics[vector] ?: 0f,
+                                values = value,
+                                vector = vector,
+                                expanded = exp,
+                                onToggleExpanded = { exp = !exp },
                             )
                         }
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = stringResource(
-                                    R.string.horoscope_for_user,
-                                    user?.firstName ?: ""
-                                ),
-                            ) {
-                                // навигация на экран горосккопа дня
-                            }
-                        }
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = "Аура! как понять?",
-                            ) {
-                                // навигация на экран мастер классов
-                            }
-                        }
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = "Проверим кто вам подходит?",
-                            ) {
-                                // навигация на экран мастер классов
-                            }
-                        }
 
-                        // дублируюттся
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = stringResource(
-                                    R.string.card_today_title,
-                                    user?.firstName ?: "",
-                                    card?.name
-                                        ?: stringResource(R.string.error_oops)
-                                ),
-                            ) {
-                                // навигация на экран карты дня
+                        item { Spacer(modifier = Modifier.width(8.dp)) }
+                    }
+
+                    Spacer(modifier = Modifier.size(16.dp))
+
+                    Box {
+                        var autoScroll by rememberSaveable { mutableStateOf(true) }
+                        AutoScrollHorizontalPager(
+                            autoScroll = autoScroll,
+                            isInfinite = true,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = stringResource(
+                                        R.string.card_today_title,
+                                        user?.firstName ?: "",
+                                        card?.name
+                                            ?: stringResource(R.string.error_oops)
+                                    ),
+                                )
                             }
-                        }
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = stringResource(
-                                    R.string.horoscope_for_user,
-                                    user?.firstName ?: ""
-                                ),
-                            ) {
-                                // навигация на экран горосккопа дня
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = stringResource(
+                                        R.string.horoscope_for_user,
+                                        user?.firstName ?: ""
+                                    ),
+                                ) {
+                                    // навигация на экран горосккопа дня
+                                }
                             }
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = "База знаний",
+                                ) {
+                                    // навигация на экран мастер классов
+                                }
+                            }
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = "Совместимость",
+                                ) {
+                                    // навигация на экран мастер классов
+                                }
+                            }
+
+                            // дублируюттся
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = stringResource(
+                                        R.string.card_today_title,
+                                        user?.firstName ?: "",
+                                        card?.name
+                                            ?: stringResource(R.string.error_oops)
+                                    ),
+                                ) {
+                                    // навигация на экран карты дня
+                                }
+                            }
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = stringResource(
+                                        R.string.horoscope_for_user,
+                                        user?.firstName ?: ""
+                                    ),
+                                ) {
+                                    // навигация на экран горосккопа дня
+                                }
 //
-                        }
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = "Аура! как понять?",
-                            ) {
-                                // навигация на экран мастер классов
                             }
-                        }
-                        item {
-                            FloatingBox(
-                                modifier = Modifier
-                                    .padding(6.dp),
-                                height = 200f,
-                                width = 1f,
-                                closedTitle = "Проверим кто вам подходит?",
-                            ) {
-                                // навигация на экран мастер классов
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = "База знаний",
+                                ) {
+                                    // навигация на экран мастер классов
+                                }
+                            }
+                            item {
+                                FloatingBox(
+                                    modifier = Modifier
+                                        .padding(6.dp),
+                                    height = 200f,
+                                    width = 1f,
+                                    closedTitle = "Совместимость",
+                                ) {
+                                    // навигация на экран мастер классов
+                                }
                             }
                         }
                     }
                 }
+
+                Spacer(Modifier.height(16.dp))
             }
 
-            Spacer(Modifier.height(16.dp))
+            items(posts?.itemCount ?: 0) { index ->
+                val post = posts?.get(index)
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(25.dp))
-                    .background(
-                        AppColors.backgroundDark
-                            .copy(alpha = 0.2f)
-                    )
-                    .padding(vertical = 16.dp)
-            ) {
-                feedCardsState.forEach {
-                    FeedContentCard(
+                post?.let {
+                    Box(
                         modifier = Modifier
-//                                .heightIn(max = 400.dp)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        content = it,
-                        onClick = { }
-                    )
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(25.dp))
+                            .background(
+                                AppColors.backgroundDark
+                                    .copy(alpha = 0.2f)
+                            )
+                            .padding(top = 16.dp, bottom = 8.dp)
+                    ) {
+                        FeedContentCard(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            content = it,
+                            onClick = { }
+                        )
+                    }
                 }
             }
 
-            Spacer(Modifier.height(120.dp))
+            items(posts?.itemCount ?: 0) { index ->
+                Spacer(Modifier.height(120.dp))
+            }
         }
-
-//        val cornerDp = lerp(24.dp, 12.dp, progress)
-//        val borderAlpha = 1f - progress
-//        Surface(
-//            modifier = Modifier
-//                .offset { IntOffset(0, offsetY.value.roundToInt()) }
-//                .fillMaxSize()
-//                .border(
-//                    width = 0.5.dp,
-//                    color = AppColors.divider.copy(alpha = borderAlpha),
-//                    shape = RoundedCornerShape(topStart = cornerDp, topEnd = cornerDp)
-//                )
-//                .pointerInput(canScroll) {
-//                    detectVerticalDragGestures(
-//                        onVerticalDrag = { change, dragAmount ->
-//                            change.consume()
-//                            scope.launch {
-//                                val newOffset =
-//                                    (offsetY.value + dragAmount).coerceIn(expandedY, collapsedY)
-//                                if (!canScroll || dragAmount > 0) {
-//                                    offsetY.snapTo(newOffset)
-//                                }
-//                            }
-//                        },
-//                        onDragEnd = {
-//                            val middle = (collapsedY + expandedY) / 2f
-//                            if (offsetY.value <= middle) animateToExpanded()
-//                            else animateToCollapsed()
-//                        }
-//                    )
-//                },
-//            shape = RoundedCornerShape(
-//                topStart = (28.dp * (1 - progress)).coerceAtLeast(0.dp),
-//                topEnd = (28.dp * (1 - progress)).coerceAtLeast(0.dp)
-//            ),
-//            color = AppColors.background.copy(alpha = 0.95f * progress),
-//            tonalElevation = 8.dp
-//        ) {
-//
-//
-//        }
-
-//        AnimatedVisibility(
-//            visible = progress >= 0.95f,
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.BottomEnd)
-//                    .fillMaxWidth()
-//                    .padding(end = 16.dp, bottom = 100.dp),
-//                contentAlignment = Alignment.BottomEnd
-//            ) {
-//                FloatingActionButton(
-//                    onClick = {
-//                        scope.launch { offsetY.animateTo(collapsedY, tween(400)) }
-//                    },
-//                    containerColor = AppColors.accentPrimary.copy(alpha = 0.5f),
-//                    contentColor = Color.White
-//                ) {
-//                    Icon(
-//                        painter = painterResource(R.drawable.arrow_up),
-//                        contentDescription = "Добавить"
-//                    )
-//                }
-//            }
-//        }
     }
 }

@@ -1697,7 +1697,7 @@ private fun ExpandableContent(
 
 @Composable
 fun FeedContentCard(
-    content: UserContent,
+    content: UserContent.Post,
     modifier: Modifier = Modifier,
     onClick: (UserContent) -> Unit = {}
 ) {

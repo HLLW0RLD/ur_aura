@@ -44,7 +44,7 @@ class DailyTestViewModel(
     fun updateAfterTest() {
         viewModelScope.launch {
             val data = _user.value ?: return@launch
-            DailyTestOperator.applyDailyResult(data, _aura.value)
+            DailyTestOperator.applyDailyResult(data)
             PersonalDataManager.updateLevel(0.2f)
             PersonalDataManager.saveDailyTestDate(today)
             // дать ачивку за первый тест
